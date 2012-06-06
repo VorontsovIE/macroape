@@ -1,6 +1,6 @@
 module Bioinform
   class PWM
-    alias_method :probabilities, :probability
+    alias_method :probabilities, :background
     alias_method :sum_of_probabilities, :background_sum
     alias_method :number_of_words, :vocabulary_volume
   end

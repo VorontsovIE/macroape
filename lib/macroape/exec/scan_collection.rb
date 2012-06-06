@@ -25,6 +25,7 @@ Example:
 
 $:.unshift File.join(File.dirname(__FILE__),'./../../')
 require 'macroape'
+require 'bioinform'
 
 if ARGV.empty? or ARGV.include? '-h' or ARGV.include? '-help' or ARGV.include? '--help' or ARGV.include? '--h'
   STDERR.puts help_string
@@ -78,15 +79,15 @@ begin
   raise "Thresholds for pvalue #{pvalue} aren't presented in collection (#{collection.pvalues.join(', ')}). Use one of listed pvalues or recalculate the collection with needed pvalue" unless collection.pvalues.include? pvalue
   
   if filename == '.stdin'
-    query_pwm = Macroape::SingleMatrix.load_from_stdin(STDIN)
+#    query_pwm = Macroape::SingleMatrix.load_from_stdin(STDIN)
   else
     raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
-    query_pwm = Macroape::SingleMatrix.load_pat(filename)
+    query_pwm = Bioinform::PWM.new(File.read(filename))
   end
   
   
-  query_pwm_rough = query_pwm.with_background(background_query).discrete(collection.rough_discretization)
-  query_pwm_precise = query_pwm.with_background(background_query).discrete(collection.precise_discretization)
+  query_pwm_rough = query_pwm.background(background_query).discrete(collection.rough_discretization)
+  query_pwm_precise = query_pwm.background(background_query).discrete(collection.precise_discretization)
   
   threshold = query_pwm_rough.threshold(pvalue)
   threshold_precise = query_pwm_precise.threshold(pvalue)
@@ -99,13 +100,13 @@ begin
     pwm = collection.pwms[name]
     pwm_info = collection.infos[name]
     STDERR.puts pwm.name unless silent
-    cmp = Macroape::PWMCompare.new(query_pwm_rough, pwm.with_background(collection.background).discrete(collection.rough_discretization))
+    cmp = Macroape::PWMCompare.new(query_pwm_rough, pwm.background(collection.background).discrete(collection.rough_discretization))
     info = cmp.jaccard(threshold, pwm_info[:rough][pvalue] * collection.rough_discretization)
     name = pwm.name || "Unnamed #{unnamed_index += 1}"
     precision_file_mode[name] = :rough
     
     if precision_mode == :precise and info[:similarity] >= minimal_similarity
-      cmp = Macroape::PWMCompare.new(query_pwm_precise, pwm.with_background(collection.background).discrete(collection.precise_discretization))
+      cmp = Macroape::PWMCompare.new(query_pwm_precise, pwm.background(collection.background).discrete(collection.precise_discretization))
       info = cmp.jaccard(threshold_precise, pwm_info[:precise][pvalue] * collection.precise_discretization)
       precision_file_mode[name] = :precise
     end

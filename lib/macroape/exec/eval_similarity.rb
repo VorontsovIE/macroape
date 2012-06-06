@@ -28,6 +28,7 @@ Examples:
 
 $:.unshift File.join(File.dirname(__FILE__),'./../../')
 require 'macroape'
+require 'bioinform'
 
 if ARGV.empty? or ARGV.include? '-h' or ARGV.include? '-help' or ARGV.include? '--help' or ARGV.include? '--h'
   STDERR.puts help_string
@@ -70,26 +71,26 @@ begin
   Macroape::MaxHashSizeDouble = 1000 unless defined? Macroape::MaxHashSizeDouble
   
   
-  if first_file == '.stdin' || second_file == '.stdin'
-    r_stream, w_stream = IO.pipe
-    STDIN.readlines.each{|line| w_stream.write(line)}
-    w_stream.close
-  end
+#  if first_file == '.stdin' || second_file == '.stdin'
+#    r_stream, w_stream = IO.pipe
+#    STDIN.readlines.each{|line| w_stream.write(line)}
+#    w_stream.close
+#  end
   
   if first_file == '.stdin'
-    r_stream, w_stream, extracted_pwm = extract_pwm(r_stream, w_stream)
-    pwm_first = Macroape::SingleMatrix.load_from_line_array(extracted_pwm).with_background(first_background).discrete(discretization)
+#    r_stream, w_stream, extracted_pwm = extract_pwm(r_stream, w_stream)
+#    pwm_first = Macroape::SingleMatrix.load_from_line_array(extracted_pwm).with_background(first_background).discrete(discretization)
   else
     raise "Error! File #{first_file} don't exist" unless File.exist?(first_file)
-    pwm_first = Macroape::SingleMatrix.load_pat(first_file).with_background(first_background).discrete(discretization)
+    pwm_first = Bioinform::PWM.new(File.read(first_file)).background(first_background).discrete(discretization)
   end
   
   if second_file == '.stdin'
-    r_stream, w_stream, extracted_pwm = extract_pwm(r_stream, w_stream)
-    pwm_second = Macroape::SingleMatrix.load_from_line_array(extracted_pwm).with_background(second_background).discrete(discretization)
+#    r_stream, w_stream, extracted_pwm = extract_pwm(r_stream, w_stream)
+#    pwm_second = Macroape::SingleMatrix.load_from_line_array(extracted_pwm).with_background(second_background).discrete(discretization)
   else
     raise "Error! File #{second_file} don't exist" unless File.exist?(second_file)
-    pwm_second = Macroape::SingleMatrix.load_pat(second_file).with_background(second_background).discrete(discretization)
+    pwm_second = Bioinform::PWM.new(File.read(second_file)).background(second_background).discrete(discretization)
   end
   
   r_stream.close if first_file == '.stdin' || second_file == '.stdin'

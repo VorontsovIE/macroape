@@ -17,6 +17,7 @@ Example:
 
 $:.unshift File.join(File.dirname(__FILE__),'./../../')
 require 'macroape'
+require 'bioinform'
 
 if ARGV.empty? or ARGV.include? '-h' or ARGV.include? '-help' or ARGV.include? '--help' or ARGV.include? '--h'
   STDERR.puts help_string
@@ -72,7 +73,7 @@ begin
   current_dir = File.dirname(__FILE__)
   Dir.glob(File.join(folder,'*')) do |filename|
     STDERR.puts filename unless silent
-    pwm = Macroape::SingleMatrix.load_pat(filename)
+    pwm = Bioinform::PWM.new(File.read(filename))
     info = {rough: {}, precise: {}}
     output = `ruby "#{File.join current_dir,'find_threshold.rb'}" #{filename} -p #{pvalues.join(' ')} -b #{background.join(' ')} -d #{rough_discretization}`.split("\n")
     output.each do |line|
