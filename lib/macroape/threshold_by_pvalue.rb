@@ -91,7 +91,7 @@ module Bioinform
       max_look_for_count = max_pvalue * vocabulary_volume
       scores={}
       until scores.inject(0){|sum,(score,count)| sum + count} >= max_look_for_count
-        scores = calculate_count_distribution_after_threshold(threshold_gauss_estimation(max_pvalue))
+        scores = count_distribution_after_threshold(threshold_gauss_estimation(max_pvalue))
         max_pvalue *=2 # if estimation counted too small amount of words - try to lower threshold estimation by doubling pvalue
       end
       pvalue_counts = pvalues.sort.inject(Hash.new){|h, pvalue| h.merge pvalue => pvalue * vocabulary_volume }
@@ -119,7 +119,7 @@ module Bioinform
       results
     end
     
-    def calculate_count_distribution_after_threshold(threshold)
+    def count_distribution_after_threshold(threshold)
       scores = { 0 => 1 }
       length.times do |column|
         new_scores = Hash.new(0);
@@ -131,7 +131,7 @@ module Bioinform
             end
           end
         end
-        raise 'Hash overflow in PWM::ThresholdByPvalue#calculate_count_distribution_after_threshold' if defined? MaxHashSizeSingle and new_scores.size > MaxHashSizeSingle
+        raise 'Hash overflow in PWM::ThresholdByPvalue#count_distribution_after_threshold' if defined? MaxHashSizeSingle and new_scores.size > MaxHashSizeSingle
         scores = new_scores
       end
       scores

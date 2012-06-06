@@ -26,6 +26,7 @@ Examples:
 
 $:.unshift File.join(File.dirname(__FILE__),'./../../')
 require 'macroape'
+require 'bioinform'
 
 if ARGV.empty? or ARGV.include? '-h' or ARGV.include? '-help' or ARGV.include? '--help' or ARGV.include? '--h'
   STDERR.puts help_string
@@ -64,15 +65,15 @@ begin
   
   
   if filename == '.stdin'
-    pwm = Macroape::SingleMatrix.load_from_stdin(STDIN)
+#  TODO
   else
     raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
-    pwm = Macroape::SingleMatrix.load_pat(filename)
+    pwm = Bioinform::PWM.new( File.read(filename) )
   end
-  pwm = pwm.with_background(background)
+  pwm.background(background)
 
   counts = pwm.discrete(discretization).counts_by_thresholds(* thresholds.map{|count| count * discretization})
-  pvalues = counts.map{|count| count.to_f / pwm.number_of_words}
+  pvalues = counts.map{|count| count.to_f / pwm.vocabulary_volume}
   pvalues.zip(thresholds,counts).each{|pvalue,threshold,count|
     puts "#{threshold}\t#{count}\t#{pvalue}"
   }
