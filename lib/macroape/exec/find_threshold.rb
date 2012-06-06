@@ -20,6 +20,7 @@ Example:
   ruby find_threshold.rb motifs/KLF4.pat -p 0.001 0.0001 0.0005 -d 1000 -b 0.4 0.3 0.2 0.1
 }
 
+$:.unshift File.join(File.dirname(__FILE__),'./../../')
 require 'macroape'
 
 if ARGV.empty? or ARGV.include? '-h' or ARGV.include? '-help' or ARGV.include? '--help' or ARGV.include? '--h'
@@ -41,7 +42,7 @@ begin
       when '-b'
         background = ARGV.shift(4).map(&:to_f)
       when '-m'
-        PWM::MaxHashSize = ARGV.shift.to_f
+        Macroape::MaxHashSize = ARGV.shift.to_f
       when '-p'
         loop do
           begin
@@ -57,13 +58,13 @@ begin
   end
   pvalues = default_pvalues if pvalues.empty?
   
-  PWM::MaxHashSize = 1000000 unless defined? PWM::MaxHashSize
+  Macroape::MaxHashSize = 1000000 unless defined? Macroape::MaxHashSize
   
   if filename == '.stdin'
-    pwm = PWM::SingleMatrix.load_from_stdin(STDIN)
+    pwm = Macroape::SingleMatrix.load_from_stdin(STDIN)
   else
     raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
-    pwm = PWM::SingleMatrix.load_pat(filename)
+    pwm = Macroape::SingleMatrix.load_pat(filename)
   end
   
   pwm = pwm.with_background(background)

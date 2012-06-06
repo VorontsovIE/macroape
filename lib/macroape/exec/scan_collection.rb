@@ -23,6 +23,7 @@ Example:
   cat motifs/KLF4.pat | ruby scan_collection.rb .stdin collection.yaml -p 0.005 --precise 0.03
 }
 
+$:.unshift File.join(File.dirname(__FILE__),'./../../')
 require 'macroape'
 
 if ARGV.empty? or ARGV.include? '-h' or ARGV.include? '-help' or ARGV.include? '--help' or ARGV.include? '--h'
@@ -52,7 +53,7 @@ begin
       when '-p'
         pvalue = ARGV.shift.to_f
       when '-m'
-        PWM::MaxHashSize = ARGV.shift.to_f
+        Macroape::MaxHashSize = ARGV.shift.to_f
       when '-md'
         PWMCompare::MaxHashSize = ARGV.shift.to_f
       when '-c'
@@ -71,16 +72,16 @@ begin
         end
     end
   end
-  PWM::MaxHashSize = 1000000 unless defined? PWM::MaxHashSize
+  Macroape::MaxHashSize = 1000000 unless defined? Macroape::MaxHashSize
   PWMCompare::MaxHashSize = 1000 unless defined? PWMCompare::MaxHashSize
   
   raise "Thresholds for pvalue #{pvalue} aren't presented in collection (#{collection.pvalues.join(', ')}). Use one of listed pvalues or recalculate the collection with needed pvalue" unless collection.pvalues.include? pvalue
   
   if filename == '.stdin'
-    query_pwm = PWM::SingleMatrix.load_from_stdin(STDIN)
+    query_pwm = Macroape::SingleMatrix.load_from_stdin(STDIN)
   else
     raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
-    query_pwm = PWM::SingleMatrix.load_pat(filename)
+    query_pwm = Macroape::SingleMatrix.load_pat(filename)
   end
   
   

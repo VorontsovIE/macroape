@@ -1,4 +1,4 @@
-module PWM
+module Macroape
   class MatrixOnBackground < SingleMatrix
     attr_reader :probabilities
     def initialize(matrix,background)

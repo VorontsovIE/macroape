@@ -24,6 +24,7 @@ Examples:
   cat motifs/KLF4.pat | ruby find_pvalue.rb .stdin 7.32 4.31 5.42
 }
 
+$:.unshift File.join(File.dirname(__FILE__),'./../../')
 require 'macroape'
 
 if ARGV.empty? or ARGV.include? '-h' or ARGV.include? '-help' or ARGV.include? '--help' or ARGV.include? '--h'
@@ -56,17 +57,17 @@ begin
       when '-d'
         discretization = ARGV.shift.to_f
       when '-m'
-        PWM::MaxHashSize = ARGV.shift.to_f
+        Macroape::MaxHashSize = ARGV.shift.to_f
     end
   end
-  PWM::MaxHashSize = 1000000 unless defined? PWM::MaxHashSize
+  Macroape::MaxHashSize = 1000000 unless defined? Macroape::MaxHashSize
   
   
   if filename == '.stdin'
-    pwm = PWM::SingleMatrix.load_from_stdin(STDIN)
+    pwm = Macroape::SingleMatrix.load_from_stdin(STDIN)
   else
     raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
-    pwm = PWM::SingleMatrix.load_pat(filename)
+    pwm = Macroape::SingleMatrix.load_pat(filename)
   end
   pwm = pwm.with_background(background)
 

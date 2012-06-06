@@ -1,4 +1,4 @@
-module PWM
+module Macroape
   module MatrixInformation
     def length
       @length ||= matrix.length

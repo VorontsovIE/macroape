@@ -24,7 +24,7 @@ Examples:
      or in linux
   cat motifs/KLF4.pat motifs/SP1.pat | ruby eval_alignment.rb .stdin .stdin 3 direct -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
 }
-
+$:.unshift File.join(File.dirname(__FILE__),'./../../')
 require 'macroape'
 
 if ARGV.empty? or ARGV.include? '-h' or ARGV.include? '-help' or ARGV.include? '--help' or ARGV.include? '--h'
@@ -69,7 +69,7 @@ begin
       when '-d'
         discretization = ARGV.shift.to_f
       when '-m'
-        PWM::MaxHashSize = ARGV.shift.to_f
+        Macroape::MaxHashSize = ARGV.shift.to_f
       when '-md'
         PWMCompare::MaxHashSize = ARGV.shift.to_f
       when '-b'
@@ -84,7 +84,7 @@ begin
   raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless second_background == second_background.reverse
 
   
-  PWM::MaxHashSize = 1000000 unless defined? PWM::MaxHashSize
+  Macroape::MaxHashSize = 1000000 unless defined? Macroape::MaxHashSize
   PWMCompare::MaxHashSize = 1000 unless defined? PWMCompare::MaxHashSize
   
   if first_file == '.stdin' || second_file == '.stdin'
@@ -95,18 +95,18 @@ begin
   
   if first_file == '.stdin'
     r_stream, w_stream, extracted_pwm = extract_pwm(r_stream, w_stream)
-    pwm_first = PWM::SingleMatrix.load_from_line_array(extracted_pwm).with_background(first_background).discrete(discretization)
+    pwm_first = Macroape::SingleMatrix.load_from_line_array(extracted_pwm).with_background(first_background).discrete(discretization)
   else
     raise "Error! File #{first_file} don't exist" unless File.exist?(first_file)
-    pwm_first = PWM::SingleMatrix.load_pat(first_file).with_background(first_background).discrete(discretization)
+    pwm_first = Macroape::SingleMatrix.load_pat(first_file).with_background(first_background).discrete(discretization)
   end
   
   if second_file == '.stdin'
     r_stream, w_stream, extracted_pwm = extract_pwm(r_stream, w_stream)
-    pwm_second = PWM::SingleMatrix.load_from_line_array(extracted_pwm).with_background(second_background).discrete(discretization)
+    pwm_second = Macroape::SingleMatrix.load_from_line_array(extracted_pwm).with_background(second_background).discrete(discretization)
   else
     raise "Error! File #{second_file} don't exist" unless File.exist?(second_file)
-    pwm_second = PWM::SingleMatrix.load_pat(second_file).with_background(second_background).discrete(discretization)
+    pwm_second = Macroape::SingleMatrix.load_pat(second_file).with_background(second_background).discrete(discretization)
   end
   
   r_stream.close if first_file == '.stdin' || second_file == '.stdin'

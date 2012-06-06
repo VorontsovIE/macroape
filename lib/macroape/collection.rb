@@ -1,4 +1,4 @@
-module PWM
+module Macroape
   class Collection
     attr_reader :rough_discretization, :precise_discretization, :background, :pvalues, :pwms, :infos
     def initialize(rough_discretization, precise_discretization, background, pvalues)

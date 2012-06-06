@@ -1,4 +1,4 @@
-module PWM
+module Macroape
   module GaussEstimation
     def score_mean
       bckgr = probabilities.map{|v| v.to_f / sum_of_probabilities}

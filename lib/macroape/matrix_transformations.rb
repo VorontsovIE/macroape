@@ -1,4 +1,4 @@
-module PWM
+module Macroape
   module MatrixTransformations
     def reverse_complement
       clone_and_transform( matrix.reverse.map(&:reverse) ).refresh_infos

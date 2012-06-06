@@ -1,4 +1,4 @@
-module PWM
+module Macroape
   class SingleMatrix
     attr_reader :matrix
     attr_accessor :name
@@ -22,7 +22,7 @@ module PWM
       else
         pwm = SingleMatrix.new(lines[start_line..-1].map{|str| str.split.map(&:to_f)}.transpose)
       end
-      raise "PWM::SingleMatrix.build_matrix can't create matrix using this input" unless pwm.matrix.all?{|l| l.length == 4}
+      raise "Macroape::SingleMatrix.build_matrix can't create matrix using this input" unless pwm.matrix.all?{|l| l.length == 4}
       pwm.name = pwm_name
       pwm
     end

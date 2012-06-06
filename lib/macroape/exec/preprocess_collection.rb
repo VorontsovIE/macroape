@@ -9,12 +9,13 @@ Options:
   [-o <output file>]
   [--silent] - don't show current progress information during scan (by default this information's written into stderr)
 
-The tool stores preprocessed PWM collection to the specified YAML-file.
+The tool stores preprocessed Macroape collection to the specified YAML-file.
  
 Example:
   ruby preprocess_collection.rb ./motifs -p 0.001 0.0005 0.0001 -d 1 10 -b 0.2 0.3 0.2 0.3 -o collection.yaml
 }
 
+$:.unshift File.join(File.dirname(__FILE__),'./../../')
 require 'macroape'
 
 if ARGV.empty? or ARGV.include? '-h' or ARGV.include? '-help' or ARGV.include? '--help' or ARGV.include? '--h'
@@ -54,7 +55,7 @@ begin
       when '-o'
         output_file = ARGV.shift
       when '-m'
-        PWM::MaxHashSize = ARGV.shift.to_f
+        Macroape::MaxHashSize = ARGV.shift.to_f
       when '-md'
         PWMCompare::MaxHashSize = ARGV.shift.to_f
       when '--silent'
@@ -63,15 +64,15 @@ begin
   end
   pvalues = default_pvalues if pvalues.empty?
   
-  PWM::MaxHashSize = 1000000 unless defined? PWM::MaxHashSize
+  Macroape::MaxHashSize = 1000000 unless defined? Macroape::MaxHashSize
   PWMCompare::MaxHashSize = 1000 unless defined? PWMCompare::MaxHashSize
 
-  collection = PWM::Collection.new(rough_discretization, precise_discretization, background, pvalues)
+  collection = Macroape::Collection.new(rough_discretization, precise_discretization, background, pvalues)
 
   current_dir = File.dirname(__FILE__)
   Dir.glob(File.join(folder,'*')) do |filename|
     STDERR.puts filename unless silent
-    pwm = PWM::SingleMatrix.load_pat(filename)
+    pwm = Macroape::SingleMatrix.load_pat(filename)
     info = {rough: {}, precise: {}}
     output = `ruby "#{File.join current_dir,'find_threshold.rb'}" #{filename} -p #{pvalues.join(' ')} -b #{background.join(' ')} -d #{rough_discretization}`.split("\n")
     output.each do |line|

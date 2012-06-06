@@ -1,4 +1,4 @@
-module PWM
+module Macroape
   module ThresholdByPvalue
     def threshold(pvalue)
       thresholds(pvalue){|_, thresh, _| return thresh }

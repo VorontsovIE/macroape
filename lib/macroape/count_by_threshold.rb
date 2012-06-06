@@ -1,4 +1,4 @@
-module PWM
+module Macroape
   module CountByThreshold
     def counts_by_thresholds(*thresholds)
       scores = calculate_count_distribution_after_threshold(thresholds.min)
