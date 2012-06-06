@@ -1,17 +1,9 @@
-module Bioinform
-  class PWM
-    alias_method :probabilities, :background
-    alias_method :sum_of_probabilities, :background_sum
-    alias_method :number_of_words, :vocabulary_volume
-  end
-end
-
 module Macroape
   module AlignedPairIntersection
 
     def counts_for_two_matrices(threshold_first, threshold_second)
-      if first.probabilities == second.probabilities
-        if first.probabilities == [1,1,1,1]
+      if first.background == second.background
+        if first.background == [1,1,1,1]
           common_words_for_two_matrices(threshold_first, threshold_second)
         else
           counts_for_two_matrices_with_same_probabilities(threshold_first, threshold_second) 
@@ -26,8 +18,8 @@ module Macroape
       result_first = 0.0
       result_second = 0.0
       length.times do |column|    
-        ending_weight_first =  first.sum_of_probabilities ** (length - column - 1)
-        ending_weight_second = second.sum_of_probabilities ** (length - column - 1)
+        ending_weight_first =  first.background_sum ** (length - column - 1)
+        ending_weight_second = second.background_sum ** (length - column - 1)
         already_enough_first  = threshold_first  - first.worst_suffix[column + 1]
         already_enough_second = threshold_second - second.worst_suffix[column + 1]
         least_sufficient_first  = threshold_first  - first.best_suffix[column + 1]
@@ -41,17 +33,17 @@ module Macroape
               if new_score_first >= already_enough_first 
                 new_score_second = score_second + second.matrix[column][letter]
                 if new_score_second >= already_enough_second
-                  result_first += count[0] * first.probabilities[letter] * ending_weight_first
-                  result_second += count[1] * second.probabilities[letter] * ending_weight_second
+                  result_first += count[0] * first.background[letter] * ending_weight_first
+                  result_second += count[1] * second.background[letter] * ending_weight_second
                 elsif new_score_second >= least_sufficient_second 
-                  new_scores[new_score_first][new_score_second][0] += count[0] * first.probabilities[letter]
-                  new_scores[new_score_first][new_score_second][1] += count[1] * second.probabilities[letter]
+                  new_scores[new_score_first][new_score_second][0] += count[0] * first.background[letter]
+                  new_scores[new_score_first][new_score_second][1] += count[1] * second.background[letter]
                 end
               elsif new_score_first >= least_sufficient_first
                 new_score_second = score_second + second.matrix[column][letter]
                 if new_score_second >= least_sufficient_second
-                  new_scores[new_score_first][new_score_second][0] += count[0] * first.probabilities[letter]
-                  new_scores[new_score_first][new_score_second][1] += count[1] * second.probabilities[letter]
+                  new_scores[new_score_first][new_score_second][0] += count[0] * first.background[letter]
+                  new_scores[new_score_first][new_score_second][1] += count[1] * second.background[letter]
                 end
               end
             end
@@ -66,9 +58,9 @@ module Macroape
     def counts_for_two_matrices_with_same_probabilities(threshold_first, threshold_second)
       scores = { 0 => {0 => 1} } # scores_on_first_pwm, scores_on_second_pwm --> count_on_first_probabilities, count_on_second_probabilities
       result = 0.0
-      probabilities = first.probabilities
+      background = first.background
       length.times do |column|    
-        ending_weight =  first.sum_of_probabilities ** (length - column - 1)
+        ending_weight =  first.background_sum ** (length - column - 1)
         already_enough_first  = threshold_first  - first.worst_suffix[column + 1]
         already_enough_second = threshold_second - second.worst_suffix[column + 1]
         least_sufficient_first  = threshold_first  - first.best_suffix[column + 1]
@@ -82,14 +74,14 @@ module Macroape
               if new_score_first >= already_enough_first 
                 new_score_second = score_second + second.matrix[column][letter]
                 if new_score_second >= already_enough_second
-                  result += count * probabilities[letter] * ending_weight
+                  result += count * background[letter] * ending_weight
                 elsif new_score_second >= least_sufficient_second 
-                  new_scores[new_score_first][new_score_second] += count * probabilities[letter]
+                  new_scores[new_score_first][new_score_second] += count * background[letter]
                 end
               elsif new_score_first >= least_sufficient_first
                 new_score_second = score_second + second.matrix[column][letter]
                 if new_score_second >= least_sufficient_second
-                  new_scores[new_score_first][new_score_second] += count * probabilities[letter]
+                  new_scores[new_score_first][new_score_second] += count * background[letter]
                 end
               end
             end
