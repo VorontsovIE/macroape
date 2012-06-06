@@ -1,5 +1,6 @@
 require 'macroape/version'
 
+require 'bioinform'
 require 'macroape/threshold_by_pvalue'
 require 'macroape/count_by_threshold'
 

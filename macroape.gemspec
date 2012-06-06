@@ -14,4 +14,6 @@ Gem::Specification.new do |gem|
   gem.name          = "macroape"
   gem.require_paths = ["lib"]
   gem.version       = Macroape::VERSION
+  
+  gem.add_dependency('bioinform', '~> 0.1.0')
 end

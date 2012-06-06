@@ -1,6 +1,5 @@
 require 'macroape/aligned_pair_intersection'
-require 'macroape/aligned_pair_metrics'
-require 'macroape/aligned_pair_transformations'
+
 module Macroape
   class PWMCompareAligned
     attr_reader :first, :second, :length

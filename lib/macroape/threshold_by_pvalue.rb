@@ -1,5 +1,3 @@
-require 'bioinform'
-
 module Bioinform
   class PM
     def threshold(pvalue)
