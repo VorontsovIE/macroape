@@ -1,5 +1,5 @@
 module Macroape
-  module AlignedPairIntersection
+  class PWMCompareAligned
 
     def counts_for_two_matrices(threshold_first, threshold_second)
       if first.background == second.background
