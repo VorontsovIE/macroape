@@ -1,4 +1,4 @@
-module PWMCompare
+module Macroape
   module PairMetrics
     def jaccard(threshold_first, threshold_second)
       self.map_each_align do |align, alignment_info|

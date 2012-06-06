@@ -57,10 +57,10 @@ begin
       when '-d'
         discretization = ARGV.shift.to_f
       when '-m'
-        Macroape::MaxHashSize = ARGV.shift.to_f
+        Macroape::MaxHashSizeSingle = ARGV.shift.to_f
     end
   end
-  Macroape::MaxHashSize = 1000000 unless defined? Macroape::MaxHashSize
+  Macroape::MaxHashSizeSingle = 1000000 unless defined? Macroape::MaxHashSizeSingle
   
   
   if filename == '.stdin'

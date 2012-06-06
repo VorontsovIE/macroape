@@ -55,17 +55,17 @@ begin
       when '-o'
         output_file = ARGV.shift
       when '-m'
-        Macroape::MaxHashSize = ARGV.shift.to_f
+        Macroape::MaxHashSizeSingle = ARGV.shift.to_f
       when '-md'
-        PWMCompare::MaxHashSize = ARGV.shift.to_f
+        Macroape::MaxHashSizeDouble = ARGV.shift.to_f
       when '--silent'
         silent = true
       end
   end
   pvalues = default_pvalues if pvalues.empty?
   
-  Macroape::MaxHashSize = 1000000 unless defined? Macroape::MaxHashSize
-  PWMCompare::MaxHashSize = 1000 unless defined? PWMCompare::MaxHashSize
+  Macroape::MaxHashSizeSingle = 1000000 unless defined? Macroape::MaxHashSizeSingle
+  Macroape::MaxHashSizeDouble = 1000 unless defined? Macroape::MaxHashSizeDouble
 
   collection = Macroape::Collection.new(rough_discretization, precise_discretization, background, pvalues)
 

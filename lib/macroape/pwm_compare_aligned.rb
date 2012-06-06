@@ -1,4 +1,4 @@
-module PWMCompare
+module Macroape
   class PWMCompareAligned
     attr_reader :first, :second, :length
     def initialize(first, second)

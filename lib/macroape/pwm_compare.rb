@@ -1,4 +1,4 @@
-module PWMCompare
+module Macroape
   class PWMCompare
     attr_reader :first, :second
     def initialize(first, second)

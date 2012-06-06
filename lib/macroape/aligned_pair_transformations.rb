@@ -1,4 +1,4 @@
-module PWMCompare
+module Macroape
   module AlignedPairTransformations
   
     #def discrete(rate)

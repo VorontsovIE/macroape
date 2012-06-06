@@ -53,9 +53,9 @@ begin
       when '-p'
         pvalue = ARGV.shift.to_f
       when '-m'
-        Macroape::MaxHashSize = ARGV.shift.to_f
+        Macroape::MaxHashSizeSingle = ARGV.shift.to_f
       when '-md'
-        PWMCompare::MaxHashSize = ARGV.shift.to_f
+        Macroape::MaxHashSizeDouble = ARGV.shift.to_f
       when '-c'
         cutoff = ARGV.shift.to_f
       when '--all'
@@ -72,8 +72,8 @@ begin
         end
     end
   end
-  Macroape::MaxHashSize = 1000000 unless defined? Macroape::MaxHashSize
-  PWMCompare::MaxHashSize = 1000 unless defined? PWMCompare::MaxHashSize
+  Macroape::MaxHashSizeSingle = 1000000 unless defined? Macroape::MaxHashSizeSingle
+  Macroape::MaxHashSizeDouble = 1000 unless defined? Macroape::MaxHashSizeDouble
   
   raise "Thresholds for pvalue #{pvalue} aren't presented in collection (#{collection.pvalues.join(', ')}). Use one of listed pvalues or recalculate the collection with needed pvalue" unless collection.pvalues.include? pvalue
   
@@ -99,13 +99,13 @@ begin
     pwm = collection.pwms[name]
     pwm_info = collection.infos[name]
     STDERR.puts pwm.name unless silent
-    cmp = PWMCompare::PWMCompare.new(query_pwm_rough, pwm.with_background(collection.background).discrete(collection.rough_discretization))
+    cmp = Macroape::PWMCompare.new(query_pwm_rough, pwm.with_background(collection.background).discrete(collection.rough_discretization))
     info = cmp.jaccard(threshold, pwm_info[:rough][pvalue] * collection.rough_discretization)
     name = pwm.name || "Unnamed #{unnamed_index += 1}"
     precision_file_mode[name] = :rough
     
     if precision_mode == :precise and info[:similarity] >= minimal_similarity
-      cmp = PWMCompare::PWMCompare.new(query_pwm_precise, pwm.with_background(collection.background).discrete(collection.precise_discretization))
+      cmp = Macroape::PWMCompare.new(query_pwm_precise, pwm.with_background(collection.background).discrete(collection.precise_discretization))
       info = cmp.jaccard(threshold_precise, pwm_info[:precise][pvalue] * collection.precise_discretization)
       precision_file_mode[name] = :precise
     end

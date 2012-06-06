@@ -1,4 +1,4 @@
-module PWMCompare
+module Macroape
   module PairTransformations
     
     def each

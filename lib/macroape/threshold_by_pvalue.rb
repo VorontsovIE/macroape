@@ -58,7 +58,7 @@ module Macroape
             end
           end
         end
-        raise 'Hash overflow in PWM::ThresholdByPvalue#calculate_count_distribution_after_threshold' if defined? MaxHashSize and new_scores.size > MaxHashSize
+        raise 'Hash overflow in PWM::ThresholdByPvalue#calculate_count_distribution_after_threshold' if defined? MaxHashSizeSingle and new_scores.size > MaxHashSizeSingle
         scores = new_scores
       end
       scores

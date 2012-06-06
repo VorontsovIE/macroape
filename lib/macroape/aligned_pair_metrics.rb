@@ -1,4 +1,4 @@
-module PWMCompare
+module Macroape
   module AlignedPairMetrics
     def jaccard(first_threshold, second_threshold)
       f = first.counts_by_thresholds(first_threshold).first

@@ -1,4 +1,4 @@
-module PWMCompare
+module Macroape
   module AlignedPairIntersection
 
     def counts_for_two_matrices(threshold_first, threshold_second)
@@ -49,7 +49,7 @@ module PWMCompare
             end
           end
         end
-        raise 'Hash overflow in PWMCompare::AlignedPairIntersection#counts_for_two_matrices_with_different_probabilities' if new_scores.inject(0){|sum,hsh|sum+hsh.size} > MaxHashSize
+        raise 'Hash overflow in Macroape::AlignedPairIntersection#counts_for_two_matrices_with_different_probabilities' if new_scores.inject(0){|sum,hsh|sum+hsh.size} > MaxHashSizeDouble
         scores = new_scores
       end
       [result_first, result_second]
@@ -87,7 +87,7 @@ module PWMCompare
             end
           end
         end
-        raise 'Hash overflow in PWMCompare::AlignedPairIntersection#counts_for_two_matrices_with_same_probabilities' if new_scores.inject(0){|sum,hsh|sum+hsh.size} > MaxHashSize
+        raise 'Hash overflow in Macroape::AlignedPairIntersection#counts_for_two_matrices_with_same_probabilities' if new_scores.inject(0){|sum,hsh|sum+hsh.size} > MaxHashSizeDouble
         scores = new_scores
       end
       [result, result]
@@ -126,7 +126,7 @@ module PWMCompare
           end
         end
         
-        raise 'Hash overflow in PWMCompare::AlignedPairIntersection#common_words_for_two_matrices' if defined? MaxHashSize and new_scores.inject(0){|sum,hsh|sum+hsh.size} > MaxHashSize
+        raise 'Hash overflow in Macroape::AlignedPairIntersection#common_words_for_two_matrices' if defined? MaxHashSizeDouble and new_scores.inject(0){|sum,hsh|sum+hsh.size} > MaxHashSizeDouble
         scores = new_scores
       end
       [result, result]

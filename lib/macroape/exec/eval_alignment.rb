@@ -69,9 +69,9 @@ begin
       when '-d'
         discretization = ARGV.shift.to_f
       when '-m'
-        Macroape::MaxHashSize = ARGV.shift.to_f
+        Macroape::MaxHashSizeSingle = ARGV.shift.to_f
       when '-md'
-        PWMCompare::MaxHashSize = ARGV.shift.to_f
+        Macroape::MaxHashSizeDouble = ARGV.shift.to_f
       when '-b'
         second_background = first_background = ARGV.shift(4).map(&:to_f)
       when '-b1'
@@ -84,8 +84,8 @@ begin
   raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless second_background == second_background.reverse
 
   
-  Macroape::MaxHashSize = 1000000 unless defined? Macroape::MaxHashSize
-  PWMCompare::MaxHashSize = 1000 unless defined? PWMCompare::MaxHashSize
+  Macroape::MaxHashSizeSingle = 1000000 unless defined? Macroape::MaxHashSizeSingle
+  Macroape::MaxHashSizeDouble = 1000 unless defined? Macroape::MaxHashSizeDouble
   
   if first_file == '.stdin' || second_file == '.stdin'
     r_stream, w_stream = IO.pipe
@@ -121,7 +121,7 @@ begin
   (first_pwm_alignment.length...alignment_length).each{|i| first_pwm_alignment[i] = '.'}
   (second_pwm_alignment.length...alignment_length).each{|i| second_pwm_alignment[i] = '.'}
 
-  cmp = PWMCompare::PWMCompareAligned.new(pwm_first.left_augment([-shift,0].max), 
+  cmp = Macroape::PWMCompareAligned.new(pwm_first.left_augment([-shift,0].max), 
                               pwm_second.left_augment([shift,0].max))
 
   first_threshold = pwm_first.threshold(pvalue)

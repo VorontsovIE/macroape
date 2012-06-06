@@ -42,7 +42,7 @@ begin
       when '-b'
         background = ARGV.shift(4).map(&:to_f)
       when '-m'
-        Macroape::MaxHashSize = ARGV.shift.to_f
+        Macroape::MaxHashSizeSingle = ARGV.shift.to_f
       when '-p'
         loop do
           begin
@@ -58,7 +58,7 @@ begin
   end
   pvalues = default_pvalues if pvalues.empty?
   
-  Macroape::MaxHashSize = 1000000 unless defined? Macroape::MaxHashSize
+  Macroape::MaxHashSizeSingle = 1000000 unless defined? Macroape::MaxHashSizeSingle
   
   if filename == '.stdin'
     pwm = Macroape::SingleMatrix.load_from_stdin(STDIN)
