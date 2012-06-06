@@ -62,14 +62,12 @@ begin
   Macroape::MaxHashSizeSingle = 1000000 unless defined? Macroape::MaxHashSizeSingle
   
   if filename == '.stdin'
-#    pwm = Macroape::SingleMatrix.load_from_stdin(STDIN)
+##  TODO
   else
     raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
     pwm = Bioinform::PWM.new( File.read(filename) )
-#    pwm = Macroape::SingleMatrix.load_pat(filename)
   end
   
-  #pwm = pwm.with_background(background)
   pwm.background(background)
   
   pwm.discrete(discretization).thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
