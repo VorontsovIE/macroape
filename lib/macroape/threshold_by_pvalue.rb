@@ -28,25 +28,20 @@ module Bioinform
     # thresholds = left_threshold .. right_threshold  (left_threshold < right_threshold)
     # counts = left_count .. right_count  (left_count > right_count)
     def thresholds_by_pvalues(*pvalues)
-      
       count_distribution = count_distribution_under_pvalue(pvalues.max)
-      
-      pvalue_counts = pvalues.sort.collect_hash{|pvalue| [pvalue, pvalue * vocabulary_volume] }
-      look_for_counts = pvalue_counts.to_a
-      
       sorted_scores = count_distribution.sort.reverse
       scores = sorted_scores.map{|score,count| score}
       counts = sorted_scores.map{|score,count| count}
-      
       partial_sums = counts.partial_sums
-      results = {}      
-      pvalue_counts.map do |pv,look_for_count|
+      
+      results = {}
+      
+      pvalue_counts = pvalues.sort.collect_hash{|pvalue| [pvalue, pvalue * vocabulary_volume] }
+      pvalue_counts.map do |pvalue,look_for_count|
         ind = partial_sums.index{|sum| sum >= look_for_count}
-        if ind > 0
-          results[pv] = [ (scores[ind] .. scores[ind-1]), (partial_sums[ind] .. partial_sums[ind-1]) ]
-        else
-          results[pv] = [(scores[ind] .. best_score+1.0), (partial_sums[ind] .. 0.0)]
-        end
+        minscore, count_at_minscore = scores[ind], partial_sums[ind]
+        maxscore, count_at_maxscore = ind > 0  ?  [ scores[ind-1],  partial_sums[ind-1] ]  :  [ best_score + 1.0, 0.0 ]
+        results[pvalue] = [(minscore .. maxscore), (count_at_minscore .. count_at_maxscore)]
       end
 
       results
