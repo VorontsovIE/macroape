@@ -12,17 +12,24 @@ module Bioinform
       end
     end
   
+    def count_distribution_under_pvalue(max_pvalue)
+      count_distribution={}
+      look_for_count = max_pvalue * vocabulary_volume
+      until count_distribution.inject(0.0){|sum,(score,count)| sum + count} >= look_for_count
+        count_distribution = count_distribution_after_threshold(threshold_gauss_estimation(max_pvalue))
+        max_pvalue *=2 # if estimation counted too small amount of words - try to lower threshold estimation by doubling pvalue
+      end
+      
+      count_distribution
+    end
+  
+  
     # ret-value: hash {pvalue => [thresholds, counts]}
     # thresholds = left_threshold .. right_threshold  (left_threshold < right_threshold)
     # counts = left_count .. right_count  (left_count > right_count)
     def thresholds_by_pvalues(*pvalues)
-      max_pvalue = pvalues.max
-      max_look_for_count = max_pvalue * vocabulary_volume
-      count_distribution={}
-      until count_distribution.inject(0.0){|sum,(score,count)| sum + count} >= max_look_for_count
-        count_distribution = count_distribution_after_threshold(threshold_gauss_estimation(max_pvalue))
-        max_pvalue *=2 # if estimation counted too small amount of words - try to lower threshold estimation by doubling pvalue
-      end
+      
+      count_distribution = count_distribution_under_pvalue(pvalues.max)
       
       pvalue_counts = pvalues.sort.collect_hash{|pvalue| [pvalue, pvalue * vocabulary_volume] }
       look_for_counts = pvalue_counts.to_a
