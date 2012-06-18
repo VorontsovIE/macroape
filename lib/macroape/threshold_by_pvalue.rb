@@ -36,15 +36,17 @@ module Bioinform
       sum_count = 0.0
       scores = scores.sort.reverse
       results = {}
+      
+      # Refactor. Each pvalue should be calcualted separately, less non-functional code
       scores.size.times do |i|
         while !look_for_counts.empty? and sum_count + scores[i][1] > look_for_counts.first[1] # usually this 'while' works as 'if'
           pval, score = look_for_counts.shift
           threshold_2, sum_count_2  =  scores[i][0].to_f, (sum_count + scores[i][1]).to_f
           if i > 0
             threshold = scores[i-1][0].to_f
-            results[pval] = [threshold_2..threshold, sum_count_2..sum_count]
+            results[pval] = [(threshold_2 .. threshold), (sum_count_2 .. sum_count)]
           else          
-            results[pval] = [(threshold_2..best_score + 1.0), (0.0..sum_count_2)]
+            results[pval] = [(threshold_2 .. best_score+1.0), (sum_count_2 .. 0.0)]
           end
         end
         
