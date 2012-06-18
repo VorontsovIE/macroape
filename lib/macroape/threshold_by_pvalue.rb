@@ -12,14 +12,16 @@ module Bioinform
     end
     
     def thresholds(*pvalues)
-      thresholds_by_pvalues(*pvalues).each do |pvalue,(left_threshold, left_count, right_threshold, right_count)|
-        threshold = left_threshold + 0.1
-        real_pvalue = right_count.to_f / vocabulary_volume
+      thresholds_by_pvalues(*pvalues).each do |pvalue,(thresholds, counts)|
+        threshold = thresholds.begin + 0.1 * (thresholds.end - thresholds.begin)
+        real_pvalue = counts.end.to_f / vocabulary_volume
         yield pvalue, threshold, real_pvalue
       end
     end
   
-    # ret-value: hash {pvalue => [left_threshold, left_count, right_threshold, right_count]}
+    # ret-value: hash {pvalue => [thresholds, counts]}
+    # thresholds = left_threshold .. right_threshold  (left_threshold < right_threshold)
+    # counts = right_count .. left_count  (left_count > right_count)
     def thresholds_by_pvalues(*pvalues)
       max_pvalue = pvalues.max
       max_look_for_count = max_pvalue * vocabulary_volume
@@ -40,9 +42,9 @@ module Bioinform
           threshold_2, sum_count_2  =  scores[i][0].to_f, (sum_count + scores[i][1]).to_f
           if i > 0
             threshold = scores[i-1][0].to_f
-            results[pval] = [threshold_2, sum_count_2, threshold, sum_count]
+            results[pval] = [threshold_2..threshold, sum_count_2..sum_count]
           else          
-            results[pval] = [threshold_2, sum_count_2, best_score + 1.0, 0.0]
+            results[pval] = [(threshold_2..best_score + 1.0), (0.0..sum_count_2)]
           end
         end
         
