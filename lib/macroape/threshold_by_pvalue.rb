@@ -1,10 +1,3 @@
-class Array
-  def partial_sums(initial = 0.0)
-    sums = initial
-    map{|el| sums+=el}
-  end
-end
-
 module Bioinform
   class PM
     def threshold(pvalue)
@@ -21,37 +14,34 @@ module Bioinform
   
     # ret-value: hash {pvalue => [thresholds, counts]}
     # thresholds = left_threshold .. right_threshold  (left_threshold < right_threshold)
-    # counts = right_count .. left_count  (left_count > right_count)
+    # counts = left_count .. right_count  (left_count > right_count)
     def thresholds_by_pvalues(*pvalues)
       max_pvalue = pvalues.max
       max_look_for_count = max_pvalue * vocabulary_volume
-      scores={}
-      until scores.inject(0.0){|sum,(score,count)| sum + count} >= max_look_for_count
-        scores = count_distribution_after_threshold(threshold_gauss_estimation(max_pvalue))
+      count_distribution={}
+      until count_distribution.inject(0.0){|sum,(score,count)| sum + count} >= max_look_for_count
+        count_distribution = count_distribution_after_threshold(threshold_gauss_estimation(max_pvalue))
         max_pvalue *=2 # if estimation counted too small amount of words - try to lower threshold estimation by doubling pvalue
       end
       
       pvalue_counts = pvalues.sort.collect_hash{|pvalue| [pvalue, pvalue * vocabulary_volume] }
       look_for_counts = pvalue_counts.to_a
-      sum_count = 0.0
-      scores = scores.sort.reverse
-      results = {}
       
-      # Refactor. Each pvalue should be calcualted separately, less non-functional code
-      scores.size.times do |i|
-        while !look_for_counts.empty? and sum_count + scores[i][1] > look_for_counts.first[1] # usually this 'while' works as 'if'
-          pval, score = look_for_counts.shift
-          threshold_2, sum_count_2  =  scores[i][0].to_f, (sum_count + scores[i][1]).to_f
-          if i > 0
-            threshold = scores[i-1][0].to_f
-            results[pval] = [(threshold_2 .. threshold), (sum_count_2 .. sum_count)]
-          else          
-            results[pval] = [(threshold_2 .. best_score+1.0), (sum_count_2 .. 0.0)]
-          end
+      sorted_scores = count_distribution.sort.reverse
+      scores = sorted_scores.map{|score,count| score}
+      counts = sorted_scores.map{|score,count| count}
+      
+      partial_sums = counts.partial_sums
+      results = {}      
+      pvalue_counts.map do |pv,look_for_count|
+        ind = partial_sums.index{|sum| sum >= look_for_count}
+        if ind > 0
+          results[pv] = [ (scores[ind] .. scores[ind-1]), (partial_sums[ind] .. partial_sums[ind-1]) ]
+        else
+          results[pv] = [(scores[ind] .. best_score+1.0), (partial_sums[ind] .. 0.0)]
         end
-        
-        sum_count += scores[i][1]
       end
+
       results
     end
     
