@@ -6,7 +6,6 @@ module Bioinform
       scores = count_distribution_after_threshold(thresholds.min)
 =begin
        thresholds.map{ |threshold|
-       #scores.select{|score,count| score >= threshold}.map{|score,count| count}.inject(0){|sum,val|sum+val}
         scores.inject(0){|sum,(score,count)|  (score >= threshold) ? sum + count : sum}
       }
 =end

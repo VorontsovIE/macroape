@@ -7,7 +7,6 @@ module Macroape
       @infos={}
     end
     def add_pwm(pwm,info)
-      #@pwms[pwm] = info
       @pwms[pwm.name] = pwm
       @infos[pwm.name] = info
     end
