@@ -50,11 +50,12 @@ module Bioinform
     def count_distribution_after_threshold(threshold)
       scores = { 0 => 1 }
       length.times do |column|
+        least_sufficient = threshold - best_suffix[column + 1]
         new_scores = Hash.new(0);
         scores.each do |score, count|
           4.times do |letter|
             new_score = score + @matrix[column][letter]
-            if new_score + best_suffix[column + 1] >= threshold
+            if new_score >= least_sufficient
               new_scores[new_score] += count * background[letter]
             end
           end
