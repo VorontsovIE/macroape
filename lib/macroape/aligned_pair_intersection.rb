@@ -97,7 +97,7 @@ module Macroape
     def common_words_for_two_matrices(threshold_first, threshold_second)
       scores = { 0 => {0 => 1} } # scores_on_first_pwm, scores_on_second_pwm --> count_on_first_probabilities, count_on_second_probabilities
       result = 0
-      length.times do |column|    
+      length.times do |column|
         ending_weight =  4 ** (length - column - 1)
         already_enough_first  = threshold_first  - first.worst_suffix[column + 1]
         already_enough_second = threshold_second - second.worst_suffix[column + 1]
@@ -107,13 +107,13 @@ module Macroape
         new_scores = Hash.new{|h,k| h[k]=Hash.new{|h2,k2| h2[k2]=0} }
         scores.each do |score_first, second_scores|
           second_scores.each do |score_second, count|
-            4.times do |letter|          
+            4.times do |letter|
               new_score_first = score_first + first.matrix[column][letter]
-              if new_score_first >= already_enough_first 
+              if new_score_first >= already_enough_first
                 new_score_second = score_second + second.matrix[column][letter]
                 if new_score_second >= already_enough_second
                   result += count * ending_weight
-                elsif new_score_second >= least_sufficient_second 
+                elsif new_score_second >= least_sufficient_second
                   new_scores[new_score_first][new_score_second] += count
                 end
               elsif new_score_first >= least_sufficient_first
