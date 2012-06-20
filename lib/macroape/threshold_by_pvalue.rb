@@ -1,5 +1,5 @@
 module Bioinform
-  class PM
+  class PWM
     def threshold(pvalue)
       thresholds(pvalue){|_, thresh, _| return thresh }
     end
