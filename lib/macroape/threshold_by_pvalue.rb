@@ -50,20 +50,23 @@ module Bioinform
     def count_distribution_after_threshold(threshold)
       scores = { 0 => 1 }
       length.times do |column|
-        least_sufficient = threshold - best_suffix[column + 1]
-        new_scores = Hash.new(0);
-        scores.each do |score, count|
-          4.times do |letter|
-            new_score = score + @matrix[column][letter]
-            if new_score >= least_sufficient
-              new_scores[new_score] += count * background[letter]
-            end
-          end
-        end
-        raise 'Hash overflow in PWM::ThresholdByPvalue#count_distribution_after_threshold' if defined? MaxHashSizeSingle and new_scores.size > MaxHashSizeSingle
-        scores = new_scores
+        scores.replace recalc_score_hash(scores, @matrix[column], threshold - best_suffix[column + 1])
+        raise 'Hash overflow in PWM::ThresholdByPvalue#count_distribution_after_threshold' if defined? MaxHashSizeSingle and scores.size > MaxHashSizeSingle
       end
       scores
+    end
+    
+    def recalc_score_hash(scores, column, least_sufficient)
+      new_scores = Hash.new(0)
+      scores.each do |score, count|
+        4.times do |letter|
+          new_score = score + column[letter]
+          if new_score >= least_sufficient
+            new_scores[new_score] += count * background[letter]
+          end
+        end
+      end
+      new_scores
     end
     
   end
