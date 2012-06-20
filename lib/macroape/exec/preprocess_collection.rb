@@ -17,7 +17,6 @@ Example:
 
 $:.unshift File.join(File.dirname(__FILE__),'./../../')
 require 'macroape'
-require 'bioinform'
 require 'yaml'
 
 if ARGV.empty? or ARGV.include? '-h' or ARGV.include? '-help' or ARGV.include? '--help' or ARGV.include? '--h'

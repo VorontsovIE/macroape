@@ -41,14 +41,17 @@ Or install it yourself as:
     require 'macroape'
     background = [1,1,1,1]
     discretization = 10
-    first_pwm_matrix = [[1,2,3,4], [1,2,3,4], [4,1,2,3,], [5,3,2,4], [4,1,2,3], [7,8,9,11]]
-    pwm_first = PWM::SingleMatrix.new(first_pwm_matrix).with_background(background).discrete(discretization)
-    pwm_second = PWM::SingleMatrix.load_pat('another_pwm.pat').with_background(background).discrete(discretization)
-    cmp = PWMCompare::PWMCompare.new(pwm_first, pwm_second)
+    pwm_first = Bioinform::PWM.new(File.read('first_pwm.pat')).background(background).discrete(discretization)
+    pwm_second = Bioinform::PWM.new(File.read('first_pwm.pat')).background(background).discrete(discretization)
+    
+    cmp = Macroape::PWMCompare.new(pwm_first, pwm_second)
     first_threshold = pwm_first.threshold(pvalue)
     second_threshold = pwm_second.threshold(pvalue)
+    
     similarity_info = cmp.jaccard(first_threshold, second_threshold)
     puts "Jaccard similarity: #{similarity_info[:similarity]}"
+    
+  For more details look a source code of utilities in lib/exec/ folder
 
 ## Contributing
 
