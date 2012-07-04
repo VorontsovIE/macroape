@@ -94,7 +94,6 @@ begin
   
   similarities = {}
   precision_file_mode = {}
-  unnamed_index = 0
   
   collection.pwms.each_key do |name|
     pwm = collection.pwms[name]
@@ -102,7 +101,6 @@ begin
     STDERR.puts pwm.name unless silent
     cmp = Macroape::PWMCompare.new(query_pwm_rough, pwm.background(collection.background).discrete(collection.rough_discretization))
     info = cmp.jaccard(threshold, pwm_info[:rough][pvalue] * collection.rough_discretization)
-    name = pwm.name || "Unnamed #{unnamed_index += 1}"
     precision_file_mode[name] = :rough
     
     if precision_mode == :precise and info[:similarity] >= minimal_similarity
