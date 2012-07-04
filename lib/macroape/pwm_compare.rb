@@ -7,29 +7,20 @@ module Macroape
     end
 
     def jaccard(threshold_first, threshold_second)
-      self.map_each_align do |align, alignment_info|
-        align.jaccard(threshold_first, threshold_second).merge(alignment_info)
-      end.max_by {|alignment_info| alignment_info[:similarity]}
+      self.map_each_alignment do |alignment|
+        alignment.alignment_infos.merge( alignment.jaccard(threshold_first, threshold_second) )
+      end.max_by {|alignment_infos| alignment_infos[:similarity] }
     end
-    
-    
-    def each
+
+    def each_alignment
       second_rc = second.reverse_complement
       (-second.length..first.length).to_a.product([:direct,:revcomp]) do |shift, orientation|
-        cmp = PWMCompareAligned.new(first, (orientation == :direct ? second : second_rc), shift, orientation)
-       
-        yield(cmp,
-              text: "#{cmp.first_pwm_alignment}\n#{cmp.second_pwm_alignment}",
-              shift: cmp.shift,
-              orientation: orientation,
-              overlap: cmp.overlap,
-              alignment_length: cmp.alignment_length
-              )
+        yield PWMCompareAligned.new(first, (orientation == :direct ? second : second_rc), shift, orientation)
       end
     end
-    include Enumerable
-    alias :each_align :each
-    alias :map_each_align :map
     
+    include Enumerable
+    alias_method :each, :each_alignment
+    alias_method :map_each_alignment, :map
   end
 end

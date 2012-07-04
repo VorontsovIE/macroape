@@ -41,6 +41,14 @@ module Macroape
       result
     end
     
+    def alignment_infos
+      {text: "#{first_pwm_alignment}\n#{second_pwm_alignment}",
+      shift: shift,
+      orientation: orientation,
+      overlap: overlap,
+      alignment_length: alignment_length}
+    end
+    
 =begin    
     def discrete(rate)
       PWMCompareAligned.new(first.discrete(rate), second.discrete(rate))
