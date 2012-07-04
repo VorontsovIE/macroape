@@ -2,8 +2,11 @@ require 'macroape/aligned_pair_intersection'
 
 module Macroape
   class PWMCompareAligned
-    attr_reader :first, :second, :length
-    def initialize(first, second)
+    attr_reader :first, :second, :length, :shift, :orientation
+    def initialize(first, second, shift, orientation)
+      @shift, @orientation = shift, orientation
+      first = first.left_augment([-shift,0].max)
+      second = second.left_augment([shift,0].max)
       @length = [first.length, second.length].max
       @first = first.right_augment(@length - first.length)
       @second = second.right_augment(@length - second.length)

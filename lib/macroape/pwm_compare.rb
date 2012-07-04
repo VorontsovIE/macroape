@@ -23,8 +23,8 @@ module Macroape
         (first_pwm_alignment.length...alignment_length).each{|i| first_pwm_alignment[i] = '.'}
         (second_pwm_alignment.length...alignment_length).each{|i| second_pwm_alignment[i] = '.'}
         
-        yield(PWMCompareAligned.new(first.left_augment([-shift,0].max), 
-                                    (orientation == :direct ? second : second_rc).left_augment([shift,0].max)),
+        yield(PWMCompareAligned.new(first,
+                                    (orientation == :direct ? second : second_rc), shift, orientation),
               text: "#{first_pwm_alignment}\n#{second_pwm_alignment}",
               shift: shift,
               orientation: orientation,

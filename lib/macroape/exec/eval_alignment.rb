@@ -121,8 +121,7 @@ begin
   (first_pwm_alignment.length...alignment_length).each{|i| first_pwm_alignment[i] = '.'}
   (second_pwm_alignment.length...alignment_length).each{|i| second_pwm_alignment[i] = '.'}
 
-  cmp = Macroape::PWMCompareAligned.new(pwm_first.left_augment([-shift,0].max), 
-                              pwm_second.left_augment([shift,0].max))
+  cmp = Macroape::PWMCompareAligned.new(pwm_first, pwm_second, shift, orientation)
 
   first_threshold = pwm_first.threshold(pvalue)
   second_threshold = pwm_second.threshold(pvalue)
