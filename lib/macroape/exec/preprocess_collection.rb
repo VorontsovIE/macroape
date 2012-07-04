@@ -75,17 +75,17 @@ begin
     STDERR.puts filename unless silent
     pwm = Bioinform::PWM.new(File.read(filename))
     info = {rough: {}, precise: {}}
-    output = `ruby "#{File.join current_dir,'find_threshold.rb'}" #{filename} -p #{pvalues.join(' ')} -b #{background.join(' ')} -d #{rough_discretization}`.split("\n")
-    output.each do |line|
-      pvalue, threshold, real_pvalue = line.split.map(&:to_f)
-      info[:rough][pvalue] = threshold
+
+    pwm.background(background)
+    
+    pwm.discrete(rough_discretization).thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
+      info[:rough][pvalue] = threshold / rough_discretization
+    end
+
+    pwm.discrete(precise_discretization).thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
+      info[:precise][pvalue] = threshold / precise_discretization
     end
     
-    output = `ruby "#{File.join current_dir,'find_threshold.rb'}" #{filename} -p #{pvalues.join(' ')} -b #{background.join(' ')} -d #{precise_discretization}`.split("\n")
-    output.each do |line|
-      pvalue, threshold, real_pvalue = line.split.map(&:to_f)
-      info[:precise][pvalue] = threshold
-    end
     collection.add_pwm(pwm, info)
   end
   File.open(output_file,'w') do |f|

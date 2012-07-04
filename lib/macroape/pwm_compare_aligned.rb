@@ -2,43 +2,49 @@ require 'macroape/aligned_pair_intersection'
 
 module Macroape
   class PWMCompareAligned
-    attr_reader :first, :second, :length, :shift, :orientation, :first_unaligned, :second_unaligned
+    attr_reader :first, :second, :length, :shift, :orientation, :unaligned_first, :unaligned_second
     def initialize(first, second, shift, orientation)
-      @first_unaligned, @second_unaligned = first, second
+      @unaligned_first, @unaligned_second = first, second
       @shift, @orientation = shift, orientation
-      first = first.left_augment([-shift,0].max)
-      second = second.left_augment([shift,0].max)
+      if shift > 0
+        first, second = first, second.left_augment(shift)
+      else
+        first, second = first.left_augment(-shift), second
+      end
       @length = [first.length, second.length].max
       @first = first.right_augment(@length - first.length)
       @second = second.right_augment(@length - second.length)
     end
     
+    def direct?
+      orientation == :direct
+    end
+    def revcomp?
+      orientation == :revcomp
+    end
+    
     def overlap
-      [first_unaligned.length + [-shift,0].max, second_unaligned.length + [shift,0].max].min - shift.abs
-    end
-    
-    def unfinished_first_pwm_alignment
-      '.' * [-shift, 0].max + '>' * first_unaligned.length
-    end
-    
-    def unfinished_second_pwm_alignment
-      '.' * [shift, 0].max + (orientation == :direct ? '>' : '<') * second_unaligned.length
-    end
-    
-    def alignment_length
-      [unfinished_first_pwm_alignment, unfinished_second_pwm_alignment].map(&:length).max
+      length.times.count{|pos| first_overlaps?(pos) && second_overlaps?(pos) }
     end
     
     def first_pwm_alignment
-      result = unfinished_first_pwm_alignment
-      (result.length...alignment_length).each{|i| result[i] = '.'}
-      result
+      length.times.map do |pos|
+        if first_overlaps?(pos)
+          '>'
+        else
+          '.'
+        end
+      end.join
     end
     
     def second_pwm_alignment
-      result = unfinished_second_pwm_alignment
-      (result.length...alignment_length).each{|i| result[i] = '.'}
-      result
+      length.times.map do |pos|
+        if second_overlaps?(pos)
+          direct? ? '>' : '<'
+        else
+          '.'
+        end
+      end.join
     end
     
     def alignment_infos
@@ -46,7 +52,33 @@ module Macroape
       orientation: orientation,
       text: "#{first_pwm_alignment}\n#{second_pwm_alignment}",
       overlap: overlap,
-      alignment_length: alignment_length}
+      alignment_length: length}
+    end
+    
+    def first_length
+      unaligned_first.length
+    end
+    def second_length
+      unaligned_second.length
+    end
+    
+    # whether first matrix overlap specified position
+    def first_overlaps?(pos)
+      return false unless pos >= 0 && pos < length
+      if shift > 0
+        pos < first_length
+      else
+        pos >= -shift && pos < -shift + first_length
+      end
+    end
+    
+    def second_overlaps?(pos)
+      return false unless pos >= 0 && pos < length
+      if shift > 0
+        pos >= shift && pos < shift + second_length
+      else
+        pos < second_length
+      end
     end
     
 =begin    
