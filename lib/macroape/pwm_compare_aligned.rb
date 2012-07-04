@@ -9,9 +9,10 @@ module Macroape
       @second = second.right_augment(@length - second.length)
     end
     
-    #def discrete(rate)
-    #  PWMCompareAligned.new(first.discrete(rate), second.discrete(rate))
-    #end
+=begin    
+    def discrete(rate)
+      PWMCompareAligned.new(first.discrete(rate), second.discrete(rate))
+    end
 
     def sort_pair_of_matrices_by(&block)
       mat = first.pwm.zip(second.pwm).sort_by(&block).transpose
@@ -26,6 +27,7 @@ module Macroape
     def permute_columns(permutation_index)
       PWMCompareAligned.new(first.permute(permutation_index), second.permute(permutation_index))
     end
+=end
 
     def jaccard(first_threshold, second_threshold)
       f = first.counts_by_thresholds(first_threshold).first
