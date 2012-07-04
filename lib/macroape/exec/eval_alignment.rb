@@ -115,21 +115,11 @@ begin
   pwm_second.reverse_complement!  if reverse
   
   cmp = Macroape::PWMCompareAligned.new(pwm_first, pwm_second, shift, orientation)
-  
-  overlap = cmp.overlap
-  alignment_length = cmp.alignment_length
-  first_pwm_alignment = cmp.first_pwm_alignment
-  second_pwm_alignment = cmp.second_pwm_alignment
-
+ 
   first_threshold = pwm_first.threshold(pvalue)
   second_threshold = pwm_second.threshold(pvalue)
 
-  info = cmp.jaccard(first_threshold, second_threshold).merge(
-    text: "#{first_pwm_alignment}\n#{second_pwm_alignment}",
-    shift: shift,
-    orientation: orientation,
-    overlap: overlap,
-    alignment_length: alignment_length)
+  info = cmp.alignment_infos.merge( cmp.jaccard(first_threshold, second_threshold) )
   
   puts "#{info[:similarity]}\n#{info[:recognized_by_both]}\t#{info[:alignment_length]}\n#{info[:text]}\n#{info[:shift]}\t#{info[:orientation]}"
   
