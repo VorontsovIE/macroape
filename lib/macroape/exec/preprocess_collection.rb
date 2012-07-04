@@ -74,8 +74,13 @@ begin
   Dir.glob(File.join(folder,'*')) do |filename|
     STDERR.puts filename unless silent
     pwm = Bioinform::PWM.new(File.read(filename))
+    pwm.name ||= File.basename(filename, File.extname(filename))
+    
+    # When support of onefile collections is introduced - then here should be check if name exists. 
+    # Otherwise it should skip motif and tell you about this
+    # Also two command line options to fail on skipping or to skip silently should be included
+    
     info = {rough: {}, precise: {}}
-
     pwm.background(background)
     
     pwm.discrete(rough_discretization).thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
