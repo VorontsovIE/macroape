@@ -114,14 +114,12 @@ begin
   
   pwm_second.reverse_complement!  if reverse
   
-  first_pwm_alignment = '.' * [-shift, 0].max + '>' * pwm_first.length
-  second_pwm_alignment = '.' * [shift, 0].max + (orientation == :direct ? '>' : '<') * pwm_second.length
-  overlap = [pwm_first.length + [-shift,0].max, pwm_second.length + [shift,0].max].min - shift.abs
-  alignment_length = [first_pwm_alignment.length, second_pwm_alignment.length].max
-  (first_pwm_alignment.length...alignment_length).each{|i| first_pwm_alignment[i] = '.'}
-  (second_pwm_alignment.length...alignment_length).each{|i| second_pwm_alignment[i] = '.'}
-
   cmp = Macroape::PWMCompareAligned.new(pwm_first, pwm_second, shift, orientation)
+  
+  overlap = cmp.overlap
+  alignment_length = cmp.alignment_length
+  first_pwm_alignment = cmp.first_pwm_alignment
+  second_pwm_alignment = cmp.second_pwm_alignment
 
   first_threshold = pwm_first.threshold(pvalue)
   second_threshold = pwm_second.threshold(pvalue)

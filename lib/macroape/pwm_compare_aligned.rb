@@ -2,14 +2,43 @@ require 'macroape/aligned_pair_intersection'
 
 module Macroape
   class PWMCompareAligned
-    attr_reader :first, :second, :length, :shift, :orientation
+    attr_reader :first, :second, :length, :shift, :orientation, :first_unaligned, :second_unaligned
     def initialize(first, second, shift, orientation)
+      @first_unaligned, @second_unaligned = first, second
       @shift, @orientation = shift, orientation
       first = first.left_augment([-shift,0].max)
       second = second.left_augment([shift,0].max)
       @length = [first.length, second.length].max
       @first = first.right_augment(@length - first.length)
       @second = second.right_augment(@length - second.length)
+    end
+    
+    def overlap
+      [first_unaligned.length + [-shift,0].max, second_unaligned.length + [shift,0].max].min - shift.abs
+    end
+    
+    def unfinished_first_pwm_alignment
+      '.' * [-shift, 0].max + '>' * first_unaligned.length
+    end
+    
+    def unfinished_second_pwm_alignment
+      '.' * [shift, 0].max + (orientation == :direct ? '>' : '<') * second_unaligned.length
+    end
+    
+    def alignment_length
+      [unfinished_first_pwm_alignment, unfinished_second_pwm_alignment].map(&:length).max
+    end
+    
+    def first_pwm_alignment
+      result = unfinished_first_pwm_alignment
+      (result.length...alignment_length).each{|i| result[i] = '.'}
+      result
+    end
+    
+    def second_pwm_alignment
+      result = unfinished_second_pwm_alignment
+      (result.length...alignment_length).each{|i| result[i] = '.'}
+      result
     end
     
 =begin    
