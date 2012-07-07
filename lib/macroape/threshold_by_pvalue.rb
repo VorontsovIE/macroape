@@ -56,6 +56,10 @@ module Bioinform
       scores
     end
     
+    def count_distribution
+      count_distribution_after_threshold(worst_score)
+    end
+
     def recalc_score_hash(scores, column, least_sufficient)
       new_scores = Hash.new(0)
       scores.each do |score, count|
