@@ -48,6 +48,7 @@ module Bioinform
     end
     
     def count_distribution_after_threshold(threshold)
+      return @count_distribution.select{|score, count| score >= count}  if @count_distribution
       scores = { 0 => 1 }
       length.times do |column|
         scores.replace recalc_score_hash(scores, @matrix[column], threshold - best_suffix[column + 1])
@@ -57,7 +58,7 @@ module Bioinform
     end
     
     def count_distribution
-      count_distribution_after_threshold(worst_score)
+      @count_distribution ||= count_distribution_after_threshold(worst_score)
     end
 
     def recalc_score_hash(scores, column, least_sufficient)

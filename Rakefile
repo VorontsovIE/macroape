@@ -1,5 +1,6 @@
 #!/usr/bin/env rake
 require "bundler/gem_tasks"
+require 'rspec/core/rake_task'
 
 namespace :spec do
   task :find_threshold do
@@ -20,9 +21,11 @@ namespace :spec do
   task :scan_collection do
     system("ruby -I ./test test/scan_collection_test.rb")
   end
-  task :all => [:find_threshold, :find_pvalue, :eval_similarity,
+  task :tests => [:find_threshold, :find_pvalue, :eval_similarity,
                 :eval_alignment_similarity, :scan_collection, :preprocess_collection]
+  
+  RSpec::Core::RakeTask.new
 end
 
 desc 'Test all functionality of gem executables'
-task :spec => ['spec:all']
+task :spec => ['spec:tests', 'spec:spec']
