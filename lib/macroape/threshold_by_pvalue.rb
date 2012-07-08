@@ -13,14 +13,14 @@ module Bioinform
     end
   
     def count_distribution_under_pvalue(max_pvalue)
-      count_distribution={}
+      cnt_distribution = {}
       look_for_count = max_pvalue * vocabulary_volume
-      until count_distribution.inject(0.0){|sum,(score,count)| sum + count} >= look_for_count
-        count_distribution = count_distribution_after_threshold(threshold_gauss_estimation(max_pvalue))
+      until cnt_distribution.inject(0.0){|sum,(score,count)| sum + count} >= look_for_count
+        cnt_distribution = count_distribution_after_threshold(threshold_gauss_estimation(max_pvalue))
         max_pvalue *=2 # if estimation counted too small amount of words - try to lower threshold estimation by doubling pvalue
       end
       
-      count_distribution
+      cnt_distribution
     end
   
   
@@ -28,8 +28,7 @@ module Bioinform
     # thresholds = left_threshold .. right_threshold  (left_threshold < right_threshold)
     # counts = left_count .. right_count  (left_count > right_count)
     def thresholds_by_pvalues(*pvalues)
-      count_distribution = count_distribution_under_pvalue(pvalues.max)
-      sorted_scores = count_distribution.sort.reverse
+      sorted_scores = count_distribution_under_pvalue(pvalues.max).sort.reverse
       scores = sorted_scores.map{|score,count| score}
       counts = sorted_scores.map{|score,count| count}
       partial_sums = counts.partial_sums
