@@ -1,8 +1,7 @@
 require 'macroape/version'
 
 require 'bioinform'
-require 'macroape/threshold_by_pvalue'
-require 'macroape/count_by_threshold'
+require 'macroape/counting'
 
 require 'macroape/aligned_pair_intersection'
 require 'macroape/pwm_compare_aligned'
