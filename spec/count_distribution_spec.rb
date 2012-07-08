@@ -1,6 +1,6 @@
 require 'spec_helper'
 require 'bioinform'
-require 'macroape/threshold_by_pvalue'
+require 'macroape/counting'
 
 describe Bioinform::PWM do
   let :matrix_first do [[1,2,3,4],[10,20,30,40],[100,200,300,400]] end
