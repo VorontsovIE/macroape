@@ -80,7 +80,7 @@ begin
         second_background = ARGV.shift(4).map(&:to_f)
     end
   end
-  raise 'background should be symmetric' unless first_background == first_background.reverse
+  raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless first_background == first_background.reverse
   raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless second_background == second_background.reverse
 
   
