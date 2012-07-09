@@ -10,7 +10,7 @@ Options:
   [--silent] - don't show current progress information during scan (by default this information's written into stderr)
 
 The tool stores preprocessed Macroape collection to the specified YAML-file.
- 
+
 Example:
   ruby preprocess_collection.rb ./motifs -p 0.001 0.0005 0.0001 -d 1 10 -b 0.2 0.3 0.2 0.3 -o collection.yaml
 }
@@ -34,7 +34,7 @@ begin
   folder = ARGV.shift
   raise "No input. You'd specify folder with pat-files" unless folder
   raise "Error! Folder #{folder} doesn't exist" unless Dir.exist?(folder)
-  
+
   pvalues = []
   silent = false
   until ARGV.empty?
@@ -64,7 +64,7 @@ begin
       end
   end
   pvalues = default_pvalues if pvalues.empty?
-  
+
   Macroape::MaxHashSizeSingle = 1000000 unless defined? Macroape::MaxHashSizeSingle
   Macroape::MaxHashSizeDouble = 1000 unless defined? Macroape::MaxHashSizeDouble
 
@@ -75,14 +75,14 @@ begin
     STDERR.puts filename unless silent
     pwm = Bioinform::PWM.new(File.read(filename))
     pwm.name ||= File.basename(filename, File.extname(filename))
-    
-    # When support of onefile collections is introduced - then here should be check if name exists. 
+
+    # When support of onefile collections is introduced - then here should be check if name exists.
     # Otherwise it should skip motif and tell you about this
     # Also two command line options to fail on skipping or to skip silently should be included
-    
+
     info = {rough: {}, precise: {}}
     pwm.background(background)
-    
+
     pwm.discrete(rough_discretization).thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
       info[:rough][pvalue] = threshold / rough_discretization
     end
@@ -90,7 +90,7 @@ begin
     pwm.discrete(precise_discretization).thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
       info[:precise][pvalue] = threshold / precise_discretization
     end
-    
+
     collection.add_pwm(pwm, info)
   end
   File.open(output_file,'w') do |f|

@@ -11,13 +11,13 @@ Options:
   [-c <similarity cutoff (minimal similarity to be included in output)> ] or [--all], '-c 0.05' by default
   [--precise [<level, minimal similarity to check on a more precise discretization level on the second pass>]], off by default, '--precise 0.01' if level is not set
   [--silent] - don't show current progress information during scan (by default this information's written into stderr)
-  
+
 Output format:
  <name> <similarity jaccard index> <shift> <overlap> <orientation> * [in case that result calculated on the second pass(in precise mode)]
-    Attention! Name can contain whitespace characters. 
+    Attention! Name can contain whitespace characters.
     Attention! The shift and orientation are reported for the collection matrix relative to the query matrix.
-	 
-Example:  
+
+Example:
   ruby scan_collection.rb motifs/KLF4.pat collection.yaml -p 0.005
             or in linux
   cat motifs/KLF4.pat | ruby scan_collection.rb .stdin collection.yaml -p 0.005 --precise 0.03
@@ -38,7 +38,7 @@ begin
   raise "No input. You'd specify input source for pat: filename or .stdin" unless filename
   raise "No input. You'd specify input file with collection" unless collection_file
   raise "Collection file #{collection_file} doesn't exist" unless File.exist?(collection_file)
-  
+
   pvalue = 0.0005
   cutoff = 0.05 # minimal similarity to output
   collection = YAML.load_file(collection_file)
@@ -65,7 +65,7 @@ begin
         silent = true
       when '--precise'
         precision_mode = :precise
-        begin 
+        begin
           Float(ARGV.first)
           minimal_similarity = ARGV.shift.to_f
         rescue
@@ -75,26 +75,26 @@ begin
   end
   Macroape::MaxHashSizeSingle = 1000000 unless defined? Macroape::MaxHashSizeSingle
   Macroape::MaxHashSizeDouble = 1000 unless defined? Macroape::MaxHashSizeDouble
-  
+
   raise "Thresholds for pvalue #{pvalue} aren't presented in collection (#{collection.pvalues.join(', ')}). Use one of listed pvalues or recalculate the collection with needed pvalue" unless collection.pvalues.include? pvalue
-  
+
   if filename == '.stdin'
 #    query_pwm = Macroape::SingleMatrix.load_from_stdin(STDIN)
   else
     raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
     query_pwm = Bioinform::PWM.new(File.read(filename))
   end
-  
-  
+
+
   query_pwm_rough = query_pwm.background(background_query).discrete(collection.rough_discretization)
   query_pwm_precise = query_pwm.background(background_query).discrete(collection.precise_discretization)
-  
+
   threshold = query_pwm_rough.threshold(pvalue)
   threshold_precise = query_pwm_precise.threshold(pvalue)
-  
+
   similarities = {}
   precision_file_mode = {}
-  
+
   collection.pwms.each_key do |name|
     pwm = collection.pwms[name]
     pwm_info = collection.infos[name]
@@ -102,7 +102,7 @@ begin
     cmp = Macroape::PWMCompare.new(query_pwm_rough, pwm.background(collection.background).discrete(collection.rough_discretization))
     info = cmp.jaccard(threshold, pwm_info[:rough][pvalue] * collection.rough_discretization)
     precision_file_mode[name] = :rough
-    
+
     if precision_mode == :precise and info[:similarity] >= minimal_similarity
       cmp = Macroape::PWMCompare.new(query_pwm_precise, pwm.background(collection.background).discrete(collection.precise_discretization))
       info = cmp.jaccard(threshold_precise, pwm_info[:precise][pvalue] * collection.precise_discretization)
@@ -110,7 +110,7 @@ begin
     end
     similarities[name] = info
   end
-  
+
   puts "#pwm\tsimilarity\tshift\toverlap\torientation"
   similarities.sort_by do |name, info|
     info[:similarity]
@@ -118,7 +118,7 @@ begin
     precision_text = (precision_file_mode[name] == :precise) ? "\t*" : ""
     puts "#{name}\t#{info[:similarity]}\t#{info[:shift]}\t#{info[:overlap]}\t#{info[:orientation]}#{precision_text}" if info[:similarity] >= cutoff
   end
-  
+
 rescue => err
   STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse -help option for help\n"
 end

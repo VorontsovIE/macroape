@@ -11,10 +11,10 @@ module Macroape
       @infos[pwm.name] = info
     end
     def ==(other)
-      @rough_discretization == other.rough_discretization && 
-      @precise_discretization == other.precise_discretization && 
-      @background == other.background && 
-      @pvalues == other.pvalues && 
+      @rough_discretization == other.rough_discretization &&
+      @precise_discretization == other.precise_discretization &&
+      @background == other.background &&
+      @pvalues == other.pvalues &&
       @pwms == other.pwms &&
       @infos == other.infos
     end

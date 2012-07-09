@@ -14,9 +14,9 @@ Options:
 Output format:
  	requested_pvalue_1 threshold_1 achieved_pvalue_1
  	requested_pvalue_2 threshold_2 achieved_pvalue_2
-	 
-	 
-Example:  
+
+
+Example:
   ruby find_threshold.rb motifs/KLF4.pat -p 0.001 0.0001 0.0005 -d 1000 -b 0.4 0.3 0.2 0.1
 }
 
@@ -35,7 +35,7 @@ discretization = 10000
 begin
   filename = ARGV.shift
   raise "No input. You'd specify input source: filename or .stdin" unless filename
-  
+
   pvalues = []
   until ARGV.empty?
     case ARGV.shift
@@ -57,18 +57,18 @@ begin
       end
   end
   pvalues = default_pvalues if pvalues.empty?
-  
+
   Macroape::MaxHashSizeSingle = 1000000 unless defined? Macroape::MaxHashSizeSingle
-  
+
   if filename == '.stdin'
 ##  TODO
   else
     raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
     pwm = Bioinform::PWM.new( File.read(filename) )
   end
-  
+
   pwm.background(background)
-  
+
   pwm.discrete(discretization).thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
     puts "#{pvalue}\t#{threshold / discretization}\t#{real_pvalue}"
   end

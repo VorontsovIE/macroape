@@ -1,7 +1,7 @@
 help_string = %q{
 Command-line format:
 ruby find_pvalue.rb <pat-file> <threshold list> [options]
-        	or in linux 
+        	or in linux
 cat <pat-file> | ruby find_pvalue.rb .stdin <threshold> [options]
  	or on windows
 type <pat-file> | ruby find_pvalue.rb .stdin <threshold> [options]
@@ -16,7 +16,7 @@ Output format:
 	threshold_3 count_3  pvalue_3
 The results are printed out in the same order as in the given threshold list.
 
-Examples:  
+Examples:
   ruby find_pvalue.rb motifs/KLF4.pat 7.32 -d 1000 -b 0.2 0.3 0.2 0.3
            or on windows
   type motifs/KLF4.pat | ruby find_pvalue.rb .stdin 7.32 4.31 5.42
@@ -35,7 +35,7 @@ end
 discretization = 10000
 background = [1,1,1,1]
 thresholds = []
-begin 
+begin
   filename = ARGV.shift
 
   loop do
@@ -46,10 +46,10 @@ begin
       raise StopIteration
     end
   end
-  
+
   raise "No input. You'd specify input source: filename or .stdin" unless filename
   raise 'You should specify at least one threshold' if thresholds.empty?
-  
+
   until ARGV.empty?
     case ARGV.shift
       when '-b'
@@ -61,8 +61,8 @@ begin
     end
   end
   Macroape::MaxHashSizeSingle = 1000000 unless defined? Macroape::MaxHashSizeSingle
-  
-  
+
+
   if filename == '.stdin'
 #  TODO
   else

@@ -5,32 +5,32 @@ module Macroape
     attr_reader :first, :second, :length, :shift, :orientation, :first_length, :second_length
     def initialize(first_unaligned, second_unaligned, shift, orientation)
       @shift, @orientation = shift, orientation
-      
+
       @first_length, @second_length = first_unaligned.length, second_unaligned.length
       @length = self.class.calculate_alignment_length(@first_length, @second_length, @shift)
-      
+
       first, second = first_unaligned, second_unaligned
       if shift > 0
         second = second.left_augment(shift)
       else
         first = first.left_augment(-shift)
       end
-      
+
       @first = first.right_augment(@length - first.length)
       @second = second.right_augment(@length - second.length)
     end
-    
+
     def direct?
       orientation == :direct
     end
     def revcomp?
       orientation == :revcomp
     end
-    
+
     def overlap
       length.times.count{|pos| first_overlaps?(pos) && second_overlaps?(pos) }
     end
-    
+
     def first_pwm_alignment
       length.times.map do |pos|
         if first_overlaps?(pos)
@@ -40,7 +40,7 @@ module Macroape
         end
       end.join
     end
-    
+
     def second_pwm_alignment
       length.times.map do |pos|
         if second_overlaps?(pos)
@@ -50,7 +50,7 @@ module Macroape
         end
       end.join
     end
-    
+
     def alignment_infos
       {shift: shift,
       orientation: orientation,
@@ -58,7 +58,7 @@ module Macroape
       overlap: overlap,
       alignment_length: length}
     end
-    
+
     # whether first matrix overlap specified position of alignment
     def first_overlaps?(pos)
       return false unless pos >= 0 && pos < length
@@ -68,7 +68,7 @@ module Macroape
         pos >= -shift && pos < -shift + first_length
       end
     end
-    
+
     def second_overlaps?(pos)
       return false unless pos >= 0 && pos < length
       if shift > 0
@@ -77,8 +77,8 @@ module Macroape
         pos < second_length
       end
     end
-    
-=begin    
+
+=begin
     def discrete(rate)
       PWMCompareAligned.new(first.discrete(rate), second.discrete(rate))
     end
@@ -107,7 +107,7 @@ module Macroape
               recognized_by_second: s,
             }
       end
-      
+
       intersect = counts_for_two_matrices(first_threshold, second_threshold)
       intersect = Math.sqrt(intersect[0] * intersect[1])
       union = f + s - intersect
@@ -115,7 +115,7 @@ module Macroape
       { similarity: similarity,  tanimoto: 1.0 - similarity,  recognized_by_both: intersect,
         recognized_by_first: f,  recognized_by_second: s }
     end
-    
+
     def self.calculate_alignment_length(first_len, second_len, shift)
       if shift > 0
         [first_len, second_len + shift].max
@@ -123,7 +123,7 @@ module Macroape
         [first_len - shift, second_len].max
       end
     end
-    
+
   end
-  
+
 end

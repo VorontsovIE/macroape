@@ -18,7 +18,7 @@ module Macroape
         yield PWMCompareAligned.new(first, (orientation == :direct ? second : second_rc), shift, orientation)
       end
     end
-    
+
     include Enumerable
     alias_method :each, :each_alignment
     alias_method :map_each_alignment, :map

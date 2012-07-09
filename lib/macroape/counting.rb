@@ -3,7 +3,7 @@ module Bioinform
     def threshold(pvalue)
       thresholds(pvalue){|_, thresh, _| return thresh }
     end
-    
+
     def thresholds(*pvalues)
       thresholds_by_pvalues(*pvalues).each do |pvalue,(thresholds, counts)|
         threshold = thresholds.begin + 0.1 * (thresholds.end - thresholds.begin)
@@ -11,7 +11,7 @@ module Bioinform
         yield pvalue, threshold, real_pvalue
       end
     end
-  
+
     def count_distribution_under_pvalue(max_pvalue)
       cnt_distribution = {}
       look_for_count = max_pvalue * vocabulary_volume
@@ -19,11 +19,11 @@ module Bioinform
         cnt_distribution = count_distribution_after_threshold(threshold_gauss_estimation(max_pvalue))
         max_pvalue *=2 # if estimation counted too small amount of words - try to lower threshold estimation by doubling pvalue
       end
-      
+
       cnt_distribution
     end
-  
-  
+
+
     # ret-value: hash {pvalue => [thresholds, counts]}
     # thresholds = left_threshold .. right_threshold  (left_threshold < right_threshold)
     # counts = left_count .. right_count  (left_count > right_count)
@@ -32,9 +32,9 @@ module Bioinform
       scores = sorted_scores.map{|score,count| score}
       counts = sorted_scores.map{|score,count| count}
       partial_sums = counts.partial_sums
-      
+
       results = {}
-      
+
       pvalue_counts = pvalues.sort.collect_hash{|pvalue| [pvalue, pvalue * vocabulary_volume] }
       pvalue_counts.map do |pvalue,look_for_count|
         ind = partial_sums.index{|sum| sum >= look_for_count}
@@ -45,7 +45,7 @@ module Bioinform
 
       results
     end
-    
+
     def count_distribution_after_threshold(threshold)
       return @count_distribution.select{|score, count| score >= threshold}  if @count_distribution
       scores = { 0 => 1 }
@@ -55,7 +55,7 @@ module Bioinform
       end
       scores
     end
-    
+
     def count_distribution
       @count_distribution ||= count_distribution_after_threshold(worst_score)
     end
@@ -72,7 +72,7 @@ module Bioinform
       end
       new_scores
     end
-    
+
     def counts_by_thresholds(*thresholds)
       scores = count_distribution_after_threshold(thresholds.min)
       thresholds.map{ |threshold|
