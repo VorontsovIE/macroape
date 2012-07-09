@@ -2,16 +2,20 @@ require 'macroape/aligned_pair_intersection'
 
 module Macroape
   class PWMCompareAligned
-    attr_reader :first, :second, :length, :shift, :orientation, :unaligned_first, :unaligned_second
-    def initialize(first, second, shift, orientation)
-      @unaligned_first, @unaligned_second = first, second
+    attr_reader :first, :second, :length, :shift, :orientation, :first_length, :second_length
+    def initialize(first_unaligned, second_unaligned, shift, orientation)
       @shift, @orientation = shift, orientation
+      
+      @first_length, @second_length = first_unaligned.length, second_unaligned.length
+      @length = self.class.calculate_alignment_length(@first_length, @second_length, @shift)
+      
+      first, second = first_unaligned, second_unaligned
       if shift > 0
-        first, second = first, second.left_augment(shift)
+        second = second.left_augment(shift)
       else
-        first, second = first.left_augment(-shift), second
+        first = first.left_augment(-shift)
       end
-      @length = [first.length, second.length].max
+      
       @first = first.right_augment(@length - first.length)
       @second = second.right_augment(@length - second.length)
     end
@@ -55,14 +59,7 @@ module Macroape
       alignment_length: length}
     end
     
-    def first_length
-      unaligned_first.length
-    end
-    def second_length
-      unaligned_second.length
-    end
-    
-    # whether first matrix overlap specified position
+    # whether first matrix overlap specified position of alignment
     def first_overlaps?(pos)
       return false unless pos >= 0 && pos < length
       if shift > 0
@@ -104,7 +101,7 @@ module Macroape
     def jaccard(first_threshold, second_threshold)
       f = first.counts_by_thresholds(first_threshold).first
       s = second.counts_by_thresholds(second_threshold).first
-      if f == 0 or s == 0
+      if f == 0 || s == 0
         return {similarity: -1, tanimoto: -1, recognized_by_both: 0,
               recognized_by_first: f,
               recognized_by_second: s,
@@ -119,5 +116,14 @@ module Macroape
         recognized_by_first: f,  recognized_by_second: s }
     end
     
+    def self.calculate_alignment_length(first_len, second_len, shift)
+      if shift > 0
+        [first_len, second_len + shift].max
+      else
+        [first_len - shift, second_len].max
+      end
+    end
+    
   end
+  
 end
