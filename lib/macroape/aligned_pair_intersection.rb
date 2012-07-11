@@ -5,13 +5,13 @@ module Macroape
     def counts_for_two_matrices(threshold_first, threshold_second)
       return counts_for_two_matrices_with_different_probabilities(threshold_first, threshold_second)  unless first.background == second.background
       if first.background == [1,1,1,1]
-        unoptimized_get_counts(threshold_first, threshold_second,:unoptimized_recalc_score_hash_common_words)
+        get_counts(threshold_first, threshold_second,:recalc_score_hash_common_words)
       else
-        unoptimized_get_counts(threshold_first, threshold_second, :unoptimized_recalc_score_hash_same_background)
+        get_counts(threshold_first, threshold_second, :recalc_score_hash_same_background)
       end
     end
   
-    def unoptimized_get_counts(threshold_first, threshold_second, meth = :unoptimized_recalc_score_hash_different_probabilities)
+    def get_counts(threshold_first, threshold_second, meth = :recalc_score_hash_different_probabilities)
       # scores_on_first_pwm, scores_on_second_pwm --> count
       scores = { 0 => {0 => 1} }
       length.times do |column|
@@ -28,7 +28,7 @@ module Macroape
     end
 
   
-    def unoptimized_recalc_score_hash_same_background(scores, first_column, second_column, least_sufficient_first, least_sufficient_second)
+    def recalc_score_hash_same_background(scores, first_column, second_column, least_sufficient_first, least_sufficient_second)
       new_scores = Hash.new{|h,k| h[k]=Hash.new{|h2,k2| h2[k2] = 0}}
       scores.each do |score_first, second_scores|
         second_scores.each do |score_second, count|
@@ -48,7 +48,7 @@ module Macroape
       new_scores
     end
     
-    def unoptimized_recalc_score_hash_common_words(scores, first_column, second_column, least_sufficient_first, least_sufficient_second)
+    def recalc_score_hash_common_words(scores, first_column, second_column, least_sufficient_first, least_sufficient_second)
       new_scores = Hash.new{|h,k| h[k]=Hash.new{|h2,k2| h2[k2] = 0}}
       scores.each do |score_first, second_scores|
         second_scores.each do |score_second, count|
@@ -68,20 +68,6 @@ module Macroape
       new_scores
     end
     
-=begin
-  # another version of counting methods
-    def counts_for_two_matrices(threshold_first, threshold_second)
-      if first.background == second.background
-        if first.background == [1,1,1,1]
-          common_words_for_two_matrices(threshold_first, threshold_second)
-        else
-          counts_for_two_matrices_with_same_probabilities(threshold_first, threshold_second)
-        end
-      else
-        counts_for_two_matrices_with_different_probabilities(threshold_first, threshold_second)
-      end
-    end
-=end
     def counts_for_two_matrices_with_different_probabilities(threshold_first, threshold_second)
       scores = { 0 => {0 => [1,1]} } # scores_on_first_pwm, scores_on_second_pwm --> count_on_first_probabilities, count_on_second_probabilities
       result_first = 0.0
