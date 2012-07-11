@@ -1,0 +1,20 @@
+Absolutely necessary:
+  Repair obtaining matrix not only from files but from stdin
+  Make it available to load collections in preprocess_collection from single file (and from stdin of certainly)
+  Make it available to load PCM files with (it should be first preprocessed to PWMs in a standardized way) -- may be it's better to use pipeline
+
+Specs and tests:
+  create spec on use of MaxHashSize, MaxHashSizeDouble
+  create spec for testing case when {real_pvalue == 0, threshold == best_score + 1}
+  create test for getting PWMs from stdin
+  create test for nonuniform word-wise background([1,1,1,1]) and for different backgrounds
+
+Ideas to inctrease perfomance:
+  - Add shifting matrix elements to zero after discreeting - in such case worst suffix is zero at all positions
+  - (?) Make rearrangment of rows by DIC decreasing in aligned pair of matrices before counting
+  - Create JAVA extension for alignment_intersection methods in order to increase perfomance
+  - Possibly algorithm shouldn't use hash but had two iterations: at first it determines possible hash scores for every length(if worst suffix is always zero, its flat space of scores at all pwm prefix lengths) of each pwm separately. And after that we can work with arrays which use such scores as indices via additional substructure
+  
+Usability issues:  
+  review Collection class. Now its completely unuseful. May be it should be even in another gem (with blackjack and clustering)
+
