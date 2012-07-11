@@ -1,5 +1,6 @@
 require 'test_helper'
 
+puts "\n\neval_similarity test:"
 class TestEvalSimilarity < Test::Unit::TestCase
   def test_process_pair_of_pwms
     IO.popen(Helpers.exec_cmd('eval_similarity','test/data/KLF4_f2.pat test/data/SP1_f1.pat')){|f|

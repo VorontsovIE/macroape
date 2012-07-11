@@ -1,5 +1,6 @@
 require 'test_helper'
 
+puts "\n\neval_alignment test:"
 class TestEvalAlignmentSimilarity < Test::Unit::TestCase
   def test_process_at_optimal_alignment
     IO.popen(Helpers.exec_cmd('eval_alignment','test/data/KLF4_f2.pat test/data/SP1_f1.pat -1 direct')){|f|

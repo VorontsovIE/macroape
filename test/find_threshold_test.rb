@@ -1,5 +1,6 @@
 require 'test_helper'
 
+puts "\n\nfind_threshold test:"
 class FindThresholdTest < Test::Unit::TestCase
   def test_process_several_pvalues
     pvalues = []

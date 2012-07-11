@@ -1,5 +1,6 @@
 require 'test_helper'
 
+puts "\n\nscan_collection test:"
 class TestScanCollection < Test::Unit::TestCase
   def test_scan_default_cutoff
     assert_equal File.read('test/data/KLF4_f2_scan_results_default_cutoff.txt').gsub("\r\n", "\n"),

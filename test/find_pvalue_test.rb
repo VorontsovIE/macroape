@@ -1,5 +1,6 @@
 require 'test_helper'
 
+puts "\n\nfind_pvalue test:"
 class FindPvalueTest < Test::Unit::TestCase
   def test_process_one_threshold
     IO.popen(Helpers.exec_cmd('find_pvalue', 'test/data/KLF4_f2.pat 4.1719')){|f|
