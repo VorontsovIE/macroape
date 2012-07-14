@@ -13,9 +13,8 @@ module Macroape
     end
 
     def each_alignment
-      second_rc = second.reverse_complement
       (-second.length..first.length).to_a.product([:direct,:revcomp]) do |shift, orientation|
-        yield PWMCompareAligned.new(first, (orientation == :direct ? second : second_rc), shift, orientation)
+        yield PWMCompareAligned.new(first, second, shift, orientation)
       end
     end
 

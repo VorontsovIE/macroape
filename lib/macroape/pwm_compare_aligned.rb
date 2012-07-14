@@ -10,6 +10,8 @@ module Macroape
       @length = self.class.calculate_alignment_length(@first_length, @second_length, @shift)
 
       first, second = first_unaligned, second_unaligned
+      second = second.reverse_complement  if revcomp?
+      
       if shift > 0
         second = second.left_augment(shift)
       else
