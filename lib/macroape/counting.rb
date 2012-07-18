@@ -50,7 +50,7 @@ module Bioinform
       return @count_distribution.select{|score, count| score >= threshold}  if @count_distribution
       scores = { 0 => 1 }
       length.times do |column|
-        scores.replace recalc_score_hash(scores, @matrix[column], threshold - best_suffix[column + 1])
+        scores.replace recalc_score_hash(scores, @matrix[column], threshold - best_suffix(column + 1))
         raise 'Hash overflow in PWM::ThresholdByPvalue#count_distribution_after_threshold' if defined? MaxHashSizeSingle and scores.size > MaxHashSizeSingle
       end
       scores

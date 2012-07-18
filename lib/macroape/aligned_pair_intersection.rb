@@ -28,8 +28,8 @@ module Macroape
       length.times do |column|
         new_scores = recalc_score_hash(scores,
                           @first.matrix[column], @second.matrix[column],
-                          threshold_first - first.best_suffix[column + 1],
-                          threshold_second - second.best_suffix[column + 1], &count_contribution_block)
+                          threshold_first - first.best_suffix(column + 1),
+                          threshold_second - second.best_suffix(column + 1), &count_contribution_block)
         scores.replace(new_scores)
         if defined?(MaxHashSizeDouble) && scores.inject(0){|sum,hsh|sum + hsh.size} > MaxHashSizeDouble
           raise 'Hash overflow in Macroape::AlignedPairIntersection#counts_for_two_matrices_with_different_probabilities'
