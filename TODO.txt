@@ -26,3 +26,5 @@ pwm1 direct shift1
 pwm2 revcomp shift2
 pwm3 direct shift3
 ...
+
+remove .stdin placeholder. Use tty? method instead

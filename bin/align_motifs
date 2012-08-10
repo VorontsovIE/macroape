@@ -1,0 +1,3 @@
+#!/usr/bin/env ruby
+
+require 'macroape/exec/align_motifs.rb'
