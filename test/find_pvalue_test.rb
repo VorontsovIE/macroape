@@ -22,5 +22,9 @@ class FindPvalueTest < Test::Unit::TestCase
       assert_equal "5.2403\t527.0\t0.0005025863647460938\n", f.read
     }
   end
+  def test_process_pwm_from_stdin
+    assert_equal IO.popen(Helpers.exec_cmd('find_pvalue', '.stdin 1 < test/data/KLF4_f2.pat'), &:read),
+                 IO.popen(Helpers.exec_cmd('find_pvalue', 'test/data/KLF4_f2.pat 1'), &:read)
+  end
 end
 

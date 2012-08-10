@@ -61,7 +61,7 @@ begin
   Macroape::MaxHashSizeSingle = 1000000 unless defined? Macroape::MaxHashSizeSingle
 
   if filename == '.stdin'
-##  TODO
+    pwm = Bioinform::PWM.new( STDIN.read )
   else
     raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
     pwm = Bioinform::PWM.new( File.read(filename) )

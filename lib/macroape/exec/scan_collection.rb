@@ -78,8 +78,9 @@ begin
 
   raise "Thresholds for pvalue #{pvalue} aren't presented in collection (#{collection.pvalues.join(', ')}). Use one of listed pvalues or recalculate the collection with needed pvalue" unless collection.pvalues.include? pvalue
 
+  
   if filename == '.stdin'
-#    query_pwm = Macroape::SingleMatrix.load_from_stdin(STDIN)
+    query_pwm = Bioinform::PWM.new( STDIN.read )
   else
     raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
     query_pwm = Bioinform::PWM.new(File.read(filename))

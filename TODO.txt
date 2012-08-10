@@ -9,7 +9,7 @@ Specs and tests:
   create test for getting PWMs from stdin
   create test for nonuniform word-wise background([1,1,1,1]) and for different backgrounds
 
-Ideas to inctrease perfomance:
+Ideas to increase perfomance:
   - Add shifting matrix elements to zero after discreeting - in such case worst suffix is zero at all positions
   - (?) Make rearrangment of rows by DIC decreasing in aligned pair of matrices before counting
   - Create JAVA extension for alignment_intersection methods in order to increase perfomance
@@ -18,3 +18,11 @@ Ideas to inctrease perfomance:
 Usability issues:  
   review Collection class. Now its completely unuseful. May be it should be even in another gem (with blackjack and clustering)
 
+
+New tool:
+align_motifs [--pcm|pwm?????] <pwm1> <pwm2> [<pwm3> ...] 
+Output:
+pwm1 direct shift1
+pwm2 revcomp shift2
+pwm3 direct shift3
+...

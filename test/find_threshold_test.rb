@@ -26,5 +26,9 @@ class FindThresholdTest < Test::Unit::TestCase
     assert_equal '0.0005', pvalue
     assert_equal Helpers.obtain_pvalue_by_threshold("test/data/KLF4_f2.pat #{threshold} -d 100"), real_pvalue
   end
+  def test_process_pwm_from_stdin
+    assert_equal IO.popen(Helpers.exec_cmd('find_threshold', '.stdin < test/data/KLF4_f2.pat'), &:read),
+                 IO.popen(Helpers.exec_cmd('find_threshold', 'test/data/KLF4_f2.pat'), &:read)
+  end
 end
 
