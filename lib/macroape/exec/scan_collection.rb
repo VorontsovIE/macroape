@@ -43,7 +43,8 @@ begin
   cutoff = 0.05 # minimal similarity to output
   collection = YAML.load_file(collection_file)
   background_query = collection.background
-
+  max_hash_size = 1000000
+  
   silent = false
   precision_mode = :rough
   until ARGV.empty?
@@ -54,7 +55,7 @@ begin
       when '-p'
         pvalue = ARGV.shift.to_f
       when '-m'
-        Macroape::MaxHashSizeSingle = ARGV.shift.to_f
+        max_hash_size = ARGV.shift.to_i        
       when '-md'
         Macroape::MaxHashSizeDouble = ARGV.shift.to_f
       when '-c'
@@ -73,7 +74,6 @@ begin
         end
     end
   end
-  Macroape::MaxHashSizeSingle = 1000000 unless defined? Macroape::MaxHashSizeSingle
   Macroape::MaxHashSizeDouble = 1000 unless defined? Macroape::MaxHashSizeDouble
 
   raise "Thresholds for pvalue #{pvalue} aren't presented in collection (#{collection.pvalues.join(', ')}). Use one of listed pvalues or recalculate the collection with needed pvalue" unless collection.pvalues.include? pvalue
@@ -86,27 +86,37 @@ begin
     query_pwm = Bioinform::PWM.new(File.read(filename))
   end
 
+  query_pwm.background(background_query).max_hash_size(max_hash_size)
+  
+  query_pwm_rough = query_pwm.discrete(collection.rough_discretization)
+  query_pwm_precise = query_pwm.discrete(collection.precise_discretization)
 
-  query_pwm_rough = query_pwm.background(background_query).discrete(collection.rough_discretization)
-  query_pwm_precise = query_pwm.background(background_query).discrete(collection.precise_discretization)
-
-  threshold = query_pwm_rough.threshold(pvalue)
-  threshold_precise = query_pwm_precise.threshold(pvalue)
+  query_threshold_rough = query_pwm_rough.threshold(pvalue)
+  query_threshold_precise = query_pwm_precise.threshold(pvalue)
 
   similarities = {}
   precision_file_mode = {}
 
   collection.pwms.each_key do |name|
     pwm = collection.pwms[name]
+    pwm.background(collection.background).max_hash_size(max_hash_size)
+    pwm_rough = pwm.discrete(collection.rough_discretization)
+    pwm_precise = pwm.discrete(collection.precise_discretization)
+    
     pwm_info = collection.infos[name]
+    
+    pwm_threshold_rough = pwm_info[:rough][pvalue] * collection.rough_discretization
+    pwm_threshold_precise = pwm_info[:precise][pvalue] * collection.precise_discretization
+    
+    
     STDERR.puts pwm.name unless silent
-    cmp = Macroape::PWMCompare.new(query_pwm_rough, pwm.background(collection.background).discrete(collection.rough_discretization))
-    info = cmp.jaccard(threshold, pwm_info[:rough][pvalue] * collection.rough_discretization)
+    cmp = Macroape::PWMCompare.new(query_pwm_rough, pwm_rough)
+    info = cmp.jaccard(query_threshold_rough, pwm_threshold_rough)
     precision_file_mode[name] = :rough
 
     if precision_mode == :precise and info[:similarity] >= minimal_similarity
-      cmp = Macroape::PWMCompare.new(query_pwm_precise, pwm.background(collection.background).discrete(collection.precise_discretization))
-      info = cmp.jaccard(threshold_precise, pwm_info[:precise][pvalue] * collection.precise_discretization)
+      cmp = Macroape::PWMCompare.new(query_pwm_precise, pwm_precise)
+      info = cmp.jaccard(query_threshold_precise, pwm_threshold_precise)
       precision_file_mode[name] = :precise
     end
     similarities[name] = info

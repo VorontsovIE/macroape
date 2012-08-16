@@ -1,5 +1,18 @@
 module Bioinform
   class PWM
+    def max_hash_size!(new_max_hash_size)
+      @max_hash_size = new_max_hash_size
+      self
+    end
+    
+    def max_hash_size(*args)
+      case args.size
+      when 0 then @max_hash_size
+      when 1 then max_hash_size!(args.first)
+      else raise ArgumentError, '#max_hash_size method can get 0 or 1 argument'
+      end
+    end
+    
     def threshold(pvalue)
       thresholds(pvalue){|_, thresh, _| return thresh }
     end
@@ -51,7 +64,7 @@ module Bioinform
       scores = { 0 => 1 }
       length.times do |column|
         scores.replace recalc_score_hash(scores, @matrix[column], threshold - best_suffix(column + 1))
-        raise 'Hash overflow in PWM::ThresholdByPvalue#count_distribution_after_threshold' if defined? MaxHashSizeSingle and scores.size > MaxHashSizeSingle
+        raise 'Hash overflow in PWM::ThresholdByPvalue#count_distribution_after_threshold'  if max_hash_size && scores.size > max_hash_size
       end
       scores
     end

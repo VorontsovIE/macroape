@@ -29,6 +29,7 @@ background = [1,1,1,1]
 rough_discretization = 1
 precise_discretization = 10
 output_file =  'collection.yaml'
+max_hash_size = 1000000
 
 begin
   folder = ARGV.shift
@@ -56,7 +57,7 @@ begin
       when '-o'
         output_file = ARGV.shift
       when '-m'
-        Macroape::MaxHashSizeSingle = ARGV.shift.to_f
+        max_hash_size = ARGV.shift.to_i
       when '-md'
         Macroape::MaxHashSizeDouble = ARGV.shift.to_f
       when '--silent'
@@ -65,7 +66,6 @@ begin
   end
   pvalues = default_pvalues if pvalues.empty?
 
-  Macroape::MaxHashSizeSingle = 1000000 unless defined? Macroape::MaxHashSizeSingle
   Macroape::MaxHashSizeDouble = 1000 unless defined? Macroape::MaxHashSizeDouble
 
   collection = Macroape::Collection.new(rough_discretization, precise_discretization, background, pvalues)
@@ -81,7 +81,7 @@ begin
     # Also two command line options to fail on skipping or to skip silently should be included
 
     info = {rough: {}, precise: {}}
-    pwm.background(background)
+    pwm.background(background).max_hash_size(max_hash_size)
 
     pwm.discrete(rough_discretization).thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
       info[:rough][pvalue] = threshold / rough_discretization

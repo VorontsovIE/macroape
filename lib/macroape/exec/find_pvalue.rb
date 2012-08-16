@@ -35,6 +35,8 @@ end
 discretization = 10000
 background = [1,1,1,1]
 thresholds = []
+max_hash_size = 1000000
+
 begin
   filename = ARGV.shift
 
@@ -57,10 +59,9 @@ begin
       when '-d'
         discretization = ARGV.shift.to_f
       when '-m'
-        Macroape::MaxHashSizeSingle = ARGV.shift.to_f
+        max_hash_size = ARGV.shift.to_i
     end
   end
-  Macroape::MaxHashSizeSingle = 1000000 unless defined? Macroape::MaxHashSizeSingle
 
   
   if filename == '.stdin'
@@ -69,7 +70,7 @@ begin
     raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
     pwm = Bioinform::PWM.new( File.read(filename) )
   end
-  pwm.background(background)
+  pwm.background(background).max_hash_size(max_hash_size)
 
   counts = pwm.discrete(discretization).counts_by_thresholds(* thresholds.map{|count| count * discretization})
   pvalues = counts.map{|count| count.to_f / pwm.vocabulary_volume}

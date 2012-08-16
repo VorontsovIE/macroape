@@ -31,6 +31,7 @@ end
 background = [1,1,1,1]
 default_pvalues = [0.0005]
 discretization = 10000
+max_hash_size = 1000000
 
 begin
   filename = ARGV.shift
@@ -42,7 +43,7 @@ begin
       when '-b'
         background = ARGV.shift(4).map(&:to_f)
       when '-m'
-        Macroape::MaxHashSizeSingle = ARGV.shift.to_f
+        max_hash_size = ARGV.shift.to_i
       when '-p'
         loop do
           begin
@@ -58,8 +59,6 @@ begin
   end
   pvalues = default_pvalues if pvalues.empty?
 
-  Macroape::MaxHashSizeSingle = 1000000 unless defined? Macroape::MaxHashSizeSingle
-
   if filename == '.stdin'
     pwm = Bioinform::PWM.new( STDIN.read )
   else
@@ -67,7 +66,7 @@ begin
     pwm = Bioinform::PWM.new( File.read(filename) )
   end
 
-  pwm.background(background)
+  pwm.background(background).max_hash_size(max_hash_size)
 
   pwm.discrete(discretization).thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
     puts "#{pvalue}\t#{threshold / discretization}\t#{real_pvalue}"
