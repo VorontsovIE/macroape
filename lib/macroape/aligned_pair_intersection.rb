@@ -1,6 +1,5 @@
 module Macroape
   class PWMCompareAligned
-    
     # unoptimized version of this and related methods
     def counts_for_two_matrices(threshold_first, threshold_second)
       # just not to call method each time
@@ -31,7 +30,7 @@ module Macroape
                           threshold_first - first.best_suffix(column + 1),
                           threshold_second - second.best_suffix(column + 1), &count_contribution_block)
         scores.replace(new_scores)
-        if defined?(MaxHashSizeDouble) && scores.inject(0){|sum,hsh|sum + hsh.size} > MaxHashSizeDouble
+        if max_hash_size && scores.inject(0){|sum,hsh|sum + hsh.size} > max_hash_size
           raise 'Hash overflow in Macroape::AlignedPairIntersection#counts_for_two_matrices_with_different_probabilities'
         end
       end

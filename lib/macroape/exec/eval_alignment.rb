@@ -38,6 +38,7 @@ discretization = 10
 first_background = [1,1,1,1]
 second_background = [1,1,1,1]
 max_hash_size = 1000000
+max_pair_hash_size = 1000
 
 begin
   first_file = ARGV.shift
@@ -72,7 +73,7 @@ begin
       when '-m'
         max_hash_size = ARGV.shift.to_i
       when '-md'
-        Macroape::MaxHashSizeDouble = ARGV.shift.to_f
+        max_pair_hash_size = ARGV.shift.to_i
       when '-b'
         second_background = first_background = ARGV.shift(4).map(&:to_f)
       when '-b1'
@@ -83,8 +84,6 @@ begin
   end
   raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless first_background == first_background.reverse
   raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless second_background == second_background.reverse
-  
-  Macroape::MaxHashSizeDouble = 1000 unless defined? Macroape::MaxHashSizeDouble
 
 #  if first_file == '.stdin' || second_file == '.stdin'
 #    r_stream, w_stream = IO.pipe
@@ -113,7 +112,7 @@ begin
   pwm_first = pwm_first.background(first_background).max_hash_size(max_hash_size).discrete(discretization)
   pwm_second = pwm_second.background(second_background).max_hash_size(max_hash_size).discrete(discretization)
 
-  cmp = Macroape::PWMCompareAligned.new(pwm_first, pwm_second, shift, orientation)
+  cmp = Macroape::PWMCompareAligned.new(pwm_first, pwm_second, shift, orientation).max_hash_size(max_pair_hash_size)
 
   first_threshold = pwm_first.threshold(pvalue)
   second_threshold = pwm_second.threshold(pvalue)

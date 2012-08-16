@@ -125,6 +125,21 @@ module Macroape
         [first_len - shift, second_len].max
       end
     end
+    
+    # sets or gets limit of summary size of calculation hash. It's a defence against overuse CPU resources by non-appropriate data
+    def max_hash_size!(new_max_hash_size)
+      @max_hash_size = new_max_hash_size
+      self
+    end
+    
+    def max_hash_size(*args)
+      case args.size
+      when 0 then @max_hash_size
+      when 1 then max_hash_size!(args.first)
+      else raise ArgumentError, '#max_hash_size method can get 0 or 1 argument'
+      end
+    end
+    
 
   end
 

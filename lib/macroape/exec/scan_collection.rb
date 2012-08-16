@@ -44,6 +44,7 @@ begin
   collection = YAML.load_file(collection_file)
   background_query = collection.background
   max_hash_size = 1000000
+  max_pair_hash_size = 1000
   
   silent = false
   precision_mode = :rough
@@ -57,7 +58,7 @@ begin
       when '-m'
         max_hash_size = ARGV.shift.to_i        
       when '-md'
-        Macroape::MaxHashSizeDouble = ARGV.shift.to_f
+        max_pair_hash_size = ARGV.shift.to_i
       when '-c'
         cutoff = ARGV.shift.to_f
       when '--all'
@@ -74,7 +75,6 @@ begin
         end
     end
   end
-  Macroape::MaxHashSizeDouble = 1000 unless defined? Macroape::MaxHashSizeDouble
 
   raise "Thresholds for pvalue #{pvalue} aren't presented in collection (#{collection.pvalues.join(', ')}). Use one of listed pvalues or recalculate the collection with needed pvalue" unless collection.pvalues.include? pvalue
 
@@ -110,12 +110,12 @@ begin
     
     
     STDERR.puts pwm.name unless silent
-    cmp = Macroape::PWMCompare.new(query_pwm_rough, pwm_rough)
+    cmp = Macroape::PWMCompare.new(query_pwm_rough, pwm_rough).max_hash_size(max_pair_hash_size)
     info = cmp.jaccard(query_threshold_rough, pwm_threshold_rough)
     precision_file_mode[name] = :rough
 
     if precision_mode == :precise and info[:similarity] >= minimal_similarity
-      cmp = Macroape::PWMCompare.new(query_pwm_precise, pwm_precise)
+      cmp = Macroape::PWMCompare.new(query_pwm_precise, pwm_precise).max_hash_size(max_pair_hash_size)
       info = cmp.jaccard(query_threshold_precise, pwm_threshold_precise)
       precision_file_mode[name] = :precise
     end

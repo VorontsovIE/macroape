@@ -1,5 +1,6 @@
 module Bioinform
   class PWM
+    # sets or gets limit size of calculation hash. It's a defence against overuse CPU resources by non-appropriate data
     def max_hash_size!(new_max_hash_size)
       @max_hash_size = new_max_hash_size
       self

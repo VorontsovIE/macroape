@@ -58,15 +58,11 @@ begin
         output_file = ARGV.shift
       when '-m'
         max_hash_size = ARGV.shift.to_i
-      when '-md'
-        Macroape::MaxHashSizeDouble = ARGV.shift.to_f
       when '--silent'
         silent = true
       end
   end
   pvalues = default_pvalues if pvalues.empty?
-
-  Macroape::MaxHashSizeDouble = 1000 unless defined? Macroape::MaxHashSizeDouble
 
   collection = Macroape::Collection.new(rough_discretization, precise_discretization, background, pvalues)
 
