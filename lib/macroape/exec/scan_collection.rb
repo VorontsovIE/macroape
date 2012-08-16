@@ -27,7 +27,7 @@ $:.unshift File.join(File.dirname(__FILE__),'./../../')
 require 'macroape'
 require 'yaml'
 
-if ARGV.empty? or ARGV.include? '-h' or ARGV.include? '-help' or ARGV.include? '--help' or ARGV.include? '--h'
+if ARGV.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| ARGV.include?(help_option)}
   STDERR.puts help_string
   exit
 end
