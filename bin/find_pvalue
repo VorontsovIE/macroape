@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 
 require 'macroape/cli/find_pvalue'
-Macroape::CLI::FindPvalue.main(ARGV)
+Macroape::CLI::FindPValue.main(ARGV)
