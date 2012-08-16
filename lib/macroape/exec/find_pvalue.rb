@@ -25,58 +25,10 @@ Examples:
 }
 
 $:.unshift File.join(File.dirname(__FILE__),'./../../')
-require 'macroape'
-
-if ARGV.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| ARGV.include?(help_option)}
-  STDERR.puts help_string
-  exit
-end
-
-discretization = 10000
-background = [1,1,1,1]
-thresholds = []
-max_hash_size = 1000000
+require 'macroape/cli'
 
 begin
-  filename = ARGV.shift
-
-  loop do
-    begin
-      Float(ARGV.first)
-      thresholds << ARGV.shift.to_f
-    rescue
-      raise StopIteration
-    end
-  end
-
-  raise "No input. You'd specify input source: filename or .stdin" unless filename
-  raise 'You should specify at least one threshold' if thresholds.empty?
-
-  until ARGV.empty?
-    case ARGV.shift
-      when '-b'
-        background = ARGV.shift(4).map(&:to_f)
-      when '-d'
-        discretization = ARGV.shift.to_f
-      when '-m'
-        max_hash_size = ARGV.shift.to_i
-    end
-  end
-
-  
-  if filename == '.stdin'
-    pwm = Bioinform::PWM.new( STDIN.read )
-  else
-    raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
-    pwm = Bioinform::PWM.new( File.read(filename) )
-  end
-  pwm.background(background).max_hash_size(max_hash_size)
-
-  counts = pwm.discrete(discretization).counts_by_thresholds(* thresholds.map{|count| count * discretization})
-  pvalues = counts.map{|count| count.to_f / pwm.vocabulary_volume}
-  pvalues.zip(thresholds,counts).each{|pvalue,threshold,count|
-    puts "#{threshold}\t#{count}\t#{pvalue}"
-  }
+  Macroape::CLI::FindPValue.main(ARGV, help_string)
 rescue => err
   STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse -help option for help\n"
 end

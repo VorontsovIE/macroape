@@ -1,12 +1,39 @@
 $lib_folder = File.dirname(__FILE__) + '/../lib'
 $LOAD_PATH.unshift $lib_folder
 require 'test/unit'
+
+require 'stringio'
+require 'macroape/cli'
  
 module Helpers
+  # from minitest
+  def self.capture_io(&block)
+    orig_stdout, orig_stderr = $stdout, $stderr
+    captured_stdout, captured_stderr = StringIO.new, StringIO.new
+    $stdout, $stderr = captured_stdout, captured_stderr
+    yield
+    return {stdout: captured_stdout.string, stderr: captured_stderr.string}
+  ensure
+    $stdout = orig_stdout
+    $stderr = orig_stderr
+  end
+  def self.capture_output(&block)
+    capture_io(&block)[:stdout]
+  end
+  def self.capture_stderr(&block)
+    capture_io(&block)[:stderr]
+  end
+  
   def self.obtain_pvalue_by_threshold(args)
-    IO.popen("ruby -I #{$lib_folder} #{$lib_folder}/macroape/exec/find_pvalue.rb #{args}",&:read).strip.split.last
+    find_pvalue_output(args).strip.split.last
   end
   def self.exec_cmd(executable, param_list)
     "ruby -I #{$lib_folder} #{$lib_folder}/macroape/exec/#{executable}.rb #{param_list}"
+  end
+  def self.find_threshold_output(param_list)
+    capture_output{ Macroape::CLI::FindThreshold.main(param_list.split, 'stub help string') }
+  end
+  def self.find_pvalue_output(param_list)
+    capture_output{ Macroape::CLI::FindPValue.main(param_list.split, 'stub help string') }
   end
 end
