@@ -1,3 +1,4 @@
 #!/usr/bin/env ruby
 
-require 'macroape/exec/align_motifs.rb'
+require 'macroape/cli/align_motifs'
+Macroape::CLI::AlignMotifs.main(ARGV)

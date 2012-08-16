@@ -31,9 +31,19 @@ module Helpers
     "ruby -I #{$lib_folder} #{$lib_folder}/macroape/exec/#{executable}.rb #{param_list}"
   end
   def self.find_threshold_output(param_list)
-    capture_output{ Macroape::CLI::FindThreshold.main(param_list.split, 'stub help string') }
+    capture_output{ Macroape::CLI::FindThreshold.main(param_list.split) }
   end
   def self.find_pvalue_output(param_list)
-    capture_output{ Macroape::CLI::FindPValue.main(param_list.split, 'stub help string') }
+    capture_output{ Macroape::CLI::FindPValue.main(param_list.split) }
   end
+  def self.eval_similarity_output(param_list)
+    capture_output{ Macroape::CLI::EvalSimilarity.main(param_list.split) }
+  end
+  def self.eval_alignment_output(param_list)
+    capture_output{ Macroape::CLI::EvalAlignment.main(param_list.split) }
+  end
+  def self.scan_collection_output(param_list)
+    capture_output{ Macroape::CLI::ScanCollection.main(param_list.split) }
+  end
+  
 end

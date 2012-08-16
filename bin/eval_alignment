@@ -1,3 +1,4 @@
 #!/usr/bin/env ruby
 
-require 'macroape/exec/eval_alignment.rb'
+require 'macroape/cli/eval_alignment'
+Macroape::CLI::EvalAlignment.main(ARGV)

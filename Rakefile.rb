@@ -12,8 +12,8 @@ namespace :spec do
   task :eval_similarity do
     system("ruby -I ./test test/eval_similarity_test.rb")
   end
-  task :eval_alignment_similarity do
-    system("ruby -I ./test test/eval_alignment_similarity_test.rb")
+  task :eval_alignment do
+    system("ruby -I ./test test/eval_alignment_test.rb")
   end
   task :preprocess_collection do
     system("ruby -I ./test test/preprocess_collection_test.rb")
@@ -22,7 +22,7 @@ namespace :spec do
     system("ruby -I ./test test/scan_collection_test.rb")
   end
   task :tests => [:find_threshold, :find_pvalue, :eval_similarity,
-                :eval_alignment_similarity, :scan_collection, :preprocess_collection]
+                :eval_alignment, :scan_collection, :preprocess_collection]
   
   RSpec::Core::RakeTask.new
 end

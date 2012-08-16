@@ -1,3 +1,4 @@
 #!/usr/bin/env ruby
 
-require 'macroape/exec/preprocess_collection.rb'
+require 'macroape/cli/preprocess_collection'
+Macroape::CLI::PreprocessCollection.main(ARGV)

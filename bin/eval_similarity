@@ -1,3 +1,4 @@
 #!/usr/bin/env ruby
 
-require 'macroape/exec/eval_similarity.rb'
+require 'macroape/cli/eval_similarity'
+Macroape::CLI::EvalSimilarity.main(ARGV)
