@@ -34,7 +34,7 @@ module Helpers
     find_pvalue_output(args).strip.split.last
   end
   def self.exec_cmd(executable, param_list)
-    "ruby -I #{$lib_folder} #{$lib_folder}/macroape/exec/#{executable}.rb #{param_list}"
+    "ruby -I #{$lib_folder} #{$lib_folder}/../bin/#{executable} #{param_list}"
   end
   def self.find_threshold_output(param_list)
     capture_output{ Macroape::CLI::FindThreshold.main(param_list.split) }
