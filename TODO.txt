@@ -30,8 +30,6 @@ pwm3 direct shift3
 remove .stdin placeholder. Use tty? method instead
 
 
-move cli to different files
-move help_string to CLI
 use OptionParser (??? can OptionParser get stub ARGV ???)
 make capture_io able to replace stdin in order to make test `find_threshold < in_file` and so on faster
 make options more uniform so that some of them were reusable(and the question: can I apply two option parsers consequently?)

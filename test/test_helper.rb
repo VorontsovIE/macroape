@@ -1,9 +1,15 @@
 $lib_folder = File.dirname(__FILE__) + '/../lib'
 $LOAD_PATH.unshift $lib_folder
 require 'test/unit'
-
 require 'stringio'
-require 'macroape/cli'
+
+require 'macroape/cli/find_threshold'
+require 'macroape/cli/find_pvalue'
+require 'macroape/cli/eval_similarity'
+require 'macroape/cli/eval_alignment'
+require 'macroape/cli/preprocess_collection'
+require 'macroape/cli/scan_collection'
+require 'macroape/cli/align_motifs'
  
 module Helpers
   # from minitest
@@ -45,5 +51,9 @@ module Helpers
   def self.scan_collection_output(param_list)
     capture_output{ Macroape::CLI::ScanCollection.main(param_list.split) }
   end
+  def self.run_preprocess_collection(param_list)
+    Macroape::CLI::PreprocessCollection.main(param_list.split)
+  end
+
   
 end
