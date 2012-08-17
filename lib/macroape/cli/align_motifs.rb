@@ -32,9 +32,7 @@ module Macroape
         argv.each do |motif_name|
           pwm_second = data_model.new(File.read(motif_name)).to_pwm.background(background).discrete(discretization)
           cmp = Macroape::PWMCompare.new(pwm_first, pwm_second)
-          first_threshold = pwm_first.threshold(pvalue)
-          second_threshold = pwm_second.threshold(pvalue)
-          info = cmp.jaccard(first_threshold, second_threshold)
+          info = cmp.jaccard_by_pvalue(pvalue)
           shifts[motif_name] = [info[:shift], info[:orientation]]
         end
         
