@@ -25,6 +25,12 @@ module Macroape
         alignment.alignment_infos.merge( alignment.jaccard(threshold_first, threshold_second) )
       end.max_by {|alignment_infos| alignment_infos[:similarity] }
     end
+    
+    def jaccard_by_pvalue(pvalue)
+      threshold_first = first.threshold(pvalue)
+      threshold_second = second.threshold(pvalue)
+      jaccard(threshold_first, threshold_second)
+    end
 
     def each_alignment
       (-second.length..first.length).to_a.product([:direct,:revcomp]) do |shift, orientation|

@@ -24,7 +24,7 @@ module Macroape
         data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
         leader = argv.shift
         background = [1,1,1,1]
-        discretization = 100
+        discretization = 10
         pvalue = 0.0005
         
         shifts = {leader => [0,:direct]}

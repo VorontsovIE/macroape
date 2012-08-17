@@ -119,10 +119,7 @@ module Macroape
 
         cmp = Macroape::PWMCompareAligned.new(pwm_first, pwm_second, shift, orientation).max_hash_size(max_pair_hash_size)
 
-        first_threshold = pwm_first.threshold(pvalue)
-        second_threshold = pwm_second.threshold(pvalue)
-
-        info = cmp.alignment_infos.merge( cmp.jaccard(first_threshold, second_threshold) )
+        info = cmp.alignment_infos.merge( cmp.jaccard_by_pvalue(pvalue) )
 
         puts "#{info[:similarity]}\n#{info[:recognized_by_both]}\t#{info[:alignment_length]}\n#{info[:text]}\n#{info[:shift]}\t#{info[:orientation]}"
 

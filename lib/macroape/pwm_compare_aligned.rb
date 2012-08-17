@@ -117,6 +117,12 @@ module Macroape
       { similarity: similarity,  tanimoto: 1.0 - similarity,  recognized_by_both: intersect,
         recognized_by_first: f,  recognized_by_second: s }
     end
+    
+    def jaccard_by_pvalue(pvalue)
+      threshold_first = first.threshold(pvalue)
+      threshold_second = second.threshold(pvalue)
+      jaccard(threshold_first, threshold_second)
+    end
 
     def self.calculate_alignment_length(first_len, second_len, shift)
       if shift > 0

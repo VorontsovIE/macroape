@@ -102,10 +102,7 @@ module Macroape
 
         cmp = Macroape::PWMCompare.new(pwm_first, pwm_second).max_hash_size(max_pair_hash_size)
 
-        first_threshold = pwm_first.threshold(pvalue)
-        second_threshold = pwm_second.threshold(pvalue)
-
-        info = cmp.jaccard(first_threshold, second_threshold)
+        info = cmp.jaccard_by_pvalue(pvalue)
 
         puts "#{info[:similarity]}\n#{info[:recognized_by_both]}\t#{info[:alignment_length]}\n#{info[:text]}\n#{info[:shift]}\t#{info[:orientation]}"
 
