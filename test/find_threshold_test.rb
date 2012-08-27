@@ -1,6 +1,5 @@
 require 'test_helper'
 
-puts "\n\nfind_threshold test:"
 class FindThresholdTest < Test::Unit::TestCase
   def test_process_several_pvalues
     pvalues = []
@@ -27,8 +26,10 @@ class FindThresholdTest < Test::Unit::TestCase
     assert_equal Helpers.obtain_pvalue_by_threshold("test/data/KLF4_f2.pat #{threshold} -d 100"), real_pvalue
   end
   def test_process_pwm_from_stdin
-    assert_equal IO.popen(Helpers.exec_cmd('find_threshold', '.stdin < test/data/KLF4_f2.pat'), &:read),
-                 Helpers.find_threshold_output('test/data/KLF4_f2.pat')
+    assert_equal Helpers.find_threshold_output('test/data/KLF4_f2.pat'),
+                Helpers.provide_stdin(File.read('test/data/KLF4_f2.pat')) {
+                  Helpers.find_threshold_output('.stdin')
+                }
   end
 end
 

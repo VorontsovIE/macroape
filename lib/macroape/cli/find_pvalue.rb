@@ -68,7 +68,7 @@ module Macroape
 
         
         if filename == '.stdin'
-          pwm = Bioinform::PWM.new( STDIN.read )
+          pwm = Bioinform::PWM.new( $stdin.read )
         else
           raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
           pwm = Bioinform::PWM.new( File.read(filename) )

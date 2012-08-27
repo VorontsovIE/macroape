@@ -75,7 +75,7 @@ module Macroape
 
       #  if first_file == '.stdin' || second_file == '.stdin'
       #    r_stream, w_stream = IO.pipe
-      #    STDIN.readlines.each{|line| w_stream.write(line)}
+      #    $stdin.readlines.each{|line| w_stream.write(line)}
       #    w_stream.close
       #  end
 

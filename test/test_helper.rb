@@ -23,6 +23,16 @@ module Helpers
     $stdout = orig_stdout
     $stderr = orig_stderr
   end
+  
+  # Method stubs $stdin not STDIN !
+  def self.provide_stdin(input, &block)
+    orig_stdin = $stdin
+    $stdin = StringIO.new(input)
+    yield
+  ensure  
+    $stdin = orig_stdin
+  end
+  
   def self.capture_output(&block)
     capture_io(&block)[:stdout]
   end
@@ -55,5 +65,4 @@ module Helpers
     Macroape::CLI::PreprocessCollection.main(param_list.split)
   end
 
-  
 end

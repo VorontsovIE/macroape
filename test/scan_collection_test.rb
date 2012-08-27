@@ -1,6 +1,5 @@
 require 'test_helper'
 
-puts "\n\nscan_collection test:"
 class TestScanCollection < Test::Unit::TestCase
   def test_scan_default_cutoff
     assert_equal File.read('test/data/KLF4_f2_scan_results_default_cutoff.txt').gsub("\r\n", "\n"),
@@ -17,6 +16,8 @@ class TestScanCollection < Test::Unit::TestCase
   end
   def test_process_query_pwm_from_stdin
     assert_equal Helpers.scan_collection_output('test/data/KLF4_f2.pat test/data/test_collection.yaml --silent'),
-                 IO.popen(Helpers.exec_cmd('scan_collection', '.stdin test/data/test_collection.yaml --silent < test/data/KLF4_f2.pat'), &:read)
+                Helpers.provide_stdin(File.read('test/data/KLF4_f2.pat')) {
+                  Helpers.scan_collection_output('.stdin test/data/test_collection.yaml --silent')
+                }
   end
 end
