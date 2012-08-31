@@ -26,7 +26,7 @@ module Macroape
       scores = { 0 => {0 => 1} }
       length.times do |column|
         new_scores = recalc_score_hash(scores,
-                          @first.matrix[column], @second.matrix[column],
+                          first.matrix[column], second.matrix[column],
                           threshold_first - first.best_suffix(column + 1),
                           threshold_second - second.best_suffix(column + 1), &count_contribution_block)
         scores.replace(new_scores)
