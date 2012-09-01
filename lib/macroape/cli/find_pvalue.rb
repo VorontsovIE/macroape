@@ -73,9 +73,9 @@ module Macroape
           raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
           pwm = Bioinform::PWM.new( File.read(filename) )
         end
-        pwm.background(background).max_hash_size(max_hash_size)
+        pwm.background!(background).max_hash_size!(max_hash_size).discrete!(discretization)
 
-        counts = pwm.discrete(discretization).counts_by_thresholds(* thresholds.map{|count| count * discretization})
+        counts = pwm.counts_by_thresholds(* thresholds.map{|count| count * discretization})
         pvalues = counts.map{|count| count.to_f / pwm.vocabulary_volume}
         pvalues.zip(thresholds,counts).each{|pvalue,threshold,count|
           puts "#{threshold}\t#{count}\t#{pvalue}"

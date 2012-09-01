@@ -106,8 +106,8 @@ module Macroape
           pwm_second = Bioinform::PWM.new(File.read(second_file))
         end
         
-        pwm_first = pwm_first.background(first_background).max_hash_size(max_hash_size).discrete(discretization)
-        pwm_second = pwm_second.background(second_background).max_hash_size(max_hash_size).discrete(discretization)
+        pwm_first.background!(first_background).max_hash_size!(max_hash_size).discrete!(discretization)
+        pwm_second.background!(second_background).max_hash_size!(max_hash_size).discrete!(discretization)
 
         cmp = Macroape::PWMCompareAligned.new(pwm_first, pwm_second, shift, orientation).max_hash_size(max_pair_hash_size)
 

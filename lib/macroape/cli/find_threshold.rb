@@ -69,9 +69,9 @@ module Macroape
           pwm = Bioinform::PWM.new( File.read(filename) )
         end
 
-        pwm.background(background).max_hash_size(max_hash_size)
+        pwm.background!(background).max_hash_size!(max_hash_size).discrete!(discretization)
 
-        pwm.discrete(discretization).thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
+        pwm.thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
           puts "#{pvalue}\t#{threshold / discretization}\t#{real_pvalue}"
         end
         

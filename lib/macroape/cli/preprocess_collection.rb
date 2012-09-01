@@ -8,7 +8,7 @@ module Macroape
       def self.main(argv)
         help_string = %q{
         Command-line format:
-          ruby preprocess_collection.rb <folder with PWMs> [options]
+          ruby preprocess_collection.rb <file or folder with PWMs> [options]
 
         Options:
           [-p <list of P-values>]
@@ -34,10 +34,11 @@ module Macroape
         precise_discretization = 10
         output_file =  'collection.yaml'
         max_hash_size = 1000000
-
-        folder = argv.shift
-        raise "No input. You'd specify folder with pat-files" unless folder
-        raise "Error! Folder #{folder} doesn't exist" unless Dir.exist?(folder)
+        
+        data_source = argv.shift
+        
+        raise "No input. You'd specify file or folder with pwms" unless data_source
+        raise "Error! File or folder #{data_source} doesn't exist" unless Dir.exist?(data_source) || File.exist?(data_source)
 
         pvalues = []
         silent = false
@@ -65,22 +66,31 @@ module Macroape
               silent = true
             end
         end
-        pvalues = default_pvalues if pvalues.empty?
+        pvalues = default_pvalues  if pvalues.empty?
 
         collection = Macroape::Collection.new(rough_discretization, precise_discretization, background, pvalues)
-
-        current_dir = File.dirname(__FILE__)
-        Dir.glob(File.join(folder,'*')) do |filename|
-          STDERR.puts filename unless silent
-          pwm = Bioinform::PWM.new(File.read(filename))
-          pwm.name ||= File.basename(filename, File.extname(filename))
-
+        
+        if File.directory?(data_source)
+          pwms = Dir.glob(File.join(data_source,'*')).map do |filename|
+            STDERR.puts filename  unless silent
+            pwm = Bioinform::PWM.new(File.read(filename))
+            pwm.name ||= File.basename(filename, File.extname(filename))
+            pwm
+          end
+        elsif File.file?(data_source)
+          input = File.read(data_source)
+          pwms = Bioinform::PWM.choose_parser(input).split_on_motifs(input, Bioinform::PWM)
+        else
+          raise "Specified data source `#{data_source}` is neither directory nor file"
+        end
+        
+        pwms.each do |pwm|
           # When support of onefile collections is introduced - then here should be check if name exists.
           # Otherwise it should skip motif and tell you about this
           # Also two command line options to fail on skipping or to skip silently should be included
 
           info = {rough: {}, precise: {}}
-          pwm.background(background).max_hash_size(max_hash_size)
+          pwm.background!(background).max_hash_size!(max_hash_size)
 
           pwm.discrete(rough_discretization).thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
             info[:rough][pvalue] = threshold / rough_discretization
