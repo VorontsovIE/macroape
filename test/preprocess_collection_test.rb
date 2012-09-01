@@ -25,4 +25,24 @@ class TestPreprocessCollection < Test::Unit::TestCase
     File.delete 'test/data/test_collection.yaml.tmp'
   end
 
+  def test_preproceessing_folder_pcm
+    Helpers.run_preprocess_collection('test/data/test_collection_pcm -o test/data/test_collection.yaml.tmp -p 0.0005 0.0001 0.00005 --silent --pcm')
+    assert_equal YAML.load(File.read('test/data/test_collection.yaml')), YAML.load(File.read('test/data/test_collection.yaml.tmp'))
+    File.delete 'test/data/test_collection.yaml.tmp'
+  end
+  
+  def test_preproceessing_collection_from_a_single_file_pcm
+    Helpers.run_preprocess_collection('test/data/test_collection_single_file_pcm.txt -o test/data/test_collection.yaml.tmp -p 0.0005 0.0001 0.00005 --silent --pcm')
+    assert_equal YAML.load(File.read('test/data/test_collection.yaml')), YAML.load(File.read('test/data/test_collection.yaml.tmp'))
+    File.delete 'test/data/test_collection.yaml.tmp'
+  end
+  
+  def test_preproceessing_collection_from_stdin_pcm
+    Helpers.provide_stdin(File.read('test/data/test_collection_single_file_pcm.txt')){
+      Helpers.run_preprocess_collection('.stdin -o test/data/test_collection.yaml.tmp -p 0.0005 0.0001 0.00005 --silent --pcm')
+    }
+    assert_equal YAML.load(File.read('test/data/test_collection.yaml')), YAML.load(File.read('test/data/test_collection.yaml.tmp'))
+    File.delete 'test/data/test_collection.yaml.tmp'
+  end
+
 end

@@ -16,6 +16,7 @@ module Macroape
           [-b <background probabilities, ACGT - 4 numbers, space-delimited, sum should be equal to 1>]
           [-o <output file>]
           [--silent] - don't show current progress information during scan (by default this information's written into stderr)
+          [--pcm] - treats your input motifs as PCM-s. Motifs are converted to PWMs internally so output is the same as for according PWMs
 
         The tool stores preprocessed Macroape collection to the specified YAML-file.
 
@@ -28,6 +29,8 @@ module Macroape
           exit
         end
 
+        data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
+        
         default_pvalues = [0.0005]
         background = [1,1,1,1]
         rough_discretization = 1
@@ -71,20 +74,22 @@ module Macroape
         collection = Macroape::Collection.new(rough_discretization, precise_discretization, background, pvalues)
         
         if File.directory?(data_source)
-            pwms = Dir.glob(File.join(data_source,'*')).map do |filename|
-            pwm = Bioinform::PWM.new(File.read(filename))
+            motifs = Dir.glob(File.join(data_source,'*')).map do |filename|
+            pwm = data_model.new(File.read(filename))
             pwm.name ||= File.basename(filename, File.extname(filename))
             pwm
           end
         elsif File.file?(data_source)
           input = File.read(data_source)
-          pwms = Bioinform::PWM.choose_parser(input).split_on_motifs(input, Bioinform::PWM)
+          motifs = data_model.choose_parser(input).split_on_motifs(input, data_model)
         elsif data_source == '.stdin'
           input = $stdin.read
-          pwms = Bioinform::PWM.choose_parser(input).split_on_motifs(input, Bioinform::PWM)
+          motifs = data_model.choose_parser(input).split_on_motifs(input, data_model)
         else
           raise "Specified data source `#{data_source}` is neither directory nor file nor even .stdin"
         end
+        
+        pwms = motifs.map(&:to_pwm)
         
         pwms.each_with_index do |pwm,index|
           STDERR.puts "#{index + 1} -- Name: #{pwm.name}, Length: #{pwm.length}"  unless silent
