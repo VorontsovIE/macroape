@@ -71,8 +71,7 @@ module Macroape
         collection = Macroape::Collection.new(rough_discretization, precise_discretization, background, pvalues)
         
         if File.directory?(data_source)
-          pwms = Dir.glob(File.join(data_source,'*')).map do |filename|
-            STDERR.puts filename  unless silent
+            pwms = Dir.glob(File.join(data_source,'*')).map do |filename|
             pwm = Bioinform::PWM.new(File.read(filename))
             pwm.name ||= File.basename(filename, File.extname(filename))
             pwm
@@ -84,7 +83,9 @@ module Macroape
           raise "Specified data source `#{data_source}` is neither directory nor file"
         end
         
-        pwms.each do |pwm|
+        pwms.each_with_index do |pwm,index|
+          STDERR.puts "#{index + 1} -- Name: #{pwm.name}, Length: #{pwm.length}"  unless silent
+          
           # When support of onefile collections is introduced - then here should be check if name exists.
           # Otherwise it should skip motif and tell you about this
           # Also two command line options to fail on skipping or to skip silently should be included
