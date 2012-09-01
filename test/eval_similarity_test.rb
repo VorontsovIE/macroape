@@ -15,4 +15,28 @@ class TestEvalSimilarity < Test::Unit::TestCase
   def test_process_custom_discretization
     assert_equal "0.22754919499105544\n636.0\t11\n>>>>>>>>>>>\n.>>>>>>>>>>\n1\tdirect\n", Helpers.eval_similarity_output('test/data/SP1_f1.pat test/data/KLF4_f2.pat -d 1')
   end
+  
+  def test_process_first_motif_from_stdin
+    assert_equal "0.22754919499105544\n636.0\t11\n>>>>>>>>>>>\n.>>>>>>>>>>\n1\tdirect\n", 
+      Helpers.provide_stdin(File.read('test/data/SP1_f1.pat')){
+        Helpers.eval_similarity_output('.stdin test/data/KLF4_f2.pat -d 1')
+      }
+  end
+  
+  def test_process_second_motif_from_stdin
+    assert_equal "0.22754919499105544\n636.0\t11\n>>>>>>>>>>>\n.>>>>>>>>>>\n1\tdirect\n", 
+      Helpers.provide_stdin(File.read('test/data/KLF4_f2.pat')){ 
+        Helpers.eval_similarity_output('test/data/SP1_f1.pat .stdin -d 1') 
+      }
+  end
+
+  def test_process_both_motifs_from_stdin
+    assert_equal "0.22754919499105544\n636.0\t11\n>>>>>>>>>>>\n.>>>>>>>>>>\n1\tdirect\n", 
+      Helpers.provide_stdin(File.read('test/data/SP1_f1.pat') + File.read('test/data/KLF4_f2.pat')){
+        Helpers.eval_similarity_output('.stdin .stdin -d 1')
+      }
+  end
+
+
+  
 end

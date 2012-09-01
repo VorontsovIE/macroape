@@ -15,13 +15,6 @@ end
 desc 'Test all functionality of gem executables'
 task :spec => ['spec:test', 'spec:spec']
 
-
-Rake::TestTask.new do |t|
-  t.libs << "test"
-  t.test_files = FileList['test/*_test.rb']
-  t.verbose = true
-end 
-
 namespace :benchmark do
   task :run do
     require 'open3'

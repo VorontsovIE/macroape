@@ -73,29 +73,21 @@ module Macroape
         raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless first_background == first_background.reverse
         raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless second_background == second_background.reverse
 
-      #  if first_file == '.stdin' || second_file == '.stdin'
-      #    r_stream, w_stream = IO.pipe
-      #    $stdin.readlines.each{|line| w_stream.write(line)}
-      #    w_stream.close
-      #  end
-
+        parser = Bioinform::StringParser.new($stdin.read)  if first_file == '.stdin' || second_file == '.stdin'
+        
         if first_file == '.stdin'
-      #    r_stream, w_stream, extracted_pwm = extract_pwm(r_stream, w_stream)
-      #    pwm_first = Macroape::SingleMatrix.load_from_line_array(extracted_pwm)
+          pwm_first = Bioinform::PWM.new( parser.parse )
         else
           raise "Error! File #{first_file} don't exist" unless File.exist?(first_file)
           pwm_first = Bioinform::PWM.new(File.read(first_file))
         end
 
         if second_file == '.stdin'
-      #    r_stream, w_stream, extracted_pwm = extract_pwm(r_stream, w_stream)
-      #    pwm_second = Macroape::SingleMatrix.load_from_line_array(extracted_pwm)
+          pwm_second = Bioinform::PWM.new( parser.parse )
         else
           raise "Error! File #{second_file} don't exist" unless File.exist?(second_file)
           pwm_second = Bioinform::PWM.new(File.read(second_file))
         end
-
-        r_stream.close if first_file == '.stdin' || second_file == '.stdin'
         
         pwm_first = pwm_first.background(first_background).max_hash_size(max_hash_size).discrete(discretization)
         pwm_second = pwm_second.background(second_background).max_hash_size(max_hash_size).discrete(discretization)
