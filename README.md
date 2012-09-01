@@ -20,7 +20,7 @@ Or install it yourself as:
   For more information read manual at https://docs.google.com/document/pub?id=1_jsxhMNzMzy4d2d_byAd3n6Szg5gEcqG_Sf7w9tEqWw (not last version but comprehensive description of approach)
 
 ## Basic usage as a command-line tool
-  MacroAPE have 6 command line tools:
+  MacroAPE have 7 command line tools:
   
 ### Tools for calculating thresholds and pvalues:
   * find_threshold \<PWM file\> [-p \<pvalue\> (by default: 0.0005)]
@@ -34,8 +34,12 @@ Or install it yourself as:
   * preprocess_collection \<folder with motif files\> [-o \<collection output file\>]
   * scan_collection \<query PWM file\> \<collection file\>
   
+### Tool for finding mutual alignment of several motifs relative to first(leader) motif. It's designed to use with sequence_logo to draw logos of clusters
+  * align_motifs \<pwm_leader\> \<pwm_2\> \<pwm_3\> ...
+  
   Also you can use -h option to print help for a tool in console.
   There are lots of different command line options. Most useful option is -d <discretization=1|10|100|1000>. You can vary precision/speed rate by specifing a discretization. For more information look through a manual.
+  Some of tools also can process PCMs in addition to PWMs.
 
 ## Basic usage in your code
     require 'macroape'
@@ -51,7 +55,7 @@ Or install it yourself as:
     similarity_info = cmp.jaccard(first_threshold, second_threshold)
     puts "Jaccard similarity: #{similarity_info[:similarity]}"
     
-  For more details look a source code of utilities in lib/exec/ folder
+  For more details look a source code of utilities in lib/macroape/cli/ folder
 
 ## Contributing
 
