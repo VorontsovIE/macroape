@@ -49,6 +49,9 @@ module Helpers
   def self.find_threshold_output(param_list)
     capture_output{ Macroape::CLI::FindThreshold.main(param_list.split) }
   end
+  def self.align_motifs_output(param_list)
+    capture_output{ Macroape::CLI::AlignMotifs.main(param_list.split) }
+  end
   def self.find_pvalue_output(param_list)
     capture_output{ Macroape::CLI::FindPValue.main(param_list.split) }
   end
