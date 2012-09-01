@@ -16,5 +16,13 @@ class TestPreprocessCollection < Test::Unit::TestCase
     assert_equal YAML.load(File.read('test/data/test_collection.yaml')), YAML.load(File.read('test/data/test_collection.yaml.tmp'))
     File.delete 'test/data/test_collection.yaml.tmp'
   end
+  
+  def test_preproceessing_collection_from_stdin
+    Helpers.provide_stdin(File.read('test/data/test_collection_single_file.txt')){
+      Helpers.run_preprocess_collection('.stdin -o test/data/test_collection.yaml.tmp -p 0.0005 0.0001 0.00005 --silent')
+    }
+    assert_equal YAML.load(File.read('test/data/test_collection.yaml')), YAML.load(File.read('test/data/test_collection.yaml.tmp'))
+    File.delete 'test/data/test_collection.yaml.tmp'
+  end
 
 end

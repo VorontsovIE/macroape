@@ -8,7 +8,7 @@ module Macroape
       def self.main(argv)
         help_string = %q{
         Command-line format:
-          ruby preprocess_collection.rb <file or folder with PWMs> [options]
+          ruby preprocess_collection.rb <file or folder with PWMs or .stdin with PWMs> [options]
 
         Options:
           [-p <list of P-values>]
@@ -38,7 +38,7 @@ module Macroape
         data_source = argv.shift
         
         raise "No input. You'd specify file or folder with pwms" unless data_source
-        raise "Error! File or folder #{data_source} doesn't exist" unless Dir.exist?(data_source) || File.exist?(data_source)
+        raise "Error! File or folder #{data_source} doesn't exist" unless Dir.exist?(data_source) || File.exist?(data_source) || data_source == '.stdin'
 
         pvalues = []
         silent = false
@@ -79,8 +79,11 @@ module Macroape
         elsif File.file?(data_source)
           input = File.read(data_source)
           pwms = Bioinform::PWM.choose_parser(input).split_on_motifs(input, Bioinform::PWM)
+        elsif data_source == '.stdin'
+          input = $stdin.read
+          pwms = Bioinform::PWM.choose_parser(input).split_on_motifs(input, Bioinform::PWM)
         else
-          raise "Specified data source `#{data_source}` is neither directory nor file"
+          raise "Specified data source `#{data_source}` is neither directory nor file nor even .stdin"
         end
         
         pwms.each_with_index do |pwm,index|
