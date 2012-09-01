@@ -1,5 +1,5 @@
 Absolutely necessary:
-  Make it available to load PCM files with (it should be first preprocessed to PWMs in a standardized way) -- may be it's better to use pipeline
+  (already work in preprocess_colleсtion and align_motifs) Make it available to load PCM files with (it should be first preprocessed to PWMs in a standardized way) -- may be it's better to use pipeline 
 
 Specs and tests:
   create spec on use of MaxHashSize, MaxHashSizeDouble
@@ -15,17 +15,7 @@ Ideas to increase perfomance:
 Usability issues:  
   review Collection class. Now its completely unuseful. May be it should be even in another gem (with blackjack and clustering)
 
-New tool:
-align_motifs [--pcm|pwm?????] <pwm1> <pwm2> [<pwm3> ...] 
-Output:
-pwm1 direct shift1
-pwm2 revcomp shift2
-pwm3 direct shift3
-...
-
 remove .stdin placeholder. Use tty? method instead
 
-
 use OptionParser (??? can OptionParser get stub ARGV ???)
-make capture_io able to replace stdin in order to make test `find_threshold < in_file` and so on faster
 make options more uniform so that some of them were reusable(and the question: can I apply two option parsers consequently?)
