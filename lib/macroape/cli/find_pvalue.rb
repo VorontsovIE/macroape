@@ -41,6 +41,7 @@ module Macroape
         thresholds = []
         max_hash_size = 1000000
 
+        data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
         filename = argv.shift
 
         loop do
@@ -68,11 +69,12 @@ module Macroape
 
         
         if filename == '.stdin'
-          pwm = Bioinform::PWM.new( $stdin.read )
+          input = $stdin.read
         else
           raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
-          pwm = Bioinform::PWM.new( File.read(filename) )
+          input = File.read(filename)
         end
+        pwm = data_model.new(input).to_pwm
         pwm.background!(background).max_hash_size!(max_hash_size).discrete!(discretization)
 
         counts = pwm.counts_by_thresholds(* thresholds.map{|count| count * discretization})

@@ -36,6 +36,7 @@ module Macroape
         default_pvalues = [0.0005]
         discretization = 10000
         max_hash_size = 1000000
+        data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM      
 
         filename = argv.shift
         raise "No input. You'd specify input source: filename or .stdin" unless filename
@@ -63,12 +64,12 @@ module Macroape
         pvalues = default_pvalues if pvalues.empty?
 
         if filename == '.stdin'
-          pwm = Bioinform::PWM.new( $stdin.read )
+          input = $stdin.read
         else
           raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
-          pwm = Bioinform::PWM.new( File.read(filename) )
+          input = File.read(filename)
         end
-
+        pwm = data_model.new(input).to_pwm
         pwm.background!(background).max_hash_size!(max_hash_size).discrete!(discretization)
 
         pwm.thresholds(*pvalues) do |pvalue, threshold, real_pvalue|

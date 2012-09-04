@@ -47,7 +47,7 @@ module Macroape
         max_hash_size = 1000000
         max_pair_hash_size = 1000
 
-      
+        data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM      
         first_file = argv.shift
         second_file = argv.shift
         raise "You'd specify two input sources (each is filename or .stdin)" unless first_file and second_file
@@ -76,18 +76,20 @@ module Macroape
         parser = Bioinform::StringParser.new($stdin.read)  if first_file == '.stdin' || second_file == '.stdin'
         
         if first_file == '.stdin'
-          pwm_first = Bioinform::PWM.new( parser.parse )
+          input_first = parser.parse
         else
           raise "Error! File #{first_file} don't exist" unless File.exist?(first_file)
-          pwm_first = Bioinform::PWM.new(File.read(first_file))
+          input_first = File.read(first_file)
         end
+        pwm_first = data_model.new(input_first).to_pwm
 
         if second_file == '.stdin'
-          pwm_second = Bioinform::PWM.new( parser.parse )
+          input_second = parser.parse
         else
           raise "Error! File #{second_file} don't exist" unless File.exist?(second_file)
-          pwm_second = Bioinform::PWM.new(File.read(second_file))
+          input_second = File.read(second_file)
         end
+        pwm_second = data_model.new(input_second).to_pwm
         
         pwm_first.background!(first_background).max_hash_size!(max_hash_size).discrete!(discretization)
         pwm_second.background!(second_background).max_hash_size!(max_hash_size).discrete!(discretization)

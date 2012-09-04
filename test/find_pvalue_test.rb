@@ -1,6 +1,9 @@
 require 'test_helper'
 
 class FindPvalueTest < Test::Unit::TestCase
+  def test_process_pcm
+    assert_equal "4.1719\t1048.0\t0.00099945068359375\n", Helpers.find_pvalue_output('test/data/KLF4_f2.pcm 4.1719 --pcm')
+  end
   def test_process_one_threshold
     assert_equal "4.1719\t1048.0\t0.00099945068359375\n", Helpers.find_pvalue_output('test/data/KLF4_f2.pat 4.1719')
   end

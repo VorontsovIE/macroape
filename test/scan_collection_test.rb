@@ -1,6 +1,10 @@
 require 'test_helper'
 
 class TestScanCollection < Test::Unit::TestCase
+  def test_scan_pcm
+    assert_equal File.read('test/data/KLF4_f2_scan_results_default_cutoff.txt').gsub("\r\n", "\n"),
+                 Helpers.scan_collection_output('test/data/KLF4_f2.pcm test/data/test_collection.yaml --silent --pcm').gsub("\r\n","\n")
+  end
   def test_scan_default_cutoff
     assert_equal File.read('test/data/KLF4_f2_scan_results_default_cutoff.txt').gsub("\r\n", "\n"),
                  Helpers.scan_collection_output('test/data/KLF4_f2.pat test/data/test_collection.yaml --silent').gsub("\r\n","\n")

@@ -10,6 +10,11 @@ class FindThresholdTest < Test::Unit::TestCase
     }
     assert_equal pvalues, ['0.0005', '0.001']
   end
+  def test_process_pcm
+    pvalue, threshold, real_pvalue = Helpers.find_threshold_output('test/data/KLF4_f2.pcm -p 0.001 --pcm').strip.split("\t")
+    assert_equal '0.001', pvalue
+    assert_equal Helpers.obtain_pvalue_by_threshold("test/data/KLF4_f2.pat #{threshold}"), real_pvalue
+  end
   def test_process_one_pvalue
     pvalue, threshold, real_pvalue = Helpers.find_threshold_output('test/data/KLF4_f2.pat -p 0.001').strip.split("\t")
     assert_equal '0.001', pvalue

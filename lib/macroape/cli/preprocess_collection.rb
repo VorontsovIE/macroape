@@ -74,7 +74,7 @@ module Macroape
         collection = Macroape::Collection.new(rough_discretization, precise_discretization, background, pvalues)
         
         if File.directory?(data_source)
-            motifs = Dir.glob(File.join(data_source,'*')).map do |filename|
+          motifs = Dir.glob(File.join(data_source,'*')).map do |filename|
             pwm = data_model.new(File.read(filename))
             pwm.name ||= File.basename(filename, File.extname(filename))
             pwm

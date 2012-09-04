@@ -1,6 +1,9 @@
 require 'test_helper'
 
 class TestEvalSimilarity < Test::Unit::TestCase
+  def test_process_pair_of_pcms
+    assert_equal "0.2420758234928527\n779.0\t11\n.>>>>>>>>>>\n>>>>>>>>>>>\n-1\tdirect\n", Helpers.eval_similarity_output('test/data/KLF4_f2.pcm test/data/SP1_f1.pcm --pcm')
+  end
   def test_process_pair_of_pwms
     assert_equal "0.2420758234928527\n779.0\t11\n.>>>>>>>>>>\n>>>>>>>>>>>\n-1\tdirect\n", Helpers.eval_similarity_output('test/data/KLF4_f2.pat test/data/SP1_f1.pat')
   end

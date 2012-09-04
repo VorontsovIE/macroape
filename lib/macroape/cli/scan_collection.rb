@@ -36,6 +36,7 @@ module Macroape
           exit
         end
 
+        data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
         filename = argv.shift
         collection_file = argv.shift
         raise "No input. You'd specify input source for pat: filename or .stdin" unless filename
@@ -82,12 +83,13 @@ module Macroape
         raise "Thresholds for pvalue #{pvalue} aren't presented in collection (#{collection.pvalues.join(', ')}). Use one of listed pvalues or recalculate the collection with needed pvalue" unless collection.pvalues.include? pvalue
         
         if filename == '.stdin'
-          query_pwm = Bioinform::PWM.new( $stdin.read )
+          query_input = $stdin.read
         else
           raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
-          query_pwm = Bioinform::PWM.new(File.read(filename))
+          query_input = File.read(filename)
         end
 
+        query_pwm = data_model.new(query_input).to_pwm
         query_pwm.background(background_query).max_hash_size(max_hash_size)
         
         query_pwm_rough = query_pwm.discrete(collection.rough_discretization)
