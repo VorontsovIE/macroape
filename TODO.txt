@@ -1,6 +1,3 @@
-Absolutely necessary:
-  (already work in preprocess_colleсtion and align_motifs) Make it available to load PCM files with (it should be first preprocessed to PWMs in a standardized way) -- may be it's better to use pipeline 
-
 Specs and tests:
   create spec on use of MaxHashSize, MaxHashSizeDouble
   create spec for testing case when {real_pvalue == 0, threshold == best_score + 1}
@@ -17,5 +14,5 @@ Usability issues:
 
 remove .stdin placeholder. Use tty? method instead
 
-use OptionParser (??? can OptionParser get stub ARGV ???)
+use OptionParser or docopt
 make options more uniform so that some of them were reusable(and the question: can I apply two option parsers consequently?)
