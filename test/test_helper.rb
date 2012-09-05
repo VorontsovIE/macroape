@@ -2,6 +2,7 @@ $lib_folder = File.dirname(__FILE__) + '/../lib'
 $LOAD_PATH.unshift $lib_folder
 require 'test/unit'
 require 'stringio'
+require 'shellwords'
 
 require 'macroape/cli/find_threshold'
 require 'macroape/cli/find_pvalue'
@@ -47,25 +48,25 @@ module Helpers
     "ruby -I #{$lib_folder} #{$lib_folder}/../bin/#{executable} #{param_list}"
   end
   def self.find_threshold_output(param_list)
-    capture_output{ Macroape::CLI::FindThreshold.main(param_list.split) }
+    capture_output{ Macroape::CLI::FindThreshold.main(param_list.shellsplit) }
   end
   def self.align_motifs_output(param_list)
-    capture_output{ Macroape::CLI::AlignMotifs.main(param_list.split) }
+    capture_output{ Macroape::CLI::AlignMotifs.main(param_list.shellsplit) }
   end
   def self.find_pvalue_output(param_list)
-    capture_output{ Macroape::CLI::FindPValue.main(param_list.split) }
+    capture_output{ Macroape::CLI::FindPValue.main(param_list.shellsplit) }
   end
   def self.eval_similarity_output(param_list)
-    capture_output{ Macroape::CLI::EvalSimilarity.main(param_list.split) }
+    capture_output{ Macroape::CLI::EvalSimilarity.main(param_list.shellsplit) }
   end
   def self.eval_alignment_output(param_list)
-    capture_output{ Macroape::CLI::EvalAlignment.main(param_list.split) }
+    capture_output{ Macroape::CLI::EvalAlignment.main(param_list.shellsplit) }
   end
   def self.scan_collection_output(param_list)
-    capture_output{ Macroape::CLI::ScanCollection.main(param_list.split) }
+    capture_output{ Macroape::CLI::ScanCollection.main(param_list.shellsplit) }
   end
   def self.run_preprocess_collection(param_list)
-    Macroape::CLI::PreprocessCollection.main(param_list.split)
+    Macroape::CLI::PreprocessCollection.main(param_list.shellsplit)
   end
 
 end
