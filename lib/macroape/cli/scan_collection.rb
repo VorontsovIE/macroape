@@ -101,19 +101,16 @@ module Macroape
         similarities = {}
         precision_file_mode = {}
 
-        collection.pwms.each_key do |name|
-          pwm = collection.pwms[name]
+        collection.each do |pwm, pwm_info|
+          name = pwm.name
           pwm.background(collection.parameters.background).max_hash_size(max_hash_size)
           pwm_rough = pwm.discrete(collection.parameters.rough_discretization)
           pwm_precise = pwm.discrete(collection.parameters.precise_discretization)
-          
-          pwm_info = collection.infos[name]
-          
-          pwm_threshold_rough = pwm_info[:rough][pvalue] * collection.parameters.rough_discretization
-          pwm_threshold_precise = pwm_info[:precise][pvalue] * collection.parameters.precise_discretization
-          
-          
-          STDERR.puts pwm.name unless silent
+
+          pwm_threshold_rough = pwm_info.rough[pvalue] * collection.parameters.rough_discretization
+          pwm_threshold_precise = pwm_info.precise[pvalue] * collection.parameters.precise_discretization
+
+          STDERR.puts name unless silent
           cmp = Macroape::PWMCompare.new(query_pwm_rough, pwm_rough).max_hash_size(max_pair_hash_size)
           info = cmp.jaccard(query_threshold_rough, pwm_threshold_rough)
           precision_file_mode[name] = :rough

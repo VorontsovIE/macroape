@@ -1,19 +1,6 @@
 --- !ruby/object:Macroape::Collection
-parameters: !ruby/object:OpenStruct
-  table:
-    :rough_discretization: 1
-    :precise_discretization: 10
-    :background: &21019764
-    - 1
-    - 1
-    - 1
-    - 1
-    :pvalues:
-    - 0.0005
-    - 0.0001
-    - 5.0e-05
-pwms:
-  GABPA_f1: !ruby/object:Bioinform::PWM
+collection:
+- - !ruby/object:Bioinform::PWM
     matrix:
     - - -0.1106670158341858
       - 0.013801606113892391
@@ -69,9 +56,23 @@ pwms:
       - -1.0304105539540915
     name: GABPA_f1
     tags: []
-    background: *21019764
+    background: &20086572
+    - 1
+    - 1
+    - 1
+    - 1
     max_hash_size: 1000000
-  KLF4_f2: !ruby/object:Bioinform::PWM
+  - !ruby/object:OpenStruct
+    table:
+      :rough:
+        5.0e-05: 16.1
+        0.0001: 15.1
+        0.0005: 12.1
+      :precise:
+        5.0e-05: 8.61
+        0.0001: 7.609999999999999
+        0.0005: 4.51
+- - !ruby/object:Bioinform::PWM
     matrix:
     - - 0.30861857265872605
       - -2.254321000121579
@@ -115,9 +116,19 @@ pwms:
       - -0.18161647647456935
     name: KLF4_f2
     tags: []
-    background: *21019764
+    background: *20086572
     max_hash_size: 1000000
-  SP1_f1: !ruby/object:Bioinform::PWM
+  - !ruby/object:OpenStruct
+    table:
+      :rough:
+        5.0e-05: 14.1
+        0.0001: 13.1
+        0.0005: 11.1
+      :precise:
+        5.0e-05: 8.51
+        0.0001: 7.909999999999999
+        0.0005: 5.8100000000000005
+- - !ruby/object:Bioinform::PWM
     matrix:
     - - -0.24435707885585292
       - -0.674823404693731
@@ -165,33 +176,24 @@ pwms:
       - -0.68254820978656
     name: SP1_f1
     tags: []
-    background: *21019764
+    background: *20086572
     max_hash_size: 1000000
-infos:
-  GABPA_f1:
-    :rough:
-      5.0e-05: 16.1
-      0.0001: 15.1
-      0.0005: 12.1
-    :precise:
-      5.0e-05: 8.61
-      0.0001: 7.609999999999999
-      0.0005: 4.51
-  KLF4_f2:
-    :rough:
-      5.0e-05: 14.1
-      0.0001: 13.1
-      0.0005: 11.1
-    :precise:
-      5.0e-05: 8.51
-      0.0001: 7.909999999999999
-      0.0005: 5.8100000000000005
-  SP1_f1:
-    :rough:
-      5.0e-05: 14.1
-      0.0001: 14.1
-      0.0005: 11.1
-    :precise:
-      5.0e-05: 8.51
-      0.0001: 7.709999999999999
-      0.0005: 5.61
+  - !ruby/object:OpenStruct
+    table:
+      :rough:
+        5.0e-05: 14.1
+        0.0001: 14.1
+        0.0005: 11.1
+      :precise:
+        5.0e-05: 8.51
+        0.0001: 7.709999999999999
+        0.0005: 5.61
+parameters: !ruby/object:OpenStruct
+  table:
+    :rough_discretization: 1
+    :precise_discretization: 10
+    :background: *20086572
+    :pvalues:
+    - 0.0005
+    - 0.0001
+    - 5.0e-05

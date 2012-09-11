@@ -74,7 +74,7 @@ module Macroape
         collection = Macroape::Collection.new(rough_discretization, precise_discretization, background, pvalues)
         
         if File.directory?(data_source)
-          motifs = Dir.glob(File.join(data_source,'*')).map do |filename|
+          motifs = Dir.glob(File.join(data_source,'*')).sort.map do |filename|
             pwm = data_model.new(File.read(filename))
             pwm.name ||= File.basename(filename, File.extname(filename))
             pwm
@@ -98,18 +98,18 @@ module Macroape
           # Otherwise it should skip motif and tell you about this
           # Also two command line options to fail on skipping or to skip silently should be included
 
-          info = {rough: {}, precise: {}}
+          info = OpenStruct.new(rough: {}, precise: {})
           pwm.background!(background).max_hash_size!(max_hash_size)
 
           pwm.discrete(rough_discretization).thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
-            info[:rough][pvalue] = threshold / rough_discretization
+            info.rough[pvalue] = threshold / rough_discretization
           end
 
           pwm.discrete(precise_discretization).thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
-            info[:precise][pvalue] = threshold / precise_discretization
+            info.precise[pvalue] = threshold / precise_discretization
           end
 
-          collection.add_pwm(pwm, info)
+          collection.add_pm(pwm, info)
         end
         File.open(output_file,'w') do |f|
           f.puts(collection.to_yaml)
