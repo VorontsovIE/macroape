@@ -10,7 +10,7 @@ Ideas to increase perfomance:
   - Possibly algorithm shouldn't use hash but had two iterations: at first it determines possible hash scores for every length(if worst suffix is always zero, its flat space of scores at all pwm prefix lengths) of each pwm separately. And after that we can work with arrays which use such scores as indices via additional substructure
   
 Usability issues:  
-  review Collection class. Now its completely unuseful. May be it should be even in another gem (with blackjack and clustering)
+  make preprocess_collection be able to add information to existing collection of motifs. Make able to give collection a name from command line
 
 remove .stdin placeholder. Use tty? method instead
 
