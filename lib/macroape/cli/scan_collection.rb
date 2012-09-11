@@ -46,7 +46,7 @@ module Macroape
         pvalue = 0.0005
         cutoff = 0.05 # minimal similarity to output
         collection = YAML.load_file(collection_file)
-        background_query = collection.background
+        background_query = collection.parameters.background
         max_hash_size = 1000000
         max_pair_hash_size = 1000
         
@@ -80,7 +80,7 @@ module Macroape
           end
         end
 
-        raise "Thresholds for pvalue #{pvalue} aren't presented in collection (#{collection.pvalues.join(', ')}). Use one of listed pvalues or recalculate the collection with needed pvalue" unless collection.pvalues.include? pvalue
+        raise "Thresholds for pvalue #{pvalue} aren't presented in collection (#{collection.parameters.pvalues.join(', ')}). Use one of listed pvalues or recalculate the collection with needed pvalue" unless collection.parameters.pvalues.include? pvalue
         
         if filename == '.stdin'
           query_input = $stdin.read
@@ -92,8 +92,8 @@ module Macroape
         query_pwm = data_model.new(query_input).to_pwm
         query_pwm.background(background_query).max_hash_size(max_hash_size)
         
-        query_pwm_rough = query_pwm.discrete(collection.rough_discretization)
-        query_pwm_precise = query_pwm.discrete(collection.precise_discretization)
+        query_pwm_rough = query_pwm.discrete(collection.parameters.rough_discretization)
+        query_pwm_precise = query_pwm.discrete(collection.parameters.precise_discretization)
 
         query_threshold_rough = query_pwm_rough.threshold(pvalue)
         query_threshold_precise = query_pwm_precise.threshold(pvalue)
@@ -103,14 +103,14 @@ module Macroape
 
         collection.pwms.each_key do |name|
           pwm = collection.pwms[name]
-          pwm.background(collection.background).max_hash_size(max_hash_size)
-          pwm_rough = pwm.discrete(collection.rough_discretization)
-          pwm_precise = pwm.discrete(collection.precise_discretization)
+          pwm.background(collection.parameters.background).max_hash_size(max_hash_size)
+          pwm_rough = pwm.discrete(collection.parameters.rough_discretization)
+          pwm_precise = pwm.discrete(collection.parameters.precise_discretization)
           
           pwm_info = collection.infos[name]
           
-          pwm_threshold_rough = pwm_info[:rough][pvalue] * collection.rough_discretization
-          pwm_threshold_precise = pwm_info[:precise][pvalue] * collection.precise_discretization
+          pwm_threshold_rough = pwm_info[:rough][pvalue] * collection.parameters.rough_discretization
+          pwm_threshold_precise = pwm_info[:precise][pvalue] * collection.parameters.precise_discretization
           
           
           STDERR.puts pwm.name unless silent

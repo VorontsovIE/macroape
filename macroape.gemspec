@@ -8,7 +8,7 @@ Gem::Specification.new do |gem|
   gem.summary       = %q{PWM comparison tool using MACROAPE approach}
   gem.homepage      = "http://autosome.ru/macroape/"
 
-  gem.files         = `git ls-files`.split($\)
+  gem.files         = `git ls-files`.split($/)
   gem.executables   = gem.files.grep(%r{^bin/}).map{ |f| File.basename(f) }
   gem.test_files    = gem.files.grep(%r{^(test|spec|features)/})
   gem.name          = "macroape"
