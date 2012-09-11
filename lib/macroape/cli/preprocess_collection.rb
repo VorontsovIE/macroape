@@ -71,7 +71,10 @@ module Macroape
         end
         pvalues = default_pvalues  if pvalues.empty?
 
-        collection = Macroape::Collection.new(rough_discretization, precise_discretization, background, pvalues)
+        collection = Bioinform::Collection.new(rough_discretization: rough_discretization, 
+                                precise_discretization: precise_discretization,
+                                background: background,
+                                pvalues: pvalues)
         
         if File.directory?(data_source)
           motifs = Dir.glob(File.join(data_source,'*')).sort.map do |filename|

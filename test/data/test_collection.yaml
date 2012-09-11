@@ -1,4 +1,4 @@
---- !ruby/object:Macroape::Collection
+--- &18156900 !ruby/object:Bioinform::Collection
 collection:
 - - !ruby/object:Bioinform::PWM
     matrix:
@@ -55,8 +55,9 @@ collection:
       - 0.4381106695354074
       - -1.0304105539540915
     name: GABPA_f1
-    tags: []
-    background: &20086572
+    tags:
+    - *18156900
+    background: &18124572
     - 1
     - 1
     - 1
@@ -115,8 +116,9 @@ collection:
       - -0.8080773665408135
       - -0.18161647647456935
     name: KLF4_f2
-    tags: []
-    background: *20086572
+    tags:
+    - *18156900
+    background: *18124572
     max_hash_size: 1000000
   - !ruby/object:OpenStruct
     table:
@@ -175,8 +177,9 @@ collection:
       - -0.2862677570028208
       - -0.68254820978656
     name: SP1_f1
-    tags: []
-    background: *20086572
+    tags:
+    - *18156900
+    background: *18124572
     max_hash_size: 1000000
   - !ruby/object:OpenStruct
     table:
@@ -192,7 +195,7 @@ parameters: !ruby/object:OpenStruct
   table:
     :rough_discretization: 1
     :precise_discretization: 10
-    :background: *20086572
+    :background: *18124572
     :pvalues:
     - 0.0005
     - 0.0001
