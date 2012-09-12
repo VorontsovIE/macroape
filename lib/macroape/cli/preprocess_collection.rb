@@ -1,4 +1,4 @@
-require 'macroape'
+require_relative '../../macroape'
 require 'yaml'
 
 module Macroape
@@ -110,8 +110,8 @@ module Macroape
 
           pwm.discrete(precise_discretization).thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
             info.precise[pvalue] = threshold / precise_discretization
+            $stderr.puts "#{pwm.name} at pvalue #{pvalue} has threshold that yields real-pvalue 0 in precise mode"  if real_pvalue == 0
           end
-
           collection.add_pm(pwm, info)
         end
         File.open(output_file,'w') do |f|

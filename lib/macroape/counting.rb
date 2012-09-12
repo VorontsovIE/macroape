@@ -17,6 +17,9 @@ module Bioinform
     def threshold(pvalue)
       thresholds(pvalue){|_, thresh, _| return thresh }
     end
+    def threshold_and_real_pvalue(pvalue)
+      thresholds(pvalue){|_, thresh, real_pv| return thresh, real_pv }
+    end
 
     def thresholds(*pvalues)
       thresholds_by_pvalues(*pvalues).each do |pvalue,(thresholds, counts)|

@@ -1,4 +1,4 @@
-require 'macroape/aligned_pair_intersection'
+require_relative './aligned_pair_intersection'
 
 module Macroape
   class PWMCompareAligned

@@ -1,4 +1,4 @@
-require 'macroape'
+require_relative '../../macroape'
 
 module Macroape
   module CLI

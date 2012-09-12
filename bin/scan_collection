@@ -1,4 +1,4 @@
 #!/usr/bin/env ruby
 
-require 'macroape/cli/scan_collection'
+require_relative '../lib/macroape/cli/scan_collection'
 Macroape::CLI::ScanCollection.main(ARGV)
