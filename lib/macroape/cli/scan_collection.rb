@@ -99,7 +99,7 @@ module Macroape
         query_threshold_precise, query_precise_real_pvalue = query_pwm_precise.threshold_and_real_pvalue(pvalue)
         
         if query_precise_real_pvalue == 0
-          $stderr.puts "Query motif #{query_pwm.name} gives 0 recognized words for a given P-value of #{pvalue} with the precise discretization level of #{collection.parameters.rough_discretization}. It's impossible to scan collection for this motif"
+          $stderr.puts "Query motif #{query_pwm.name} gives 0 recognized words for a given P-value of #{pvalue} with the precise discretization level of #{collection.parameters.precise_discretization}. It's impossible to scan collection for this motif"
           exit 1
         end
         
