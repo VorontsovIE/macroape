@@ -103,16 +103,25 @@ module Macroape
 
           info = OpenStruct.new(rough: {}, precise: {})
           pwm.background!(background).max_hash_size!(max_hash_size)
+          skip_motif = false
 
           pwm.discrete(rough_discretization).thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
-            info.rough[pvalue] = threshold / rough_discretization
+            if real_pvalue == 0
+              $stderr.puts "#{pwm.name} at pvalue #{pvalue} has threshold that yields real-pvalue 0 in rough mode. Rough calculation will be skipped"
+            else
+              info.rough[pvalue] = threshold / rough_discretization
+            end
           end
 
           pwm.discrete(precise_discretization).thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
-            info.precise[pvalue] = threshold / precise_discretization
-            $stderr.puts "#{pwm.name} at pvalue #{pvalue} has threshold that yields real-pvalue 0 in precise mode"  if real_pvalue == 0
+            if real_pvalue == 0
+              $stderr.puts "#{pwm.name} at pvalue #{pvalue} has threshold that yields real-pvalue 0 in precise mode. Motif will be excluded from collection"
+              skip_motif = true
+            else
+              info.precise[pvalue] = threshold / precise_discretization
+            end
           end
-          collection.add_pm(pwm, info)
+          collection.add_pm(pwm, info)  unless skip_motif
         end
         File.open(output_file,'w') do |f|
           f.puts(collection.to_yaml)

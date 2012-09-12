@@ -96,7 +96,12 @@ module Macroape
         query_pwm_precise = query_pwm.discrete(collection.parameters.precise_discretization)
 
         query_threshold_rough, query_rough_real_pvalue = query_pwm_rough.threshold_and_real_pvalue(pvalue)        
-        query_threshold_precise = query_pwm_precise.threshold(pvalue)
+        query_threshold_precise, query_precise_real_pvalue = query_pwm_precise.threshold_and_real_pvalue(pvalue)
+        
+        if query_precise_real_pvalue == 0
+          $stderr.puts "Query motif #{query_pwm.name} gives 0 recognized words for a given P-value of #{pvalue} with the precise discretization level of #{collection.parameters.rough_discretization}. It's impossible to scan collection for this motif"
+          exit 1
+        end
         
         if query_rough_real_pvalue == 0
           query_pwm_rough, query_threshold_rough = query_pwm_precise, query_threshold_precise
@@ -109,19 +114,16 @@ module Macroape
         collection.each do |collection_pwm, pwm_info|
           name = collection_pwm.name
           STDERR.puts name unless silent
-          
           collection_pwm.background(collection.parameters.background).max_hash_size(max_hash_size)
-          
-          collection_pwm_rough = collection_pwm.discrete(collection.parameters.rough_discretization)
-          collection_threshold_rough = pwm_info.rough[pvalue] * collection.parameters.rough_discretization
-          
-          info = Macroape::PWMCompare.new(query_pwm_rough, collection_pwm_rough).max_hash_size(max_pair_hash_size).jaccard(query_threshold_rough, collection_threshold_rough)
-          precision_file_mode[name] = :rough
-
-          if precision_mode == :precise and info[:similarity] >= minimal_similarity
+          if pwm_info.rough
+            collection_pwm_rough = collection_pwm.discrete(collection.parameters.rough_discretization)
+            collection_threshold_rough = pwm_info.rough[pvalue] * collection.parameters.rough_discretization
+            info = Macroape::PWMCompare.new(query_pwm_rough, collection_pwm_rough).max_hash_size(max_pair_hash_size).jaccard(query_threshold_rough, collection_threshold_rough)
+            precision_file_mode[name] = :rough
+          end
+          if !pwm_info.rough || (precision_mode == :precise) && (info[:similarity] >= minimal_similarity)
             collection_pwm_precise = collection_pwm.discrete(collection.parameters.precise_discretization)
             collection_threshold_precise = pwm_info.precise[pvalue] * collection.parameters.precise_discretization
-            
             info = Macroape::PWMCompare.new(query_pwm_precise, collection_pwm_precise).max_hash_size(max_pair_hash_size).jaccard(query_threshold_precise, collection_threshold_precise)
             precision_file_mode[name] = :precise
           end
