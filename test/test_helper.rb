@@ -65,6 +65,9 @@ module Helpers
   def self.scan_collection_output(param_list)
     capture_output{ Macroape::CLI::ScanCollection.main(param_list.shellsplit) }
   end
+  def self.scan_collection_stderr(param_list)
+    capture_stderr{ Macroape::CLI::ScanCollection.main(param_list.shellsplit) }
+  end
   def self.run_preprocess_collection(param_list)
     Macroape::CLI::PreprocessCollection.main(param_list.shellsplit)
   end

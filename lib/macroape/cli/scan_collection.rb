@@ -100,7 +100,7 @@ module Macroape
         
         if query_precise_real_pvalue == 0
           $stderr.puts "Query motif #{query_pwm.name} gives 0 recognized words for a given P-value of #{pvalue} with the precise discretization level of #{collection.parameters.precise_discretization}. It's impossible to scan collection for this motif"
-          exit 1
+          return
         end
         
         if query_rough_real_pvalue == 0
