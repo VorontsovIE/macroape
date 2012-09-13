@@ -1,7 +1,4 @@
-require 'benchmark'
-
-$:.unshift File.join(File.dirname(__FILE__),'../lib')
-require_relative '../lib/macroape'
+require_relative 'benchmark_helper'
 
 class TaskToBenchmark
   def setup
