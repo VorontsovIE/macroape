@@ -58,7 +58,7 @@ Or install it yourself as:
   For more details look a source code of utilities in lib/macroape/cli/ folder
 
 ## Contributing
-  
+
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Added some feature'`)
