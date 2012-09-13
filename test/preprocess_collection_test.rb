@@ -1,6 +1,6 @@
-require 'test_helper'
 require 'yaml'
 require 'macroape'
+require_relative 'test_helper'
 
 class TestPreprocessCollection < Test::Unit::TestCase
   def test_multipvalue_preproceessing

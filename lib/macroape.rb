@@ -1,6 +1,5 @@
 require_relative 'macroape/version'
 
-require 'bioinform'
 require_relative 'macroape/counting'
 require_relative 'macroape/aligned_pair_intersection'
 require_relative 'macroape/pwm_compare_aligned'

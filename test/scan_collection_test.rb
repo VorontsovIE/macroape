@@ -1,4 +1,4 @@
-require 'test_helper'
+require_relative 'test_helper'
 
 class TestScanCollection < Test::Unit::TestCase
   def test_scan_pcm

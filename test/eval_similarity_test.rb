@@ -1,4 +1,4 @@
-require 'test_helper'
+require_relative 'test_helper'
 
 class TestEvalSimilarity < Test::Unit::TestCase
   def test_process_pair_of_pcms

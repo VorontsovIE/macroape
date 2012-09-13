@@ -1,4 +1,4 @@
-require 'test_helper'
+require_relative 'test_helper'
 
 class TestEvalAlignment < Test::Unit::TestCase
   def test_process_pcm_files

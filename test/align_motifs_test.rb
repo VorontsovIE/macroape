@@ -1,4 +1,4 @@
-require 'test_helper'
+require_relative 'test_helper'
 
 class TestAlignmotifs < Test::Unit::TestCase
   def test_align_motifs

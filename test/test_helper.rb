@@ -4,13 +4,13 @@ require 'test/unit'
 require 'stringio'
 require 'shellwords'
 
-require 'macroape/cli/find_threshold'
-require 'macroape/cli/find_pvalue'
-require 'macroape/cli/eval_similarity'
-require 'macroape/cli/eval_alignment'
-require 'macroape/cli/preprocess_collection'
-require 'macroape/cli/scan_collection'
-require 'macroape/cli/align_motifs'
+require_relative '../lib/macroape/cli/find_threshold'
+require_relative '../lib/macroape/cli/find_pvalue'
+require_relative '../lib/macroape/cli/eval_similarity'
+require_relative '../lib/macroape/cli/eval_alignment'
+require_relative '../lib/macroape/cli/preprocess_collection'
+require_relative '../lib/macroape/cli/scan_collection'
+require_relative '../lib/macroape/cli/align_motifs'
  
 module Helpers
   # from minitest
