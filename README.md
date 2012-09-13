@@ -58,11 +58,13 @@ Or install it yourself as:
   For more details look a source code of utilities in lib/macroape/cli/ folder
 
 ## Contributing
-
+  
 1. Fork it
 2. Create your feature branch (`git checkout -b my-new-feature`)
 3. Commit your changes (`git commit -am 'Added some feature'`)
 4. Push to the branch (`git push origin my-new-feature`)
 5. Create new Pull Request
+
+If you're developing both macroape and bioinform - it may be useful to know that test_helper and spec_helper expands require path in such a way that if you have two "cousin" folders: macroape and bioinform then macroape specs will require bioinform from development folder not from gem. It can save you lots of time not to rebuild-reinstall bioinform gem each time it get some changes
 
 Copyright (c) 2011-2012 Ilya Vorontsov, Ivan Kulakovskiy, Vsevolod Makeev

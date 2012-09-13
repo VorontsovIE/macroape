@@ -73,7 +73,10 @@ module Macroape
         raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless first_background == first_background.reverse
         raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless second_background == second_background.reverse
 
-        parser = Bioinform::StringParser.new($stdin.read)  if first_file == '.stdin' || second_file == '.stdin'
+        if first_file == '.stdin' || second_file == '.stdin'
+          input = $stdin.read
+          parser = data_model.choose_parser(input).new(input)
+        end
         
         if first_file == '.stdin'
           input_first = parser.parse
