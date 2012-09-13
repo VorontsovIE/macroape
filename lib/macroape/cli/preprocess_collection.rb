@@ -84,10 +84,10 @@ module Macroape
           end
         elsif File.file?(data_source)
           input = File.read(data_source)
-          motifs = data_model.choose_parser(input).split_on_motifs(input, data_model)
+          motifs = data_model.split_on_motifs(input)
         elsif data_source == '.stdin'
           input = $stdin.read
-          motifs = data_model.choose_parser(input).split_on_motifs(input, data_model)
+          motifs = data_model.split_on_motifs(input)
         else
           raise "Specified data source `#{data_source}` is neither directory nor file nor even .stdin"
         end
