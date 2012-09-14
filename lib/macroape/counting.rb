@@ -3,8 +3,7 @@ require 'bioinform'
 module Bioinform
   class PWM
     # sets or gets limit size of calculation hash. It's a defence against overuse CPU resources by non-appropriate data
-    def max_hash_size=(new_max_hash_size); parameters.max_hash_size = new_max_hash_size; end
-    def max_hash_size; parameters.max_hash_size; end
+    make_parameters :max_hash_size
     
     def threshold(pvalue)
       thresholds(pvalue){|_, thresh, _| return thresh }

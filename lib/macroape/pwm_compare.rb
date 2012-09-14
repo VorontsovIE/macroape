@@ -1,15 +1,11 @@
-require 'ostruct'
+require 'bioinform/support/parameters'
 
 module Macroape
   class PWMCompare
+    include Parameters
     # sets or gets limit of summary size of calculation hash. It's a defence against overuse CPU resources by non-appropriate data
-    def max_pair_hash_size=(new_max_pair_hash_size); parameters.max_pair_hash_size = new_max_pair_hash_size; end
-    def max_pair_hash_size; parameters.max_pair_hash_size; end
-    def set_parameters(hsh)
-      hsh.each{|k,v| send("#{k}=", v) }
-      self
-    end
-  
+    make_parameters :max_pair_hash_size
+
     attr_reader :first, :second, :parameters
     def initialize(first, second)
       @parameters = OpenStruct.new
