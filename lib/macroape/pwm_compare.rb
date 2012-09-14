@@ -1,21 +1,18 @@
+require 'ostruct'
+
 module Macroape
   class PWMCompare
     # sets or gets limit of summary size of calculation hash. It's a defence against overuse CPU resources by non-appropriate data
-    def max_hash_size!(new_max_hash_size)
-      @max_hash_size = new_max_hash_size
+    def max_pair_hash_size=(new_max_pair_hash_size); parameters.max_pair_hash_size = new_max_pair_hash_size; end
+    def max_pair_hash_size; parameters.max_pair_hash_size; end
+    def set_parameters(hsh)
+      hsh.each{|k,v| send("#{k}=", v) }
       self
     end
-    
-    def max_hash_size(*args)
-      case args.size
-      when 0 then @max_hash_size
-      when 1 then max_hash_size!(args.first)
-      else raise ArgumentError, '#max_hash_size method can get 0 or 1 argument'
-      end
-    end
   
-    attr_reader :first, :second
+    attr_reader :first, :second, :parameters
     def initialize(first, second)
+      @parameters = OpenStruct.new
       @first = first
       @second = second
     end
@@ -34,7 +31,7 @@ module Macroape
 
     def each_alignment
       (-second.length..first.length).to_a.product([:direct,:revcomp]) do |shift, orientation|
-        yield PWMCompareAligned.new(first, second, shift, orientation).max_hash_size(max_hash_size)
+        yield PWMCompareAligned.new(first, second, shift, orientation).set_parameters(max_pair_hash_size: max_pair_hash_size)
       end
     end
 

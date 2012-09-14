@@ -1,9 +1,12 @@
+require 'ostruct'
 require_relative './aligned_pair_intersection'
 
 module Macroape
   class PWMCompareAligned
-    attr_reader :first, :second, :length, :shift, :orientation, :first_length, :second_length
+    attr_reader :first, :second, :length, :shift, :orientation, :first_length, :second_length, :parameters
+    
     def initialize(first_unaligned, second_unaligned, shift, orientation)
+      @parameters = OpenStruct.new
       @shift, @orientation = shift, orientation
 
       @first_length, @second_length = first_unaligned.length, second_unaligned.length
@@ -20,6 +23,13 @@ module Macroape
 
       @first = first.right_augment(@length - first.length)
       @second = second.right_augment(@length - second.length)
+    end
+    
+    def max_pair_hash_size=(new_max_pair_hash_size); parameters.max_pair_hash_size = new_max_pair_hash_size; end
+    def max_pair_hash_size; parameters.max_pair_hash_size; end
+    def set_parameters(hsh)
+      hsh.each{|k,v| send("#{k}=", v) }
+      self
     end
 
     def direct?
@@ -131,22 +141,6 @@ module Macroape
         [first_len - shift, second_len].max
       end
     end
-    
-    # sets or gets limit of summary size of calculation hash. It's a defence against overuse CPU resources by non-appropriate data
-    def max_hash_size!(new_max_hash_size)
-      @max_hash_size = new_max_hash_size
-      self
-    end
-    
-    def max_hash_size(*args)
-      case args.size
-      when 0 then @max_hash_size
-      when 1 then max_hash_size!(args.first)
-      else raise ArgumentError, '#max_hash_size method can get 0 or 1 argument'
-      end
-    end
-    
-
   end
 
 end

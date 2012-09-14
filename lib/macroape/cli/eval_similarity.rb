@@ -94,10 +94,10 @@ module Macroape
         end
         pwm_second = data_model.new(input_second).to_pwm
         
-        pwm_first.set_parameters(background: first_background).max_hash_size!(max_hash_size).discrete!(discretization)
-        pwm_second.set_parameters(background: second_background).max_hash_size!(max_hash_size).discrete!(discretization)
+        pwm_first.set_parameters(background: first_background, max_hash_size: max_hash_size).discrete!(discretization)
+        pwm_second.set_parameters(background: second_background, max_hash_size: max_hash_size).discrete!(discretization)
 
-        cmp = Macroape::PWMCompare.new(pwm_first, pwm_second).max_hash_size(max_pair_hash_size)
+        cmp = Macroape::PWMCompare.new(pwm_first, pwm_second).set_parameters(max_pair_hash_size: max_pair_hash_size)
 
         info = cmp.jaccard_by_pvalue(pvalue)
 

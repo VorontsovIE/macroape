@@ -70,7 +70,7 @@ module Macroape
           input = File.read(filename)
         end
         pwm = data_model.new(input).to_pwm
-        pwm.set_parameters(background: background).max_hash_size!(max_hash_size).discrete!(discretization)
+        pwm.set_parameters(background: background, max_hash_size: max_hash_size).discrete!(discretization)
 
         pwm.thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
           puts "#{pvalue}\t#{threshold / discretization}\t#{real_pvalue}"
