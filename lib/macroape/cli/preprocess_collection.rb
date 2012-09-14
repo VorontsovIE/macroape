@@ -102,7 +102,7 @@ module Macroape
           # Also two command line options to fail on skipping or to skip silently should be included
 
           info = OpenStruct.new(rough: {}, precise: {})
-          pwm.background!(background).max_hash_size!(max_hash_size)
+          pwm.set_parameters(background: background).max_hash_size!(max_hash_size)
           skip_motif = false
 
           pwm.discrete(rough_discretization).thresholds(*pvalues) do |pvalue, threshold, real_pvalue|

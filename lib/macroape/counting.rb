@@ -85,7 +85,7 @@ module Bioinform
         4.times do |letter|
           new_score = score + column[letter]
           if new_score >= least_sufficient
-            new_scores[new_score] += count * @background[letter]
+            new_scores[new_score] += count * background[letter]
           end
         end
       end

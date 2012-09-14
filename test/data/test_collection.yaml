@@ -1,6 +1,17 @@
---- &18156900 !ruby/object:Bioinform::Collection
+--- &19230696 !ruby/object:Bioinform::Collection
 collection:
 - - !ruby/object:Bioinform::PWM
+    parameters: !ruby/object:OpenStruct
+      table:
+        :name: GABPA_f1
+        :tags:
+        - *19230696
+        :background: &19231104
+        - 1
+        - 1
+        - 1
+        - 1
+      modifiable: true
     matrix:
     - - -0.1106670158341858
       - 0.013801606113892391
@@ -54,14 +65,6 @@ collection:
       - -0.01814819455289191
       - 0.4381106695354074
       - -1.0304105539540915
-    name: GABPA_f1
-    tags:
-    - *18156900
-    background: &18124572
-    - 1
-    - 1
-    - 1
-    - 1
     max_hash_size: 1000000
   - !ruby/object:OpenStruct
     table:
@@ -74,6 +77,13 @@ collection:
         0.0001: 7.609999999999999
         0.0005: 4.51
 - - !ruby/object:Bioinform::PWM
+    parameters: !ruby/object:OpenStruct
+      table:
+        :name: KLF4_f2
+        :tags:
+        - *19230696
+        :background: *19231104
+      modifiable: true
     matrix:
     - - 0.30861857265872605
       - -2.254321000121579
@@ -115,10 +125,6 @@ collection:
       - 0.8982415633049462
       - -0.8080773665408135
       - -0.18161647647456935
-    name: KLF4_f2
-    tags:
-    - *18156900
-    background: *18124572
     max_hash_size: 1000000
   - !ruby/object:OpenStruct
     table:
@@ -131,6 +137,13 @@ collection:
         0.0001: 7.909999999999999
         0.0005: 5.8100000000000005
 - - !ruby/object:Bioinform::PWM
+    parameters: !ruby/object:OpenStruct
+      table:
+        :name: SP1_f1
+        :tags:
+        - *19230696
+        :background: *19231104
+      modifiable: true
     matrix:
     - - -0.24435707885585292
       - -0.674823404693731
@@ -176,10 +189,6 @@ collection:
       - 0.7641033353626657
       - -0.2862677570028208
       - -0.68254820978656
-    name: SP1_f1
-    tags:
-    - *18156900
-    background: *18124572
     max_hash_size: 1000000
   - !ruby/object:OpenStruct
     table:
@@ -195,7 +204,7 @@ parameters: !ruby/object:OpenStruct
   table:
     :rough_discretization: 1
     :precise_discretization: 10
-    :background: *18124572
+    :background: *19231104
     :pvalues:
     - 0.0005
     - 0.0001

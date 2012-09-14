@@ -90,7 +90,7 @@ module Macroape
         end
 
         query_pwm = data_model.new(query_input).to_pwm
-        query_pwm.background(background_query).max_hash_size(max_hash_size)
+        query_pwm.set_parameters(background: background_query).max_hash_size(max_hash_size)
         
         query_pwm_rough = query_pwm.discrete(collection.parameters.rough_discretization)
         query_pwm_precise = query_pwm.discrete(collection.parameters.precise_discretization)
@@ -114,7 +114,7 @@ module Macroape
         collection.each do |collection_pwm, pwm_info|
           name = collection_pwm.name
           STDERR.puts name unless silent
-          collection_pwm.background(collection.parameters.background).max_hash_size(max_hash_size)
+          collection_pwm.set_parameters(background: collection.parameters.background).max_hash_size(max_hash_size)
           if pwm_info.rough
             collection_pwm_rough = collection_pwm.discrete(collection.parameters.rough_discretization)
             collection_threshold_rough = pwm_info.rough[pvalue] * collection.parameters.rough_discretization

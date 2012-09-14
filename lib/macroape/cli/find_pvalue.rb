@@ -75,7 +75,7 @@ module Macroape
           input = File.read(filename)
         end
         pwm = data_model.new(input).to_pwm
-        pwm.background!(background).max_hash_size!(max_hash_size).discrete!(discretization)
+        pwm.set_parameters(background: background).max_hash_size!(max_hash_size).discrete!(discretization)
 
         counts = pwm.counts_by_thresholds(* thresholds.map{|count| count * discretization})
         pvalues = counts.map{|count| count.to_f / pwm.vocabulary_volume}
