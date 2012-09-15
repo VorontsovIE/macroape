@@ -33,7 +33,7 @@ module Macroape
           cat motifs/KLF4.pat motifs/SP1.pat | ruby eval_similarity.rb .stdin .stdin -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
         }
 
-        if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
+        if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
           STDERR.puts help_string
           exit
         end

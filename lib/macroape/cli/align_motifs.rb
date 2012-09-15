@@ -15,7 +15,7 @@ module Macroape
           pwm_3_file  shift_3  orientation_3
         }
 
-        if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
+        if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
           STDERR.puts help_string
           exit
         end

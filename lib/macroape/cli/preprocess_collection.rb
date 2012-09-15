@@ -1,5 +1,6 @@
 require_relative '../../macroape'
 require 'yaml'
+require 'shellwords'
 
 module Macroape
   module CLI
@@ -8,13 +9,14 @@ module Macroape
       def self.main(argv)
         help_string = %q{
         Command-line format:
-          ruby preprocess_collection.rb <file or folder with PWMs or .stdin with PWMs> [options]
+          ruby preprocess_collection.rb <file or folder with PWMs or .stdin with filenames> [options]
 
         Options:
           [-p <list of P-values>]
           [-d <rough discretization> <precise discretization>]
           [-b <background probabilities, ACGT - 4 numbers, space-delimited, sum should be equal to 1>]
           [-o <output file>]
+          [-n <name>] - specify name for a collection. Default filename is based on this parameter
           [--silent] - don't show current progress information during scan (by default this information's written into stderr)
           [--pcm] - treats your input motifs as PCM-s. Motifs are converted to PWMs internally so output is the same as for according PWMs
 
@@ -24,7 +26,7 @@ module Macroape
           ruby preprocess_collection.rb ./motifs -p 0.001 0.0005 0.0001 -d 1 10 -b 0.2 0.3 0.2 0.3 -o collection.yaml
         }
 
-        if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
+        if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
           STDERR.puts help_string
           exit
         end
@@ -35,7 +37,7 @@ module Macroape
         background = [1,1,1,1]
         rough_discretization = 1
         precise_discretization = 10
-        output_file =  'collection.yaml'
+        output_file = 'collection.yaml'
         max_hash_size = 1000000
         
         data_source = argv.shift
@@ -45,6 +47,7 @@ module Macroape
 
         pvalues = []
         silent = false
+        output_file_specified = false
         until argv.empty?
           case argv.shift
             when '-b'
@@ -63,8 +66,11 @@ module Macroape
               rough_discretization, precise_discretization = argv.shift(2).map(&:to_f).sort
             when '-o'
               output_file = argv.shift
+              output_file_specified = true
             when '-m'
               max_hash_size = argv.shift.to_i
+            when '-n'
+              collection_name = argv.shift
             when '--silent'
               silent = true
             end
@@ -75,6 +81,10 @@ module Macroape
                                 precise_discretization: precise_discretization,
                                 background: background,
                                 pvalues: pvalues)
+        if collection_name
+          collection.name = collection_name
+          output_file = "#{collection_name}.yaml"  if !output_file_specified
+        end
         
         if File.directory?(data_source)
           motifs = Dir.glob(File.join(data_source,'*')).sort.map do |filename|
@@ -86,8 +96,13 @@ module Macroape
           input = File.read(data_source)
           motifs = data_model.split_on_motifs(input)
         elsif data_source == '.stdin'
-          input = $stdin.read
-          motifs = data_model.split_on_motifs(input)
+          filelist = $stdin.read.shellsplit
+          motifs = []
+          filelist.each do |filename|
+            motif = data_model.new(File.read(filename))
+            motif.name ||= File.basename(filename, File.extname(filename))
+            motifs << motif
+          end
         else
           raise "Specified data source `#{data_source}` is neither directory nor file nor even .stdin"
         end
@@ -123,7 +138,7 @@ module Macroape
           end
           collection.add_pm(pwm, info)  unless skip_motif
         end
-        File.open(output_file,'w') do |f|
+        File.open(output_file, 'w') do |f|
           f.puts(collection.to_yaml)
         end
       rescue => err

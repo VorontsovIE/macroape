@@ -31,7 +31,7 @@ module Macroape
           cat motifs/KLF4.pat | ruby scan_collection.rb .stdin collection.yaml -p 0.005 --precise 0.03
         }
 
-        if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
+        if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
           STDERR.puts help_string
           exit
         end

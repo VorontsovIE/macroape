@@ -27,7 +27,7 @@ module Macroape
             ruby find_threshold.rb motifs/KLF4.pat -p 0.001 0.0001 0.0005 -d 1000 -b 0.4 0.3 0.2 0.1
         }
       
-        if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
+        if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
           STDERR.puts help_string
           exit
         end

@@ -31,7 +31,7 @@ module Macroape
             cat motifs/KLF4.pat | ruby find_pvalue.rb .stdin 7.32 4.31 5.42
         }
       
-        if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
+        if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
           STDERR.puts help_string
           exit
         end
