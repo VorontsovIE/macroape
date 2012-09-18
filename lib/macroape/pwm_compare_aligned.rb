@@ -3,7 +3,7 @@ require_relative './aligned_pair_intersection'
 
 module Macroape
   class PWMCompareAligned
-    include Parameters
+    include Bioinform::Parameters
     # sets or gets limit of summary size of calculation hash. It's a defence against overuse CPU resources by non-appropriate data
     make_parameters :max_pair_hash_size
 
