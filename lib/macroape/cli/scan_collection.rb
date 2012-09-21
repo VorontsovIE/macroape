@@ -112,7 +112,7 @@ module Macroape
         precision_file_mode = {}
 
         collection.each do |motif|
-          name = motif.pwm.name
+          name = motif.name
           STDERR.puts name unless silent
           motif.set_parameters(background: collection.parameters.background, max_hash_size: max_hash_size)
           if motif.rough
