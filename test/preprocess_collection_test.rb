@@ -11,6 +11,7 @@ class TestPreprocessCollection < Test::Unit::TestCase
   end
   def teardown
     File.delete('test_collection.yaml.tmp')  if File.exist? 'test_collection.yaml.tmp'
+    File.delete('my_collection.yaml')  if File.exist? 'my_collection.yaml'
     Dir.chdir(@start_dir)
   end
 

@@ -111,19 +111,19 @@ module Macroape
         similarities = {}
         precision_file_mode = {}
 
-        collection.each do |collection_pwm, pwm_info|
-          name = collection_pwm.name
+        collection.each do |motif|
+          name = motif.pwm.name
           STDERR.puts name unless silent
-          collection_pwm.set_parameters(background: collection.parameters.background, max_hash_size: max_hash_size)
-          if pwm_info.rough
-            collection_pwm_rough = collection_pwm.discrete(collection.parameters.rough_discretization)
-            collection_threshold_rough = pwm_info.rough[pvalue] * collection.parameters.rough_discretization
+          motif.set_parameters(background: collection.parameters.background, max_hash_size: max_hash_size)
+          if motif.rough
+            collection_pwm_rough = motif.pwm.discrete(collection.parameters.rough_discretization)
+            collection_threshold_rough = motif.rough[pvalue] * collection.parameters.rough_discretization
             info = Macroape::PWMCompare.new(query_pwm_rough, collection_pwm_rough).set_parameters(max_pair_hash_size: max_pair_hash_size).jaccard(query_threshold_rough, collection_threshold_rough)
             precision_file_mode[name] = :rough
           end
-          if !pwm_info.rough || (precision_mode == :precise) && (info[:similarity] >= minimal_similarity)
-            collection_pwm_precise = collection_pwm.discrete(collection.parameters.precise_discretization)
-            collection_threshold_precise = pwm_info.precise[pvalue] * collection.parameters.precise_discretization
+          if !motif.rough || (precision_mode == :precise) && (info[:similarity] >= minimal_similarity)
+            collection_pwm_precise = motif.pwm.discrete(collection.parameters.precise_discretization)
+            collection_threshold_precise = motif.precise[pvalue] * collection.parameters.precise_discretization
             info = Macroape::PWMCompare.new(query_pwm_precise, collection_pwm_precise).set_parameters(max_pair_hash_size: max_pair_hash_size).jaccard(query_threshold_precise, collection_threshold_precise)
             precision_file_mode[name] = :precise
           end

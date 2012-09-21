@@ -29,23 +29,23 @@ class TaskToBenchmark
     -0.5166047365590577  0.7641033353626651  -0.28626775700282125  -0.6825482097865606"
     
     @pvalue = 0.0005
-    @discretization = 10
+    @discretization = 1
     @first_background, @second_background = [1,1,1,1], [1,1,1,1]
     
-    @pwm_first = Bioinform::PWM.new(@matrix_first).background(@first_background).discrete(@discretization)
-    @pwm_second = Bioinform::PWM.new(@matrix_second).background(@second_background).discrete(@discretization)
+    @pwm_first = Bioinform::PWM.new(@matrix_first).set_parameters(background: @first_background).discrete(@discretization)
+    @pwm_second = Bioinform::PWM.new(@matrix_second).set_parameters(background: @second_background).discrete(@discretization)
     @cmp = Macroape::PWMCompare.new(@pwm_first, @pwm_second)
+    @first_threshold = @pwm_first.threshold(@pvalue)
+    @second_threshold = @pwm_second.threshold(@pvalue)
     self
   end
 
   def run
-    first_threshold = @pwm_first.threshold(@pvalue)
-    second_threshold = @pwm_second.threshold(@pvalue)
-    info = @cmp.jaccard(first_threshold, second_threshold)
+    info = @cmp.jaccard(@first_threshold, @second_threshold)
   end
 end
 
-benchmark_result = 10.times.collect do
+benchmark_result = 100.times.collect do
   task_to_benchmark = TaskToBenchmark.new.setup
   Benchmark.measure{  task_to_benchmark.run }
 end.inject(&:+)
