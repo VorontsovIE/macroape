@@ -10,10 +10,10 @@ class TestAlignmotifs < Test::Unit::TestCase
   end
 
   def test_align_motifs
-    assert_equal [%w[KLF4_f2.pat 0 direct],
-                  %w[KLF3_f1.pat -4 direct],
-                  %w[SP1_f1_revcomp.pat -1 revcomp]],
-      Helpers.align_motifs_output('KLF4_f2.pat  KLF3_f1.pat  SP1_f1_revcomp.pat')
+    assert_equal [%w[KLF4_f2.pwm 0 direct],
+                  %w[KLF3_f1.pwm -4 direct],
+                  %w[SP1_f1_revcomp.pwm -1 revcomp]],
+      Helpers.align_motifs_output('KLF4_f2.pwm  KLF3_f1.pwm  SP1_f1_revcomp.pwm')
   end
   def test_align_pcm_motifs
     assert_equal [%w[KLF4_f2.pcm 0 direct],

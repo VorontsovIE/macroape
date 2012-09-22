@@ -26,7 +26,7 @@ class TestPreprocessCollection < Test::Unit::TestCase
   end
 
   def test_preprocessing_collection_from_stdin
-    Helpers.provide_stdin('test_collection/GABPA_f1.pat  test_collection/KLF4_f2.pat  test_collection/SP1_f1.pat'){
+    Helpers.provide_stdin('test_collection/GABPA_f1.pwm  test_collection/KLF4_f2.pwm  test_collection/SP1_f1.pwm'){
       Helpers.run_preprocess_collection('.stdin -o test_collection.yaml.tmp -p 0.0005 0.0001 0.00005 --silent')
     }
     assert_equal YAML.load(File.read('test_collection.yaml')), YAML.load(File.read('test_collection.yaml.tmp'))
