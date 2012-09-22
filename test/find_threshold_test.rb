@@ -10,7 +10,7 @@ class FindThresholdTest < Test::Unit::TestCase
   end
   def test_process_several_pvalues
     pvalues = []
-    Helpers.find_threshold_output('KLF4_f2.pat -p 0.001 0.0005').lines.each{|line| 
+    Helpers.find_threshold_output('KLF4_f2.pat -p 0.001 0.0005').lines.each{|line|
       pvalue, threshold, real_pvalue = line.strip.split("\t")
       pvalues << pvalue
       assert_equal Helpers.obtain_pvalue_by_threshold("KLF4_f2.pat #{threshold}"), real_pvalue
@@ -39,9 +39,7 @@ class FindThresholdTest < Test::Unit::TestCase
   end
   def test_process_pwm_from_stdin
     assert_equal Helpers.find_threshold_output('KLF4_f2.pat'),
-                Helpers.provide_stdin(File.read('KLF4_f2.pat')) {
-                  Helpers.find_threshold_output('.stdin')
-                }
+                Helpers.provide_stdin(File.read('KLF4_f2.pat')){ Helpers.find_threshold_output('.stdin') }
   end
 end
 

@@ -12,7 +12,7 @@ require_relative '../lib/macroape/cli/eval_alignment'
 require_relative '../lib/macroape/cli/preprocess_collection'
 require_relative '../lib/macroape/cli/scan_collection'
 require_relative '../lib/macroape/cli/align_motifs'
- 
+
 module Helpers
   # from minitest
   def self.capture_io(&block)
@@ -25,25 +25,30 @@ module Helpers
     $stdout = orig_stdout
     $stderr = orig_stderr
   end
-  
+
   # Method stubs $stdin not STDIN !
   def self.provide_stdin(input, &block)
     orig_stdin = $stdin
     $stdin = StringIO.new(input)
     yield
-  ensure  
+  ensure
     $stdin = orig_stdin
   end
-  
+
   def self.capture_output(&block)
     capture_io(&block)[:stdout]
   end
   def self.capture_stderr(&block)
     capture_io(&block)[:stderr]
   end
-  
+
+  # aaa\tbbb\nccc\tddd  ==>  [['aaa','bbb'],['ccc','ddd']]
+  def self.split_on_lines(str)
+    str.lines.map{|line| line.strip.split("\t")}
+  end
+
   def self.obtain_pvalue_by_threshold(args)
-    find_pvalue_output(args).strip.split.last
+    find_pvalue_output(args).last.last
   end
   def self.exec_cmd(executable, param_list)
     "ruby -I #{$lib_folder} #{$lib_folder}/../bin/#{executable} #{param_list}"
@@ -52,16 +57,16 @@ module Helpers
     capture_output{ Macroape::CLI::FindThreshold.main(param_list.shellsplit) }
   end
   def self.align_motifs_output(param_list)
-    capture_output{ Macroape::CLI::AlignMotifs.main(param_list.shellsplit) }
+    split_on_lines( capture_output{ Macroape::CLI::AlignMotifs.main(param_list.shellsplit)} )
   end
   def self.find_pvalue_output(param_list)
-    capture_output{ Macroape::CLI::FindPValue.main(param_list.shellsplit) }
+    split_on_lines( capture_output{ Macroape::CLI::FindPValue.main(param_list.shellsplit)} )
   end
   def self.eval_similarity_output(param_list)
-    capture_output{ Macroape::CLI::EvalSimilarity.main(param_list.shellsplit) }
+    split_on_lines( capture_output{ Macroape::CLI::EvalSimilarity.main(param_list.shellsplit)} )
   end
   def self.eval_alignment_output(param_list)
-    capture_output{ Macroape::CLI::EvalAlignment.main(param_list.shellsplit) }
+    split_on_lines( capture_output{ Macroape::CLI::EvalAlignment.main(param_list.shellsplit)} )
   end
   def self.scan_collection_output(param_list)
     capture_output{ Macroape::CLI::ScanCollection.main(param_list.shellsplit) }
