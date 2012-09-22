@@ -1,3 +1,5 @@
+require 'docopt'
+require 'shellwords'
 require_relative '../../macroape'
 
 module Macroape
@@ -5,31 +7,37 @@ module Macroape
     module AlignMotifs
 
       def self.main(argv)
-        doc = %q{
-        Usage:
-          align_motifs pwm1_file pwm2_file pwm3_file
-          align_motifs pcm1_file pcm2_file pcm3_file --pcm
-        Output:
-          pwm_1_file  shift_1  orientation_1
-          pwm_2_file  shift_2  orientation_2
-          pwm_3_file  shift_3  orientation_3
-        }
+        doc = <<-DOCOPT
+          Align motifs tool.
+          It takes motifs and builds alignment of each motif to the first (leader) motif.
+
+          Output has format:
+            pwm_file_1  shift_1  orientation_1
+            pwm_file_2  shift_2  orientation_2
+            pwm_file_3  shift_3  orientation_3
+
+          Usage:
+            align_motifs [options] <pm-files>...
+
+          Options:
+            -h --help       Show this screen.
+            --pcm           Use PCMs instead of PWMs as input
+        DOCOPT
+
         doc.gsub!(/^#{doc[/\A +/]}/,'')
-        if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
-          STDERR.puts doc
-          exit
-        end
+        options = Docopt::docopt(doc, argv: argv)
 
-
-        data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
-        leader = argv.shift
+        data_model = options['--pcm'] ? Bioinform::PCM : Bioinform::PWM
+        motif_files = options['<pm-files>']
+        leader = motif_files.first
         background = [1,1,1,1]
         discretization = 10
         pvalue = 0.0005
 
         shifts = {leader => [0,:direct]}
-        pwm_first = data_model.new(File.read(leader)).to_pwm.set_parameters(background: background).discrete!(discretization)
-        argv.each do |motif_name|
+        pwm_first = data_model.new(File.read(leader)).to_pwm
+        pwm_first.set_parameters(background: background).discrete!(discretization)
+        motif_files[1..-1].each do |motif_name|
           pwm_second = data_model.new(File.read(motif_name)).to_pwm.set_parameters(background: background).discrete!(discretization)
           cmp = Macroape::PWMCompare.new(pwm_first, pwm_second)
           info = cmp.jaccard_by_pvalue(pvalue)
@@ -40,8 +48,8 @@ module Macroape
           puts "#{motif_name}\t#{shift}\t#{orientation}"
         end
 
-      rescue => err
-        STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse -help option for help\n"
+      rescue Docopt::Exit => e
+        puts e.message
       end
 
     end
