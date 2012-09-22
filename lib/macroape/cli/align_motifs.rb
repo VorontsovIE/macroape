@@ -7,8 +7,8 @@ module Macroape
       def self.main(argv)
         doc = %q{
         Usage:
-          ruby align_motifs pwm1_file pwm2_file pwm3_file
-          ruby align_motifs pcm1_file pcm2_file pcm3_file --pcm
+          align_motifs pwm1_file pwm2_file pwm3_file
+          align_motifs pcm1_file pcm2_file pcm3_file --pcm
         Output:
           pwm_1_file  shift_1  orientation_1
           pwm_2_file  shift_2  orientation_2

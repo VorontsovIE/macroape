@@ -8,11 +8,11 @@ module Macroape
       def self.main(argv)
         doc = %q{
         Command-line format:
-        ruby scan_collection.rb <pat-file> <collection> [options]
+        scan_collection <pat-file> <collection> [options]
                 or in linux
-        cat <pat-file> | ruby scan_collection.rb .stdin <collection> [options]
+        cat <pat-file> | scan_collection .stdin <collection> [options]
                 or on windows
-        type <pat-file> | ruby scan_collection.rb .stdin <collection> [options]
+        type <pat-file> | scan_collection .stdin <collection> [options]
 
         Options:
           [-p <P-value>]
@@ -26,9 +26,9 @@ module Macroape
             Attention! The shift and orientation are reported for the collection matrix relative to the query matrix.
 
         Example:
-          ruby scan_collection.rb motifs/KLF4.pat collection.yaml -p 0.005
+          scan_collection motifs/KLF4.pat collection.yaml -p 0.005
                     or in linux
-          cat motifs/KLF4.pat | ruby scan_collection.rb .stdin collection.yaml -p 0.005 --precise 0.03
+          cat motifs/KLF4.pat | scan_collection .stdin collection.yaml -p 0.005 --precise 0.03
         }
         doc.gsub!(/^#{doc[/\A +/]}/,'')
         if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}

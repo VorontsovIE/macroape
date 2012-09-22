@@ -7,10 +7,10 @@ module Macroape
       def self.main(argv)
         doc = %q{
         Command-line format:
-        ruby eval_alignment.rb <1st matrix pat-file> <2nd matrix pat-file> <shift> <orientation(direct/revcomp)> [options]
-        type <1st matrix pat-file> <2nd matrix pat-file> | ruby eval_alignment.rb .stdin .stdin <shift> <orientation(direct/revcomp)> [options]
+        eval_alignment <1st matrix pat-file> <2nd matrix pat-file> <shift> <orientation(direct/revcomp)> [options]
+        type <1st matrix pat-file> <2nd matrix pat-file> | eval_alignment .stdin .stdin <shift> <orientation(direct/revcomp)> [options]
              or in linux
-        cat <1st matrix pat-file> <2nd matrix pat-file> | ruby eval_alignment.rb .stdin .stdin <shift> <orientation(direct/revcomp)> [options]
+        cat <1st matrix pat-file> <2nd matrix pat-file> | eval_alignment .stdin .stdin <shift> <orientation(direct/revcomp)> [options]
 
         Options:
           [-p <P-value>]
@@ -25,11 +25,11 @@ module Macroape
           <shift> <orientation>
 
         Examples:
-          ruby eval_alignment.rb motifs/KLF4_f2.pat motifs/SP1_f1.pat -1 direct -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
+          eval_alignment motifs/KLF4_f2.pat motifs/SP1_f1.pat -1 direct -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
              or on windows
-          type motifs/SP1.pat | ruby eval_alignment.rb motifs/KLF4.pat .stdin 0 revcomp -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
+          type motifs/SP1.pat | eval_alignment motifs/KLF4.pat .stdin 0 revcomp -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
              or in linux
-          cat motifs/KLF4.pat motifs/SP1.pat | ruby eval_alignment.rb .stdin .stdin 3 direct -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
+          cat motifs/KLF4.pat motifs/SP1.pat | eval_alignment .stdin .stdin 3 direct -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
         }
         doc.gsub!(/^#{doc[/\A +/]}/,'')
         if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}

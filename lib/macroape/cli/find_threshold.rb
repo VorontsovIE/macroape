@@ -7,11 +7,11 @@ module Macroape
       def self.main(argv)
         doc = %q{
           Command-line format::
-          ruby find_threshold.rb <pat-file> [options]
+          find_threshold <pat-file> [options]
                     or in linux
-          cat <pat-file> | ruby find_threshold.rb .stdin [options]
+          cat <pat-file> | find_threshold .stdin [options]
                       or on windows
-          type <pat-file> | ruby find_threshold.rb .stdin [options]
+          type <pat-file> | find_threshold .stdin [options]
 
           Options:
             [-p <list of P-values>]
@@ -24,7 +24,7 @@ module Macroape
 
 
           Example:
-            ruby find_threshold.rb motifs/KLF4.pat -p 0.001 0.0001 0.0005 -d 1000 -b 0.4 0.3 0.2 0.1
+            find_threshold motifs/KLF4.pat -p 0.001 0.0001 0.0005 -d 1000 -b 0.4 0.3 0.2 0.1
         }
         doc.gsub!(/^#{doc[/\A +/]}/,'')
         if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}

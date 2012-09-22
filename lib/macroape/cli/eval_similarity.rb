@@ -7,11 +7,11 @@ module Macroape
       def self.main(argv)
         doc = %q{
         Command-line format:
-        ruby eval_similarity.rb <1st matrix pat-file> <2nd matrix pat-file> [options]
+        eval_similarity <1st matrix pat-file> <2nd matrix pat-file> [options]
              or on windows
-        type <1st matrix pat-file> <2nd matrix pat-file> | ruby eval_similarity.rb .stdin .stdin [options]
+        type <1st matrix pat-file> <2nd matrix pat-file> | eval_similarity .stdin .stdin [options]
              or in linux
-        cat <1st matrix pat-file> <2nd matrix pat-file> | ruby eval_similarity.rb .stdin .stdin [options]
+        cat <1st matrix pat-file> <2nd matrix pat-file> | eval_similarity .stdin .stdin [options]
 
         Options:
           [-p <P-value>]
@@ -26,11 +26,11 @@ module Macroape
           <shift> <orientation>
 
         Examples:
-          ruby eval_similarity.rb motifs/KLF4.pat motifs/SP1.pat -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
+          eval_similarity motifs/KLF4.pat motifs/SP1.pat -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
              or on windows
-          type motifs/SP1.pat | ruby eval_similarity.rb motifs/KLF4.pat .stdin -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
+          type motifs/SP1.pat | eval_similarity motifs/KLF4.pat .stdin -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
              or in linux
-          cat motifs/KLF4.pat motifs/SP1.pat | ruby eval_similarity.rb .stdin .stdin -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
+          cat motifs/KLF4.pat motifs/SP1.pat | eval_similarity .stdin .stdin -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
         }
         doc.gsub!(/^#{doc[/\A +/]}/,'')
         if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}

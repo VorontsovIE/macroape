@@ -7,11 +7,11 @@ module Macroape
       def self.main(argv)
         doc = %q{
           Command-line format:
-          ruby find_pvalue.rb <pat-file> <threshold list> [options]
+          find_pvalue <pat-file> <threshold list> [options]
                     or in linux
-          cat <pat-file> | ruby find_pvalue.rb .stdin <threshold> [options]
+          cat <pat-file> | find_pvalue .stdin <threshold> [options]
             or on windows
-          type <pat-file> | ruby find_pvalue.rb .stdin <threshold> [options]
+          type <pat-file> | find_pvalue .stdin <threshold> [options]
 
           Options:
             [-d <discretization level>]
@@ -24,11 +24,11 @@ module Macroape
           The results are printed out in the same order as in the given threshold list.
 
           Examples:
-            ruby find_pvalue.rb motifs/KLF4.pat 7.32 -d 1000 -b 0.2 0.3 0.2 0.3
+            find_pvalue motifs/KLF4.pat 7.32 -d 1000 -b 0.2 0.3 0.2 0.3
                      or on windows
-            type motifs/KLF4.pat | ruby find_pvalue.rb .stdin 7.32 4.31 5.42
+            type motifs/KLF4.pat | find_pvalue .stdin 7.32 4.31 5.42
                      or in linux
-            cat motifs/KLF4.pat | ruby find_pvalue.rb .stdin 7.32 4.31 5.42
+            cat motifs/KLF4.pat | find_pvalue .stdin 7.32 4.31 5.42
         }
         doc.gsub!(/^#{doc[/\A +/]}/,'')
         if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}

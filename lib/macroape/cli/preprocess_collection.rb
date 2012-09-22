@@ -9,7 +9,7 @@ module Macroape
       def self.main(argv)
         doc = %q{
         Command-line format:
-          ruby preprocess_collection.rb <file or folder with PWMs or .stdin with filenames> [options]
+          preprocess_collection <file or folder with PWMs or .stdin with filenames> [options]
 
         Options:
           [-p <list of P-values>]
@@ -23,7 +23,7 @@ module Macroape
         The tool stores preprocessed Macroape collection to the specified YAML-file.
 
         Example:
-          ruby preprocess_collection.rb ./motifs -p 0.001 0.0005 0.0001 -d 1 10 -b 0.2 0.3 0.2 0.3 -o collection.yaml
+          preprocess_collection ./motifs -p 0.001 0.0005 0.0001 -d 1 10 -b 0.2 0.3 0.2 0.3 -o collection.yaml
         }
         doc.gsub!(/^#{doc[/\A +/]}/,'')
         if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
