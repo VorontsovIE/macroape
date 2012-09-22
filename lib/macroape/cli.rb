@@ -1,3 +1,5 @@
+require 'docopt'
+
 module Macroape
   module CLI
     

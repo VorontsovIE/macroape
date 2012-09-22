@@ -1,5 +1,3 @@
-require 'docopt'
-require 'shellwords'
 require_relative '../../macroape'
 
 module Macroape
@@ -38,9 +36,9 @@ module Macroape
         pwm_first = data_model.new(File.read(leader)).to_pwm
         pwm_first.set_parameters(background: background).discrete!(discretization)
         motif_files[1..-1].each do |motif_name|
-          pwm_second = data_model.new(File.read(motif_name)).to_pwm.set_parameters(background: background).discrete!(discretization)
-          cmp = Macroape::PWMCompare.new(pwm_first, pwm_second)
-          info = cmp.jaccard_by_pvalue(pvalue)
+          pwm_second = data_model.new(File.read(motif_name)).to_pwm
+          pwm_second.set_parameters(background: background).discrete!(discretization)
+          info = Macroape::PWMCompare.new(pwm_first, pwm_second).jaccard_by_pvalue(pvalue)
           shifts[motif_name] = [info[:shift], info[:orientation]]
         end
 
