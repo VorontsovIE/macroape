@@ -3,9 +3,9 @@ require_relative '../../macroape'
 module Macroape
   module CLI
     module FindThreshold
-    
+
       def self.main(argv)
-        help_string = %q{
+        doc = %q{
           Command-line format::
           ruby find_threshold.rb <pat-file> [options]
                     or in linux
@@ -26,17 +26,17 @@ module Macroape
           Example:
             ruby find_threshold.rb motifs/KLF4.pat -p 0.001 0.0001 0.0005 -d 1000 -b 0.4 0.3 0.2 0.1
         }
-      
+        doc.gsub!(/^#{doc[/\A +/]}/,'')
         if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
-          STDERR.puts help_string
+          STDERR.puts doc
           exit
         end
-        
+
         background = [1,1,1,1]
         default_pvalues = [0.0005]
         discretization = 10000
         max_hash_size = 1000000
-        data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM      
+        data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
 
         filename = argv.shift
         raise "No input. You'd specify input source: filename or .stdin" unless filename
@@ -75,11 +75,11 @@ module Macroape
         pwm.thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
           puts "#{pvalue}\t#{threshold / discretization}\t#{real_pvalue}"
         end
-        
+
       rescue => err
         STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse -help option for help\n"
       end
-      
+
     end
   end
 end

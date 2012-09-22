@@ -3,9 +3,9 @@ require_relative '../../macroape'
 module Macroape
   module CLI
     module EvalAlignment
-    
+
       def self.main(argv)
-        help_string = %q{
+        doc = %q{
         Command-line format:
         ruby eval_alignment.rb <1st matrix pat-file> <2nd matrix pat-file> <shift> <orientation(direct/revcomp)> [options]
         type <1st matrix pat-file> <2nd matrix pat-file> | ruby eval_alignment.rb .stdin .stdin <shift> <orientation(direct/revcomp)> [options]
@@ -31,9 +31,9 @@ module Macroape
              or in linux
           cat motifs/KLF4.pat motifs/SP1.pat | ruby eval_alignment.rb .stdin .stdin 3 direct -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
         }
-
+        doc.gsub!(/^#{doc[/\A +/]}/,'')
         if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
-          STDERR.puts help_string
+          STDERR.puts doc
           exit
         end
 
@@ -44,7 +44,7 @@ module Macroape
         second_background = [1,1,1,1]
         max_hash_size = 1000000
         max_pair_hash_size = 1000
-        
+
         data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
 
         first_file = argv.shift
@@ -95,7 +95,7 @@ module Macroape
           input = $stdin.read
           parser = data_model.choose_parser(input).new(input)
         end
-      
+
         if first_file == '.stdin'
           input_first = parser.parse
         else
@@ -111,7 +111,7 @@ module Macroape
           input_second = File.read(second_file)
         end
         pwm_second = data_model.new(input_second).to_pwm
-        
+
         pwm_first.set_parameters(background: first_background, max_hash_size: max_hash_size).discrete!(discretization)
         pwm_second.set_parameters(background: second_background, max_hash_size: max_hash_size).discrete!(discretization)
 

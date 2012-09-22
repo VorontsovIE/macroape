@@ -3,9 +3,9 @@ require_relative '../../macroape'
 module Macroape
   module CLI
     module EvalSimilarity
-    
+
       def self.main(argv)
-        help_string = %q{
+        doc = %q{
         Command-line format:
         ruby eval_similarity.rb <1st matrix pat-file> <2nd matrix pat-file> [options]
              or on windows
@@ -32,9 +32,9 @@ module Macroape
              or in linux
           cat motifs/KLF4.pat motifs/SP1.pat | ruby eval_similarity.rb .stdin .stdin -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
         }
-
+        doc.gsub!(/^#{doc[/\A +/]}/,'')
         if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
-          STDERR.puts help_string
+          STDERR.puts doc
           exit
         end
 
@@ -47,7 +47,7 @@ module Macroape
         max_hash_size = 1000000
         max_pair_hash_size = 1000
 
-        data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM      
+        data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
         first_file = argv.shift
         second_file = argv.shift
         raise "You'd specify two input sources (each is filename or .stdin)" unless first_file and second_file
@@ -77,7 +77,7 @@ module Macroape
           input = $stdin.read
           parser = data_model.choose_parser(input).new(input)
         end
-        
+
         if first_file == '.stdin'
           input_first = parser.parse
         else
@@ -93,7 +93,7 @@ module Macroape
           input_second = File.read(second_file)
         end
         pwm_second = data_model.new(input_second).to_pwm
-        
+
         pwm_first.set_parameters(background: first_background, max_hash_size: max_hash_size).discrete!(discretization)
         pwm_second.set_parameters(background: second_background, max_hash_size: max_hash_size).discrete!(discretization)
 
@@ -104,9 +104,9 @@ module Macroape
         puts "#{info[:similarity]}\n#{info[:recognized_by_both]}\t#{info[:alignment_length]}\n#{info[:text]}\n#{info[:shift]}\t#{info[:orientation]}"
 
       rescue => err
-        STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse -help option for help\n"      
+        STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse -help option for help\n"
       end
-      
+
     end
   end
 end

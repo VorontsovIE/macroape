@@ -4,9 +4,9 @@ require 'yaml'
 module Macroape
   module CLI
     module ScanCollection
-    
+
       def self.main(argv)
-        help_string = %q{
+        doc = %q{
         Command-line format:
         ruby scan_collection.rb <pat-file> <collection> [options]
                 or in linux
@@ -30,9 +30,9 @@ module Macroape
                     or in linux
           cat motifs/KLF4.pat | ruby scan_collection.rb .stdin collection.yaml -p 0.005 --precise 0.03
         }
-
+        doc.gsub!(/^#{doc[/\A +/]}/,'')
         if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
-          STDERR.puts help_string
+          STDERR.puts doc
           exit
         end
 
@@ -49,7 +49,7 @@ module Macroape
         background_query = collection.parameters.background
         max_hash_size = 1000000
         max_pair_hash_size = 1000
-        
+
         silent = false
         precision_mode = :rough
         until argv.empty?
@@ -60,7 +60,7 @@ module Macroape
             when '-p'
               pvalue = argv.shift.to_f
             when '-m'
-              max_hash_size = argv.shift.to_i        
+              max_hash_size = argv.shift.to_i
             when '-md'
               max_pair_hash_size = argv.shift.to_i
             when '-c'
@@ -81,7 +81,7 @@ module Macroape
         end
 
         raise "Thresholds for pvalue #{pvalue} aren't presented in collection (#{collection.parameters.pvalues.join(', ')}). Use one of listed pvalues or recalculate the collection with needed pvalue" unless collection.parameters.pvalues.include? pvalue
-        
+
         if filename == '.stdin'
           query_input = $stdin.read
         else
@@ -91,18 +91,18 @@ module Macroape
 
         query_pwm = data_model.new(query_input).to_pwm
         query_pwm.set_parameters(background: background_query, max_hash_size: max_hash_size)
-        
+
         query_pwm_rough = query_pwm.discrete(collection.parameters.rough_discretization)
         query_pwm_precise = query_pwm.discrete(collection.parameters.precise_discretization)
 
-        query_threshold_rough, query_rough_real_pvalue = query_pwm_rough.threshold_and_real_pvalue(pvalue)        
+        query_threshold_rough, query_rough_real_pvalue = query_pwm_rough.threshold_and_real_pvalue(pvalue)
         query_threshold_precise, query_precise_real_pvalue = query_pwm_precise.threshold_and_real_pvalue(pvalue)
-        
+
         if query_precise_real_pvalue == 0
           $stderr.puts "Query motif #{query_pwm.name} gives 0 recognized words for a given P-value of #{pvalue} with the precise discretization level of #{collection.parameters.precise_discretization}. It's impossible to scan collection for this motif"
           return
         end
-        
+
         if query_rough_real_pvalue == 0
           query_pwm_rough, query_threshold_rough = query_pwm_precise, query_threshold_precise
           $stderr.puts "Query motif #{query_pwm.name} gives 0 recognized words for a given P-value of #{pvalue} with the rough discretization level of #{collection.parameters.rough_discretization}. Forcing precise discretization level of #{collection.parameters.precise_discretization}"
@@ -141,7 +141,7 @@ module Macroape
       rescue => err
         STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse -help option for help\n"
       end
-      
+
     end
   end
 end

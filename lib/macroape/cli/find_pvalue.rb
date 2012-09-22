@@ -3,9 +3,9 @@ require_relative '../../macroape'
 module Macroape
   module CLI
     module FindPValue
-    
+
       def self.main(argv)
-        help_string = %q{
+        doc = %q{
           Command-line format:
           ruby find_pvalue.rb <pat-file> <threshold list> [options]
                     or in linux
@@ -30,9 +30,9 @@ module Macroape
                      or in linux
             cat motifs/KLF4.pat | ruby find_pvalue.rb .stdin 7.32 4.31 5.42
         }
-      
+        doc.gsub!(/^#{doc[/\A +/]}/,'')
         if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
-          STDERR.puts help_string
+          STDERR.puts doc
           exit
         end
 
@@ -67,7 +67,7 @@ module Macroape
           end
         end
 
-        
+
         if filename == '.stdin'
           input = $stdin.read
         else
@@ -85,7 +85,7 @@ module Macroape
       rescue => err
         STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse -help option for help\n"
       end
-      
+
     end
   end
 end

@@ -5,9 +5,9 @@ require 'shellwords'
 module Macroape
   module CLI
     module PreprocessCollection
-    
+
       def self.main(argv)
-        help_string = %q{
+        doc = %q{
         Command-line format:
           ruby preprocess_collection.rb <file or folder with PWMs or .stdin with filenames> [options]
 
@@ -25,23 +25,23 @@ module Macroape
         Example:
           ruby preprocess_collection.rb ./motifs -p 0.001 0.0005 0.0001 -d 1 10 -b 0.2 0.3 0.2 0.3 -o collection.yaml
         }
-
+        doc.gsub!(/^#{doc[/\A +/]}/,'')
         if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
-          STDERR.puts help_string
+          STDERR.puts doc
           exit
         end
 
         data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
-        
+
         default_pvalues = [0.0005]
         background = [1,1,1,1]
         rough_discretization = 1
         precise_discretization = 10
         output_file = 'collection.yaml'
         max_hash_size = 1000000
-        
+
         data_source = argv.shift
-        
+
         raise "No input. You'd specify file or folder with pwms" unless data_source
         raise "Error! File or folder #{data_source} doesn't exist" unless Dir.exist?(data_source) || File.exist?(data_source) || data_source == '.stdin'
 
@@ -77,7 +77,7 @@ module Macroape
         end
         pvalues = default_pvalues  if pvalues.empty?
 
-        collection = Bioinform::Collection.new(rough_discretization: rough_discretization, 
+        collection = Bioinform::Collection.new(rough_discretization: rough_discretization,
                                 precise_discretization: precise_discretization,
                                 background: background,
                                 pvalues: pvalues)
@@ -85,7 +85,7 @@ module Macroape
           collection.name = collection_name
           output_file = "#{collection_name}.yaml"  if !output_file_specified
         end
-        
+
         if File.directory?(data_source)
           motifs = Dir.glob(File.join(data_source,'*')).sort.map do |filename|
             pwm = data_model.new(File.read(filename))
@@ -106,12 +106,12 @@ module Macroape
         else
           raise "Specified data source `#{data_source}` is neither directory nor file nor even .stdin"
         end
-        
+
         pwms = motifs.map(&:to_pwm)
-        
+
         pwms.each_with_index do |pwm,index|
           STDERR.puts "#{index + 1} -- Name: #{pwm.name}, Length: #{pwm.length}"  unless silent
-          
+
           # When support of onefile collections is introduced - then here should be check if name exists.
           # Otherwise it should skip motif and tell you about this
           # Also two command line options to fail on skipping or to skip silently should be included
