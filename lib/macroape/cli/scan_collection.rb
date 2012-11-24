@@ -115,13 +115,13 @@ module Macroape
           name = motif.name
           STDERR.puts name unless silent
           motif.set_parameters(background: collection.parameters.background, max_hash_size: max_hash_size)
-          if motif.rough
+          if motif.rough[pvalue]
             collection_pwm_rough = motif.pwm.discrete(collection.parameters.rough_discretization)
             collection_threshold_rough = motif.rough[pvalue] * collection.parameters.rough_discretization
             info = Macroape::PWMCompare.new(query_pwm_rough, collection_pwm_rough).set_parameters(max_pair_hash_size: max_pair_hash_size).jaccard(query_threshold_rough, collection_threshold_rough)
             precision_file_mode[name] = :rough
           end
-          if !motif.rough || (precision_mode == :precise) && (info[:similarity] >= minimal_similarity)
+          if !motif.rough[pvalue] || (precision_mode == :precise) && (info[:similarity] >= minimal_similarity)
             collection_pwm_precise = motif.pwm.discrete(collection.parameters.precise_discretization)
             collection_threshold_precise = motif.precise[pvalue] * collection.parameters.precise_discretization
             info = Macroape::PWMCompare.new(query_pwm_precise, collection_pwm_precise).set_parameters(max_pair_hash_size: max_pair_hash_size).jaccard(query_threshold_precise, collection_threshold_precise)

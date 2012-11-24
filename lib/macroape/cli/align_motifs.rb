@@ -29,7 +29,7 @@ module Macroape
         motif_files = options['<pm-files>']
         leader = motif_files.first
         background = [1,1,1,1]
-        discretization = 10
+        discretization = 1
         pvalue = 0.0005
 
         shifts = {leader => [0,:direct]}
