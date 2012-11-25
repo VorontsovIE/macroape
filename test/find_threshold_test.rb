@@ -48,5 +48,15 @@ class FindThresholdTest < Test::Unit::TestCase
     assert_equal Helpers.find_threshold_output('KLF4_f2.pwm'),
                 Helpers.provide_stdin(File.read('KLF4_f2.pwm')){ Helpers.find_threshold_output('.stdin') }
   end
+
+  # TODO: it should be rewritten as a spec for count_distribution_under_pvalue - not to raise an error(log out of domain) and return a value
+  def test_process_large_pvalue
+    pvalue, threshold, real_pvalue = nil, nil, nil
+    assert_nothing_raised {
+      pvalue, threshold, real_pvalue = Helpers.find_threshold_output('SP1_f1.pwm -p 0.8').strip.split("\t")
+    }
+    assert_equal '0.8', pvalue
+    assert_equal Helpers.obtain_pvalue_by_threshold("SP1_f1.pwm #{threshold}"), real_pvalue
+  end
 end
 

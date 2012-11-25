@@ -4,7 +4,7 @@ module Bioinform
   class PWM
     # sets or gets limit size of calculation hash. It's a defence against overuse CPU resources by non-appropriate data
     make_parameters :max_hash_size
-    
+
     def threshold(pvalue)
       thresholds(pvalue){|_, thresh, _| return thresh }
     end
@@ -40,7 +40,12 @@ module Bioinform
       cnt_distribution = {}
       look_for_count = max_pvalue * vocabulary_volume
       until cnt_distribution.inject(0.0){|sum,(score,count)| sum + count} >= look_for_count
-        cnt_distribution = count_distribution_after_threshold(threshold_gauss_estimation(max_pvalue))
+        begin
+          approximate_threshold = threshold_gauss_estimation(max_pvalue)
+        rescue
+          approximate_threshold = worst_score
+        end
+        cnt_distribution = count_distribution_after_threshold(approximate_threshold)
         max_pvalue *=2 # if estimation counted too small amount of words - try to lower threshold estimation by doubling pvalue
       end
 

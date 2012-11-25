@@ -1,7 +1,19 @@
 ToDo:
 3) make output of real pvalue in similarity evaluation
 4) make verbose output mode which describes parameters
-5) fix failing "log out of domain" on big pvalues
+6)
+# TODO:  FIX: this test fails due to floating point precision error: estimated threshold is -19.0418 but '-19.0418'.to_f * 10000 = -190417.99999999997
+# A workaround exists: we can use fractions, i.e. ('-19.0418'.to_r * 10000).to_f = -190418.0 but it obscures code and being used uncarefully can involve huge slowdown.
+# I think, it'd be used only at input to workaround discretization issue
+#
+#  def test_process_large_pvalue
+#    pvalue, threshold, real_pvalue = nil, nil, nil
+#    assert_nothing_raised {
+#      pvalue, threshold, real_pvalue = Helpers.find_threshold_output('KLF4_f2.pwm -p 0.8').strip.split("\t")
+#    }
+#    assert_equal '0.8', pvalue
+#    assert_equal Helpers.obtain_pvalue_by_threshold("KLF4_f2.pwm #{threshold}"), real_pvalue
+#  end
 
 
   thresholds and thresholds_weak should return a collection (Array or Hash) when block not given
