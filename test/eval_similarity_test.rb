@@ -22,6 +22,14 @@ class TestEvalSimilarity < Test::Unit::TestCase
                   %w[>>>>>>>>>>>],
                   %w[-1 direct]],  Helpers.eval_similarity_output('KLF4_f2.pwm SP1_f1.pwm')
   end
+  def test_process_custom_threshold
+    assert_equal [%w[0.28505023241865346],
+                  %w[1901.0  11],
+                  %w[.>>>>>>>>>>],
+                  %w[>>>>>>>>>>>],
+                  %w[-1 direct]],  Helpers.eval_similarity_output('KLF4_f2.pwm SP1_f1.pwm --first-threshold 4.7 --second-threshold 4.6')
+  end
+
   def test_process_pair_of_pwms
     assert_equal [%w[0.2420758234928527],
                   %w[779.0  11],

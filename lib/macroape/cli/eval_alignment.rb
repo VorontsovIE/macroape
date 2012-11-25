@@ -17,6 +17,9 @@ module Macroape
           [-d <discretization level>]
           [-b <background probabilities, ACGT - 4 numbers, space-delimited, sum should be equal to 1>]
           [--strong-threshold]
+          [--first-threshold <threshold for the first matrix>]
+          [--second-threshold <threshold for the second matrix>]
+
 
         Output format:
           <jaccard similarity coefficient>
@@ -90,6 +93,11 @@ module Macroape
               second_background = argv.shift(4).map(&:to_f)
             when '--strong-threshold'
               strong_threshold = true
+            when '--first-threshold'
+              threshold_first = argv.shift.to_f
+            when '--second-threshold'
+              threshold_second = argv.shift.to_f
+
           end
         end
         raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless first_background == first_background.reverse
@@ -121,11 +129,27 @@ module Macroape
 
         cmp = Macroape::PWMCompareAligned.new(pwm_first, pwm_second, shift, orientation).set_parameters(max_pair_hash_size: max_pair_hash_size)
 
-        if strong_threshold
-          info = cmp.alignment_infos.merge( cmp.jaccard_by_pvalue(pvalue) )
+        if threshold_first
+          threshold_first *= discretization
         else
-          info = cmp.alignment_infos.merge( cmp.jaccard_by_weak_pvalue(pvalue) )
+          if strong_threshold
+            threshold_first = pwm_first.threshold(pvalue)
+          else
+            threshold_first = pwm_first.weak_threshold(pvalue)
+          end
         end
+
+        if threshold_second
+          threshold_second *= discretization
+        else
+          if strong_threshold
+            threshold_second = pwm_second.threshold(pvalue)
+          else
+            threshold_second = pwm_second.weak_threshold(pvalue)
+          end
+        end
+
+        info = cmp.alignment_infos.merge( cmp.jaccard(threshold_first, threshold_second) )
 
         puts "#{info[:similarity]}\n#{info[:recognized_by_both]}\t#{info[:alignment_length]}\n#{info[:text]}\n#{info[:shift]}\t#{info[:orientation]}"
 

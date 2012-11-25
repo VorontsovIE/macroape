@@ -30,6 +30,13 @@ class TestEvalAlignment < Test::Unit::TestCase
                   %w[>>>>>>>>>>>],
                   %w[-1  direct]], Helpers.eval_alignment_output('KLF4_f2.pwm SP1_f1.pwm -1 direct')
   end
+  def test_process_custom_thresholds
+    assert_equal [%w[0.28505023241865346],
+                  %w[1901.0  11],
+                  %w[.>>>>>>>>>>],
+                  %w[>>>>>>>>>>>],
+                  %w[-1  direct]], Helpers.eval_alignment_output('KLF4_f2.pwm SP1_f1.pwm -1 direct --first-threshold 4.7 --second-threshold 4.6')
+  end
   def test_process_not_optimal_alignment
     assert_equal [%w[0.0017543859649122807],
                   %w[7.0  11],

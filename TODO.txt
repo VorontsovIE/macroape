@@ -1,5 +1,4 @@
 ToDo:
-2) predefined thresholds for eval_similarity, eval_alignment
 3) make output of real pvalue in similarity evaluation
 4) make verbose output mode which describes parameters
 5) fix failing "log out of domain" on big pvalues
@@ -18,8 +17,8 @@ Ideas to increase perfomance:
   - (?) Make rearrangment of rows by DIC decreasing in aligned pair of matrices before counting
   - Create JAVA extension for alignment_intersection methods in order to increase perfomance
   - Possibly algorithm shouldn't use hash but had two iterations: at first it determines possible hash scores for every length(if worst suffix is always zero, its flat space of scores at all pwm prefix lengths) of each pwm separately. And after that we can work with arrays which use such scores as indices via additional substructure
-  
-Usability issues:  
+
+Usability issues:
   make preprocess_collection be able to add information to existing collection of motifs. Make able to give collection a name from command line
 
 remove .stdin placeholder. Use tty? method instead
