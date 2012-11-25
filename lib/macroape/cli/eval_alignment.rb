@@ -150,8 +150,7 @@ module Macroape
         end
 
         info = cmp.alignment_infos.merge( cmp.jaccard(threshold_first, threshold_second) )
-
-        puts "#{info[:similarity]}\n#{info[:recognized_by_both]}\t#{info[:alignment_length]}\n#{info[:text]}\n#{info[:shift]}\t#{info[:orientation]}"
+        puts Helper.similarity_info_string(info)
 
       rescue => err
         STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse -help option for help\n"

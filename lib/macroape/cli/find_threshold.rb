@@ -17,7 +17,7 @@ module Macroape
             [-p <list of P-values>]
             [-d <discretization level>]
             [-b <background probabilities, ACGT - 4 numbers, space-delimited, sum should be equal to 1>]
-            [--strong-threshold]
+            [--weak-threshold]
 
           Output format:
             requested_pvalue_1 threshold_1 achieved_pvalue_1
@@ -37,7 +37,7 @@ module Macroape
         discretization = 10000
         max_hash_size = 1000000
         data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
-        strong_threshold = false
+        strong_threshold = true
 
         filename = argv.shift
         raise "No input. You'd specify input source: filename or .stdin" unless filename
@@ -60,8 +60,8 @@ module Macroape
               end
             when '-d'
               discretization = argv.shift.to_f
-            when '--strong-threshold'
-              strong_threshold = true
+            when '--weak-threshold'
+              strong_threshold = false
             end
         end
         pvalues = default_pvalues if pvalues.empty?

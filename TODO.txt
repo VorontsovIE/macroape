@@ -6,7 +6,7 @@ ToDo:
 # A workaround exists: we can use fractions, i.e. ('-19.0418'.to_r * 10000).to_f = -190418.0 but it obscures code and being used uncarefully can involve huge slowdown.
 # I think, it'd be used only at input to workaround discretization issue
 #
-#  def test_process_large_pvalue
+#  def test_process_large_pvalue_floating_point_error
 #    pvalue, threshold, real_pvalue = nil, nil, nil
 #    assert_nothing_raised {
 #      pvalue, threshold, real_pvalue = Helpers.find_threshold_output('KLF4_f2.pwm -p 0.8').strip.split("\t")
@@ -14,9 +14,11 @@ ToDo:
 #    assert_equal '0.8', pvalue
 #    assert_equal Helpers.obtain_pvalue_by_threshold("KLF4_f2.pwm #{threshold}"), real_pvalue
 #  end
-
-
-  thresholds and thresholds_weak should return a collection (Array or Hash) when block not given
+7)thresholds and thresholds_weak should return a collection (Array or Hash) when block not given
+  merge this two methods into one parametrized method
+8)(TODO: for theoretically consistency, while making small inconsistences to old calculations)
+  When we work with strong threshold, we round matrix up(in order to overrate threshold comparing to real thus taking underrated pvalue) and take upper bound of discrete-thresholds fork.
+  When we are estimating lower bound of threshold (weak threshold) we take lower bound of fork of discrete thresholds. But we should ALSO (not done yet) take matrix discreted down! This'd allow us give exact answer on a question in which range real threshold should lay with given P-value, now we correctly estimate only lower bound of threshold(upper bound of P-value)
 
 
 Specs and tests:

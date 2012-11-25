@@ -22,14 +22,14 @@ class FindThresholdTest < Test::Unit::TestCase
     assert_equal '0.001', pvalue
     assert_equal Helpers.obtain_pvalue_by_threshold("KLF4_f2.pwm #{threshold}"), real_pvalue
   end
-  def test_process_one_pvalue
-    pvalue, threshold, real_pvalue = Helpers.find_threshold_output('KLF4_f2.pwm -p 0.001').strip.split("\t")
+  def test_process_one_pvalue_weak
+    pvalue, threshold, real_pvalue = Helpers.find_threshold_output('KLF4_f2.pwm -p 0.001 --weak-threshold').strip.split("\t")
     assert_equal '0.001', pvalue
     assert_equal Helpers.obtain_pvalue_by_threshold("KLF4_f2.pwm #{threshold}"), real_pvalue
     assert real_pvalue.to_f >= 0.001
   end
   def test_process_one_pvalue_strong
-    pvalue, threshold, real_pvalue = Helpers.find_threshold_output('KLF4_f2.pwm -p 0.001 --strong-threshold').strip.split("\t")
+    pvalue, threshold, real_pvalue = Helpers.find_threshold_output('KLF4_f2.pwm -p 0.001').strip.split("\t")
     assert_equal '0.001', pvalue
     assert_equal Helpers.obtain_pvalue_by_threshold("KLF4_f2.pwm #{threshold}"), real_pvalue
     assert real_pvalue.to_f <= 0.001

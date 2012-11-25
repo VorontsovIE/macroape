@@ -1,5 +1,5 @@
 require 'bioinform/support/parameters'
-require_relative './aligned_pair_intersection'
+require_relative 'aligned_pair_intersection'
 
 module Macroape
   class PWMCompareAligned
@@ -104,7 +104,8 @@ module Macroape
       union = f + s - intersect
       similarity = intersect.to_f / union
       { similarity: similarity,  tanimoto: 1.0 - similarity,  recognized_by_both: intersect,
-        recognized_by_first: f,  recognized_by_second: s }
+        recognized_by_first: f,  recognized_by_second: s,
+        real_pvalue_first: f / first.vocabulary_volume, real_pvalue_second: s / second.vocabulary_volume }
     end
 
     def jaccard_by_pvalue(pvalue)
