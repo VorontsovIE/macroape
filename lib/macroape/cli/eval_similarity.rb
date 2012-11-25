@@ -24,6 +24,8 @@ module Macroape
         Output has format:
           <jaccard similarity coefficient>
           <number of words recognized by both 1st and 2nd matrices | probability to draw a word recognized by both 1st and 2nd matrices> <length of the optimal alignment>
+          <number of words recognized by 1st matrix> <number of words recognized by 2nd matrix>
+          <real pvalue at 1st matrix> <real pvalue at 2nd matrix>
           <optimal alignment, the 1st matrix>
           <optimal alignment, the 2nd matrix>
           <shift> <orientation>
