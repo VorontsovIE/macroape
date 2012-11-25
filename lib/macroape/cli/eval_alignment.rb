@@ -150,8 +150,8 @@ module Macroape
             threshold_second = pwm_second.weak_threshold(pvalue)
           end
         end
-
         info = cmp.alignment_infos.merge( cmp.jaccard(threshold_first, threshold_second) )
+        info.merge!(threshold_first: threshold_first / discretization, threshold_second: threshold_second / discretization)
         puts Helper.similarity_info_string(info)
 
       rescue => err

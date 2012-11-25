@@ -63,10 +63,10 @@ module Helpers
     split_on_lines( capture_output{ Macroape::CLI::FindPValue.main(param_list.shellsplit)} )
   end
   def self.eval_similarity_output(param_list)
-    split_on_lines( capture_output{ Macroape::CLI::EvalSimilarity.main(param_list.shellsplit)} )
+    capture_output{ Macroape::CLI::EvalSimilarity.main(param_list.shellsplit)}
   end
   def self.eval_alignment_output(param_list)
-    split_on_lines( capture_output{ Macroape::CLI::EvalAlignment.main(param_list.shellsplit)} )
+    capture_output{ Macroape::CLI::EvalAlignment.main(param_list.shellsplit)}
   end
   def self.scan_collection_output(param_list)
     capture_output{ Macroape::CLI::ScanCollection.main(param_list.shellsplit) }
@@ -76,6 +76,40 @@ module Helpers
   end
   def self.run_preprocess_collection(param_list)
     Macroape::CLI::PreprocessCollection.main(param_list.shellsplit)
+  end
+
+  def parse_similarity_infos_string(info_string)
+    infos = {}
+    info_string.lines.map(&:strip).reject{|line| line.start_with?('#')}.reject(&:empty?).each do |line|
+      key, value = line.split
+      case key
+        when 'S'  then infos[:similarity] = value
+        when 'D'  then infos[:distance] = value
+        when 'L'  then infos[:length] = value
+        when 'SH'  then infos[:shift] = value
+        when 'OR'  then infos[:orientation] = value
+        when 'W'  then infos[:words_recognized_by_both] = value
+
+        when 'W1' then infos[:words_recognized_by_first] = value
+        when 'P1' then infos[:pvalue_recognized_by_first] = value
+        when 'T1' then infos[:threshold_first] = value
+
+        when 'W2' then infos[:words_recognized_by_second] = value
+        when 'P2' then infos[:pvalue_recognized_by_second] = value
+        when 'T2' then infos[:threshold_second] = value
+
+        when 'A1'  then infos[:matrix_first_alignment] = value
+        when 'A2'  then infos[:matrix_second_alignment] = value
+      end
+    end
+    infos
+  end
+
+  def assert_similarity_info_output(expected_info, info_string)
+    infos = parse_similarity_infos_string(info_string)
+    expected_info.each do |key, value|
+      assert_equal value.to_s, infos[key]
+    end
   end
 
 end
