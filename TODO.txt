@@ -1,19 +1,4 @@
 ToDo:
-1)  option to use right bound of pvalue instead of left bound. Not to get real-pvalue 0 at rough discretization (make it default)
-  This is code but it's not tested properly
-module Bioinform
-  class PWM
-    # "weak" means that threshold has real pvalue not less than given pvalue, while usual threshold not greater
-    def thresholds_weak(*pvalues)
-      thresholds_by_pvalues(*pvalues).each do |pvalue,(thresholds, counts)|
-        threshold = thresholds.begin
-        real_pvalue = counts.begin.to_f / vocabulary_volume
-        yield pvalue, threshold, real_pvalue
-      end
-    end
-  end
-end
-
 2) predefined thresholds for eval_similarity, eval_alignment
 3) make output of real pvalue in similarity evaluation
 4) make verbose output mode which describes parameters

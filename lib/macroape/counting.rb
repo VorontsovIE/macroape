@@ -11,6 +11,12 @@ module Bioinform
     def threshold_and_real_pvalue(pvalue)
       thresholds(pvalue){|_, thresh, real_pv| return thresh, real_pv }
     end
+    def weak_threshold(pvalue)
+      weak_thresholds(pvalue){|_, thresh, _| return thresh }
+    end
+    def weak_threshold_and_real_pvalue(pvalue)
+      weak_thresholds(pvalue){|_, thresh, real_pv| return thresh, real_pv }
+    end
 
     def thresholds(*pvalues)
       thresholds_by_pvalues(*pvalues).each do |pvalue,(thresholds, counts)|
@@ -19,6 +25,16 @@ module Bioinform
         yield pvalue, threshold, real_pvalue
       end
     end
+
+    # "weak" means that threshold has real pvalue not less than given pvalue, while usual threshold not greater
+    def weak_thresholds(*pvalues)
+      thresholds_by_pvalues(*pvalues).each do |pvalue,(thresholds, counts)|
+        threshold = thresholds.begin.to_f
+        real_pvalue = counts.begin.to_f / vocabulary_volume
+        yield pvalue, threshold, real_pvalue
+      end
+    end
+
 
     def count_distribution_under_pvalue(max_pvalue)
       cnt_distribution = {}

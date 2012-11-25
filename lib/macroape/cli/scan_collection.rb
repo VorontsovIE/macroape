@@ -19,6 +19,7 @@ module Macroape
           [-c <similarity cutoff (minimal similarity to be included in output)> ] or [--all], '-c 0.05' by default
           [--precise [<level, minimal similarity to check on a more precise discretization level on the second pass>]], off by default, '--precise 0.01' if level is not set
           [--silent] - don't show current progress information during scan (by default this information's written into stderr)
+          [--strong-threshold]
 
         Output format:
          <name> <similarity jaccard index> <shift> <overlap> <orientation> * [in case that result calculated on the second pass(in precise mode)]
@@ -49,6 +50,7 @@ module Macroape
         background_query = collection.parameters.background
         max_hash_size = 1000000
         max_pair_hash_size = 1000
+        strong_threshold = false
 
         silent = false
         precision_mode = :rough
@@ -69,6 +71,8 @@ module Macroape
               cutoff = 0.0
             when '--silent'
               silent = true
+            when '--strong-threshold'
+              strong_threshold = true
             when '--precise'
               precision_mode = :precise
               begin
@@ -95,8 +99,13 @@ module Macroape
         query_pwm_rough = query_pwm.discrete(collection.parameters.rough_discretization)
         query_pwm_precise = query_pwm.discrete(collection.parameters.precise_discretization)
 
-        query_threshold_rough, query_rough_real_pvalue = query_pwm_rough.threshold_and_real_pvalue(pvalue)
-        query_threshold_precise, query_precise_real_pvalue = query_pwm_precise.threshold_and_real_pvalue(pvalue)
+        if strong_threshold
+          query_threshold_rough, query_rough_real_pvalue = query_pwm_rough.threshold_and_real_pvalue(pvalue)
+          query_threshold_precise, query_precise_real_pvalue = query_pwm_precise.threshold_and_real_pvalue(pvalue)
+        else
+          query_threshold_rough, query_rough_real_pvalue = query_pwm_rough.weak_threshold_and_real_pvalue(pvalue)
+          query_threshold_precise, query_precise_real_pvalue = query_pwm_precise.weak_threshold_and_real_pvalue(pvalue)
+        end
 
         if query_precise_real_pvalue == 0
           $stderr.puts "Query motif #{query_pwm.name} gives 0 recognized words for a given P-value of #{pvalue} with the precise discretization level of #{collection.parameters.precise_discretization}. It's impossible to scan collection for this motif"

@@ -17,6 +17,7 @@ module Macroape
           [-p <P-value>]
           [-d <discretization level>]
           [-b <background probabilities, ACGT - 4 numbers, space-delimited, sum should be equal to 1>]
+          [--strong-threshold]
 
         Output has format:
           <jaccard similarity coefficient>
@@ -46,6 +47,7 @@ module Macroape
 
         max_hash_size = 1000000
         max_pair_hash_size = 1000
+        strong_threshold = false
 
         data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
         first_file = argv.shift
@@ -68,6 +70,8 @@ module Macroape
               first_background = argv.shift(4).map(&:to_f)
             when '-b2'
               second_background = argv.shift(4).map(&:to_f)
+            when '--strong-threshold'
+              strong_threshold = true
           end
         end
         raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless first_background == first_background.reverse
@@ -99,7 +103,11 @@ module Macroape
 
         cmp = Macroape::PWMCompare.new(pwm_first, pwm_second).set_parameters(max_pair_hash_size: max_pair_hash_size)
 
-        info = cmp.jaccard_by_pvalue(pvalue)
+        if strong_threshold
+          info = cmp.jaccard_by_pvalue(pvalue)
+        else
+          info = cmp.jaccard_by_weak_pvalue(pvalue)
+        end
 
         puts "#{info[:similarity]}\n#{info[:recognized_by_both]}\t#{info[:alignment_length]}\n#{info[:text]}\n#{info[:shift]}\t#{info[:orientation]}"
 

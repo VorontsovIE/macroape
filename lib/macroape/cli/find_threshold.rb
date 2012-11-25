@@ -17,11 +17,11 @@ module Macroape
             [-p <list of P-values>]
             [-d <discretization level>]
             [-b <background probabilities, ACGT - 4 numbers, space-delimited, sum should be equal to 1>]
+            [--strong-threshold]
 
           Output format:
             requested_pvalue_1 threshold_1 achieved_pvalue_1
             requested_pvalue_2 threshold_2 achieved_pvalue_2
-
 
           Example:
             find_threshold motifs/KLF4.pat -p 0.001 0.0001 0.0005 -d 1000 -b 0.4 0.3 0.2 0.1
@@ -37,6 +37,7 @@ module Macroape
         discretization = 10000
         max_hash_size = 1000000
         data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
+        strong_threshold = false
 
         filename = argv.shift
         raise "No input. You'd specify input source: filename or .stdin" unless filename
@@ -59,6 +60,8 @@ module Macroape
               end
             when '-d'
               discretization = argv.shift.to_f
+            when '--strong-threshold'
+              strong_threshold = true
             end
         end
         pvalues = default_pvalues if pvalues.empty?
@@ -72,10 +75,15 @@ module Macroape
         pwm = data_model.new(input).to_pwm
         pwm.set_parameters(background: background, max_hash_size: max_hash_size).discrete!(discretization)
 
-        pwm.thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
-          puts "#{pvalue}\t#{threshold / discretization}\t#{real_pvalue}"
+        if strong_threshold
+          pwm.thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
+            puts "#{pvalue}\t#{threshold / discretization}\t#{real_pvalue}"
+          end
+        else
+          pwm.weak_thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
+            puts "#{pvalue}\t#{threshold / discretization}\t#{real_pvalue}"
+          end
         end
-
       rescue => err
         STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse -help option for help\n"
       end
