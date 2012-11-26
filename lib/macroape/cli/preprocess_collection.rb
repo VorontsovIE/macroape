@@ -125,42 +125,34 @@ module Macroape
           pwm.set_parameters(background: background, max_hash_size: max_hash_size)
           skip_motif = false
 
-          if strong_threshold
-            pwm.discrete(rough_discretization).thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
-              if real_pvalue == 0
-                $stderr.puts "#{pwm.name} at pvalue #{pvalue} has threshold that yields real-pvalue 0 in rough mode. Rough calculation will be skipped"
-              else
-                info.rough[pvalue] = threshold / rough_discretization
-              end
+
+          fill_rough_infos = ->(pvalue, threshold, real_pvalue) do
+            if real_pvalue == 0
+              $stderr.puts "#{pwm.name} at pvalue #{pvalue} has threshold that yields real-pvalue 0 in rough mode. Rough calculation will be skipped"
+            else
+              info.rough[pvalue] = threshold / rough_discretization
             end
-          else
-            pwm.discrete(rough_discretization).weak_thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
-              if real_pvalue == 0
-                $stderr.puts "#{pwm.name} at pvalue #{pvalue} has threshold that yields real-pvalue 0 in rough mode. Rough calculation will be skipped"
-              else
-                info.rough[pvalue] = threshold / rough_discretization
-              end
+          end
+
+          fill_precise_infos = ->(pvalue, threshold, real_pvalue) do
+            if real_pvalue == 0
+              $stderr.puts "#{pwm.name} at pvalue #{pvalue} has threshold that yields real-pvalue 0 in precise mode. Motif will be excluded from collection"
+              skip_motif = true
+            else
+              info.precise[pvalue] = threshold / precise_discretization
             end
           end
 
           if strong_threshold
-            pwm.discrete(precise_discretization).thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
-              if real_pvalue == 0
-                $stderr.puts "#{pwm.name} at pvalue #{pvalue} has threshold that yields real-pvalue 0 in precise mode. Motif will be excluded from collection"
-                skip_motif = true
-              else
-                info.precise[pvalue] = threshold / precise_discretization
-              end
-            end
+            pwm.discrete(rough_discretization).thresholds(*pvalues, &fill_rough_infos)
           else
-            pwm.discrete(precise_discretization).weak_thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
-              if real_pvalue == 0
-                $stderr.puts "#{pwm.name} at pvalue #{pvalue} has threshold that yields real-pvalue 0 in precise mode. Motif will be excluded from collection"
-                skip_motif = true
-              else
-                info.precise[pvalue] = threshold / precise_discretization
-              end
-            end
+            pwm.discrete(rough_discretization).weak_thresholds(*pvalues, &fill_rough_infos)
+          end
+
+          if strong_threshold
+            pwm.discrete(precise_discretization).thresholds(*pvalues, &fill_precise_infos)
+          else
+            pwm.discrete(precise_discretization).weak_thresholds(*pvalues,&fill_precise_infos)
           end
           collection.add_pm(pwm, info)  unless skip_motif
         end
