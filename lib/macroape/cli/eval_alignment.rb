@@ -60,9 +60,9 @@ module Macroape
         shift = argv.shift
         orientation = argv.shift
 
-        raise 'You\'d specify two input sources (each is filename or .stdin)'  unless first_file and second_file
-        raise 'You\'d specify shift' unless shift
-        raise 'You\'d specify orientation' unless orientation
+        raise 'You should specify two input sources (each is filename or .stdin)'  unless first_file and second_file
+        raise 'You should specify shift' unless shift
+        raise 'You should specify orientation' unless orientation
 
         shift = shift.to_i
         orientation = orientation.to_sym

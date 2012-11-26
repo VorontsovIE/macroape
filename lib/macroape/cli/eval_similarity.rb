@@ -56,7 +56,7 @@ module Macroape
         data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
         first_file = argv.shift
         second_file = argv.shift
-        raise "You'd specify two input sources (each is filename or .stdin)" unless first_file and second_file
+        raise 'You should specify two input files' unless first_file and second_file
 
         until argv.empty?
           case argv.shift

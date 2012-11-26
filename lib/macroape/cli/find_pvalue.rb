@@ -53,7 +53,7 @@ module Macroape
           end
         end
 
-        raise "No input. You'd specify input source: filename or .stdin" unless filename
+        raise 'No input. You should specify input file' unless filename
         raise 'You should specify at least one threshold' if thresholds.empty?
 
         until argv.empty?

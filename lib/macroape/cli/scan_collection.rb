@@ -40,8 +40,8 @@ module Macroape
         data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
         filename = argv.shift
         collection_file = argv.shift
-        raise "No input. You'd specify input source for pat: filename or .stdin" unless filename
-        raise "No input. You'd specify input file with collection" unless collection_file
+        raise 'No input. You should specify input file with matrix' unless filename
+        raise 'No input. You should specify input file with collection' unless collection_file
         raise "Collection file #{collection_file} doesn't exist" unless File.exist?(collection_file)
 
         pvalue = 0.0005

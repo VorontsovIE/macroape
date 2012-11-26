@@ -40,7 +40,7 @@ module Macroape
         strong_threshold = true
 
         filename = argv.shift
-        raise "No input. You'd specify input source: filename or .stdin" unless filename
+        raise 'No input. You should specify input file' unless filename
 
         pvalues = []
         until argv.empty?

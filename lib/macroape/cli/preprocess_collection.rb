@@ -43,7 +43,7 @@ module Macroape
 
         data_source = argv.shift
 
-        raise "No input. You'd specify file or folder with pwms" unless data_source
+        raise 'No input. You should specify file or folder with pwms' unless data_source
         raise "Error! File or folder #{data_source} doesn't exist" unless Dir.exist?(data_source) || File.exist?(data_source) || data_source == '.stdin'
 
         pvalues = []
