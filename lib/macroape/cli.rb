@@ -19,6 +19,7 @@ module Macroape
           # W2: number of words recognized by the 2nd model
           # P2: P-value for the 2nd matrix
           # T2: threshold for the 2nd matrix
+          # V: discretization
           S\t#{ info[:similarity] }
           D\t#{ info[:tanimoto] }
           L\t#{ info[:alignment_length] }
@@ -33,6 +34,7 @@ module Macroape
           W2\t#{ info[:recognized_by_second] }
           P2\t#{ info[:real_pvalue_second] }
           T2\t#{ info[:threshold_second] }
+          V\t#{info[:discretization]}
         EOS
       end
 

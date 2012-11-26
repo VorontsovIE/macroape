@@ -24,7 +24,8 @@ class TestEvalSimilarity < Test::Unit::TestCase
                                   words_recognized_by_second: 2033.0,
                                   pvalue_recognized_by_second: 0.00048470497131347656,
                                   matrix_first_alignment:  '.>>>>>>>>>>',
-                                  matrix_second_alignment: '>>>>>>>>>>>'},
+                                  matrix_second_alignment: '>>>>>>>>>>>',
+                                  discretization: 10.0},
                                   Helpers.eval_similarity_output('KLF4_f2.pwm SP1_f1.pwm --strong-threshold'))
   end
 
@@ -42,7 +43,8 @@ class TestEvalSimilarity < Test::Unit::TestCase
                                   words_recognized_by_second: 2176.0,
                                   pvalue_recognized_by_second: 0.000518798828125,
                                   matrix_first_alignment:  '.>>>>>>>>>>',
-                                  matrix_second_alignment: '>>>>>>>>>>>'},
+                                  matrix_second_alignment: '>>>>>>>>>>>',
+                                  discretization: 10.0},
                                   Helpers.eval_similarity_output('KLF4_f2.pwm SP1_f1.pwm'))
   end
   def test_process_custom_threshold
@@ -90,7 +92,8 @@ class TestEvalSimilarity < Test::Unit::TestCase
                                   matrix_first_alignment:  '>>>>>>>>>>>',
                                   matrix_second_alignment: '.>>>>>>>>>>',
                                   shift: 1,
-                                  orientation: 'direct'},
+                                  orientation: 'direct',
+                                  discretization: 1.0},
                                   Helpers.eval_similarity_output('SP1_f1.pwm KLF4_f2.pwm -d 1'))
   end
 

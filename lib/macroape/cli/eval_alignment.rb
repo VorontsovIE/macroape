@@ -28,7 +28,7 @@ module Macroape
         end
 
         pvalue = 0.0005
-        discretization = 10
+        discretization = 10.0
 
         first_background = [1,1,1,1]
         second_background = [1,1,1,1]
@@ -135,7 +135,9 @@ module Macroape
           end
         end
         info = cmp.alignment_infos.merge( cmp.jaccard(threshold_first, threshold_second) )
-        info.merge!(threshold_first: threshold_first / discretization, threshold_second: threshold_second / discretization)
+        info.merge!(threshold_first: threshold_first / discretization,
+                    threshold_second: threshold_second / discretization,
+                    discretization: discretization)
         puts Helper.similarity_info_string(info)
 
       rescue => err

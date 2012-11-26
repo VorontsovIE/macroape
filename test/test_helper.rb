@@ -100,6 +100,8 @@ module Helpers
 
         when 'A1'  then infos[:matrix_first_alignment] = value
         when 'A2'  then infos[:matrix_second_alignment] = value
+        
+        when 'V' then infos[:discretization] = value
       end
     end
     infos
