@@ -71,10 +71,11 @@ module Macroape
         pwm.set_parameters(background: background, max_hash_size: max_hash_size).discrete!(discretization)
 
         counts = pwm.counts_by_thresholds(* thresholds.map{|count| count * discretization})
-        pvalues = counts.map{|count| count.to_f / pwm.vocabulary_volume}
-        pvalues.zip(thresholds,counts).each{|pvalue,threshold,count|
+        thresholds.each do |threshold|
+          count = counts[threshold * discretization]
+          pvalue = count / pwm.vocabulary_volume
           puts "#{threshold}\t#{count}\t#{pvalue}"
-        }
+        end
       rescue => err
         STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse -help option for help\n"
       end

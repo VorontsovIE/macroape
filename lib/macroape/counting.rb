@@ -104,13 +104,14 @@ module Bioinform
 
     def counts_by_thresholds(*thresholds)
       scores = count_distribution_after_threshold(thresholds.min)
-      thresholds.map{ |threshold|
-        scores.inject(0.0){|sum,(score,count)|  (score >= threshold) ? sum + count : sum}
+      thresholds.inject({}){ |hsh, threshold|
+        hsh[threshold] = scores.inject(0.0){|sum,(score,count)|  (score >= threshold) ? sum + count : sum}
+        hsh
       }
     end
 
     def count_by_threshold(threshold)
-      counts_by_thresholds(threshold).first
+      counts_by_thresholds(threshold)[threshold]
     end
 
     def pvalue_by_threshold(threshold)
