@@ -112,4 +112,25 @@ module Helpers
     end
   end
 
+  def parse_threshold_infos_string(infos_string)
+    infos = []
+    infos_string.lines.map(&:strip).reject{|line| line.start_with?('#')}.reject(&:empty?).tap(&:shift).each do |line|
+      requested_pvalue, real_pvalue, number_of_recognized_words, threshold = line.split
+      infos << {requested_pvalue: requested_pvalue,
+                real_pvalue: real_pvalue,
+                number_of_recognized_words: number_of_recognized_words,
+                threshold: threshold }
+    end
+    infos
+  end
+
+  def assert_threshold_info_output(*expected_infos, info_string)
+    infos = parse_threshold_infos_string(info_string)
+    infos.zip(expected_infos).each do |info, expected_info|
+      expected_info.each do |key, value|
+        assert_equal value.to_s, info[key]
+      end
+    end
+  end
+
 end

@@ -37,6 +37,21 @@ module Macroape
           T2\t#{ info[:threshold_second] }
         EOS
       end
+
+      def self.threshold_infos_string(infos)
+        result_strings = infos.collect { |info|
+          "#{ info[:expected_pvalue] }\t#{ info[:real_pvalue] }\t#{ info[:recognized_words] }\t#{ info[:threshold] }" 
+        }
+        <<-EOS.strip_doc
+          # P: requested P-value
+          # AP: actual P-value
+          # W: number of recognized words
+          # T: threshold
+
+          P\tAP\tW\tT
+          #{result_strings.join("\n")}
+        EOS
+      end
     end
   end
 end

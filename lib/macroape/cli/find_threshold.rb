@@ -75,15 +75,19 @@ module Macroape
         pwm = data_model.new(input).to_pwm
         pwm.set_parameters(background: background, max_hash_size: max_hash_size).discrete!(discretization)
 
-        if strong_threshold
-          pwm.thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
-            puts "#{pvalue}\t#{threshold / discretization}\t#{real_pvalue}"
-          end
-        else
-          pwm.weak_thresholds(*pvalues) do |pvalue, threshold, real_pvalue|
-            puts "#{pvalue}\t#{threshold / discretization}\t#{real_pvalue}"
-          end
+        infos = []
+        collect_infos_proc = ->(pvalue, threshold, real_pvalue) do
+          infos << {expected_pvalue: pvalue,
+                    threshold: threshold / discretization,
+                    real_pvalue: real_pvalue,
+                    recognized_words: pwm.vocabulary_volume * real_pvalue }
         end
+        if strong_threshold
+          pwm.thresholds(*pvalues, &collect_infos_proc)
+        else
+          pwm.weak_thresholds(*pvalues, &collect_infos_proc)
+        end
+        puts Helper.threshold_infos_string(infos)
       rescue => err
         STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse -help option for help\n"
       end
