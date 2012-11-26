@@ -7,15 +7,15 @@ module Macroape
       def self.main(argv)
         doc = %q{
           Command-line format:
-          find_pvalue <pat-file> <threshold list> [options]
+          find_pvalue <pat-file> <threshold list>... [options]
 
           Options:
             [-d <discretization level>]
             [-b <background probabilities, ACGT - 4 numbers, space-delimited, sum should be equal to 1>]
 
           Examples:
-            find_pvalue motifs/KLF4.pat 7.32 -d 1000 -b 0.2 0.3 0.2 0.3
-            find_pvalue motifs/KLF4.pat 7.32 4.31 5.42
+            find_pvalue motifs/KLF4.pat 7.32
+            find_pvalue motifs/KLF4.pat 7.32 4.31 5.42 -d 1000 -b 0.2 0.3 0.2 0.3
         }
         doc.gsub!(/^#{doc[/\A +/]}/,'')
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}

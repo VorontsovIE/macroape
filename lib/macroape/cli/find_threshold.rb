@@ -7,16 +7,16 @@ module Macroape
       def self.main(argv)
         doc = %q{
           Command-line format::
-          find_threshold <pat-file> [options]
+          find_threshold <pat-file> [<list of P-values>...] [options]
 
           Options:
-            [-p <list of P-values>]
             [-d <discretization level>]
             [-b <background probabilities, ACGT - 4 numbers, space-delimited, sum should be equal to 1>]
             [--weak-threshold]
 
           Example:
-            find_threshold motifs/KLF4.pat -p 0.001 0.0001 0.0005 -d 1000 -b 0.4 0.3 0.2 0.1
+            find_threshold motifs/KLF4.pat
+            find_threshold motifs/KLF4.pat 0.001 0.0001 0.0005 -d 1000 -b 0.4 0.3 0.2 0.1
         }
         doc.gsub!(/^#{doc[/\A +/]}/,'')
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
@@ -35,28 +35,28 @@ module Macroape
         raise 'No input. You should specify input file' unless filename
 
         pvalues = []
+        loop do
+          begin
+            Float(argv.first)
+            pvalues << argv.shift.to_f
+          rescue
+            raise StopIteration
+          end
+        end
+        pvalues = default_pvalues if pvalues.empty?
+
         until argv.empty?
           case argv.shift
             when '-b'
               background = argv.shift(4).map(&:to_f)
             when '-m'
               max_hash_size = argv.shift.to_i
-            when '-p'
-              loop do
-                begin
-                  Float(argv.first)
-                  pvalues << argv.shift.to_f
-                rescue
-                  raise StopIteration
-                end
-              end
             when '-d'
               discretization = argv.shift.to_f
             when '--weak-threshold'
               strong_threshold = false
             end
         end
-        pvalues = default_pvalues if pvalues.empty?
 
         if filename == '.stdin'
           input = $stdin.read
