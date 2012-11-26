@@ -40,11 +40,17 @@ module Macroape
 
 ############################################
 
-      def self.threshold_infos_string(infos)
+      def self.threshold_infos_string(infos, parameters)
+        parameters_data = []
+        parameters_data << "# V\t#{parameters[:discretization]}\t#discretization value"
+        parameters_data << "# B\t#{parameters[:background]}\t#background"  unless parameters[:background] == [1,1,1,1]
+        parameters_string = parameters_data.join("\n")
+
         result_strings = infos.collect { |info|
           "#{ info[:expected_pvalue] }\t#{ info[:real_pvalue] }\t#{ info[:recognized_words] }\t#{ info[:threshold] }"
         }
         <<-EOS.strip_doc
+          #{parameters_string}
           # P: requested P-value
           # AP: actual P-value
           # W: number of recognized words
