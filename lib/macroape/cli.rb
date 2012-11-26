@@ -3,6 +3,10 @@ require 'bioinform/support/strip_doc'
 module Macroape
   module CLI
     module Helper
+      def self.background_string(background)
+        background.join(' ')
+      end
+
       def self.similarity_info_string(info)
         <<-EOS.strip_doc
           # S: similarity
@@ -43,7 +47,7 @@ module Macroape
       def self.threshold_infos_string(infos, parameters)
         parameters_data = []
         parameters_data << "# V\t#{parameters[:discretization]}\t#discretization value"
-        parameters_data << "# B\t#{parameters[:background]}\t#background"  unless parameters[:background] == [1,1,1,1]
+        parameters_data << "# B\t#{background_string(parameters[:background])}\t#background"  unless parameters[:background] == [1,1,1,1]
         parameters_string = parameters_data.join("\n")
 
         result_strings = infos.collect { |info|
@@ -75,8 +79,8 @@ module Macroape
         result << "#P\t#{parameters[:pvalue]}\t#P-Value"
         pvalue_boundary = parameters[:strong_threshold] ? 'lower' : 'upper'
         result << "#PB\t#{pvalue_boundary}\t#P-value boundary"
-        result << "#BQ\t#{parameters[:query_background].join(' ')}#background for query matrix"  unless parameters[:query_background] == [1,1,1,1]
-        result << "#BC\t#{parameters[:collection_background].join(' ')}#background for collection"  unless parameters[:collection_background] == [1,1,1,1]
+        result << "#BQ\t#{background_string(parameters[:query_background])}#background for query matrix"  unless parameters[:query_background] == [1,1,1,1]
+        result << "#BC\t#{background_string(parameters[:collection_background])}#background for collection"  unless parameters[:collection_background] == [1,1,1,1]
 
         result.join("\n")
       end
@@ -103,7 +107,7 @@ module Macroape
         end
         parameters_data = []
         parameters_data << "# V\t#{parameters[:discretization]}\t#discretization value"
-        parameters_data << "# B\t#{parameters[:background]}\t#background"  unless parameters[:background] == [1,1,1,1]
+        parameters_data << "# B\t#{background_string(parameters[:background])}\t#background"  unless parameters[:background] == [1,1,1,1]
         parameters_string = parameters_data.join("\n")
         <<-EOS.strip_doc
           #{parameters_string}
