@@ -12,11 +12,11 @@ module Macroape
           # OR: orientation of the 2nd PWM relative to the 1st
           # A1: aligned 1st matrix
           # A2: aligned 2nd matrix
-          # W: number of words recognized by both matrices
-          # W1: number of words and recognized by the first matrix
+          # W: number of words recognized by both models (model = PWM + threshold)
+          # W1: number of words and recognized by the first model
           # P1: P-value for the 1st matrix
           # T1: threshold for the 1st matrix
-          # W2: number of words recognized by the 2nd matrix
+          # W2: number of words recognized by the 2nd model
           # P2: P-value for the 2nd matrix
           # T2: threshold for the 2nd matrix
           S\t#{ info[:similarity] }
