@@ -19,7 +19,6 @@ module Macroape
           # W2: number of words recognized by the 2nd matrix
           # P2: P-value for the 2nd matrix
           # T2: threshold for the 2nd matrix
-
           S\t#{ info[:similarity] }
           D\t#{ info[:tanimoto] }
           L\t#{ info[:alignment_length] }
@@ -46,7 +45,6 @@ module Macroape
           # AP: actual P-value
           # W: number of recognized words
           # T: threshold
-
           P\tAP\tW\tT
           #{result_strings.join("\n")}
         EOS
