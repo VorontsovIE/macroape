@@ -20,16 +20,6 @@ module Macroape
           [--first-threshold <threshold for the first matrix>]
           [--second-threshold <threshold for the second matrix>]
 
-
-        Output format:
-          <jaccard similarity coefficient>
-          <number of words recognized by both 1st and 2nd matrices | probability to draw a word recognized by both 1st and 2nd matrices> <length of the given alignment>
-          <number of words recognized by 1st matrix> <number of words recognized by 2nd matrix>
-          <real pvalue at 1st matrix> <real pvalue at 2nd matrix>
-          <aligned 1st matrix>
-          <aligned 2nd matrix>
-          <shift> <orientation>
-
         Examples:
           eval_alignment motifs/KLF4_f2.pat motifs/SP1_f1.pat -1 direct -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
              or on windows

@@ -19,10 +19,6 @@ module Macroape
             [-b <background probabilities, ACGT - 4 numbers, space-delimited, sum should be equal to 1>]
             [--weak-threshold]
 
-          Output format:
-            requested_pvalue_1 threshold_1 achieved_pvalue_1
-            requested_pvalue_2 threshold_2 achieved_pvalue_2
-
           Example:
             find_threshold motifs/KLF4.pat -p 0.001 0.0001 0.0005 -d 1000 -b 0.4 0.3 0.2 0.1
         }
