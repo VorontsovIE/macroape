@@ -1,3 +1,4 @@
+require 'docopt'
 require_relative '../../macroape'
 
 module Macroape

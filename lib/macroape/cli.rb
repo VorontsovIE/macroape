@@ -1,4 +1,3 @@
-require 'docopt'
 require 'bioinform/support/strip_doc'
 
 module Macroape
