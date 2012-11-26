@@ -9,10 +9,6 @@ module Macroape
         doc = %q{
         Command-line format:
         scan_collection <pat-file> <collection> [options]
-                or in linux
-        cat <pat-file> | scan_collection .stdin <collection> [options]
-                or on windows
-        type <pat-file> | scan_collection .stdin <collection> [options]
 
         Options:
           [-p <P-value>]
@@ -27,9 +23,8 @@ module Macroape
             Attention! The shift and orientation are reported for the collection matrix relative to the query matrix.
 
         Example:
-          scan_collection motifs/KLF4.pat collection.yaml -p 0.005
-                    or in linux
-          cat motifs/KLF4.pat | scan_collection .stdin collection.yaml -p 0.005 --precise 0.03
+          scan_collection motifs/KLF4.pat collection.yaml
+          scan_collection motifs/KLF4.pat collection.yaml -p 0.005 --precise 0.03
         }
         doc.gsub!(/^#{doc[/\A +/]}/,'')
         if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}

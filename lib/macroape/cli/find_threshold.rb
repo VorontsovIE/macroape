@@ -8,10 +8,6 @@ module Macroape
         doc = %q{
           Command-line format::
           find_threshold <pat-file> [options]
-                    or in linux
-          cat <pat-file> | find_threshold .stdin [options]
-                      or on windows
-          type <pat-file> | find_threshold .stdin [options]
 
           Options:
             [-p <list of P-values>]

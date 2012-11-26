@@ -8,10 +8,6 @@ module Macroape
         doc = %q{
           Command-line format:
           find_pvalue <pat-file> <threshold list> [options]
-                    or in linux
-          cat <pat-file> | find_pvalue .stdin <threshold> [options]
-            or on windows
-          type <pat-file> | find_pvalue .stdin <threshold> [options]
 
           Options:
             [-d <discretization level>]
@@ -25,10 +21,7 @@ module Macroape
 
           Examples:
             find_pvalue motifs/KLF4.pat 7.32 -d 1000 -b 0.2 0.3 0.2 0.3
-                     or on windows
-            type motifs/KLF4.pat | find_pvalue .stdin 7.32 4.31 5.42
-                     or in linux
-            cat motifs/KLF4.pat | find_pvalue .stdin 7.32 4.31 5.42
+            find_pvalue motifs/KLF4.pat 7.32 4.31 5.42
         }
         doc.gsub!(/^#{doc[/\A +/]}/,'')
         if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}

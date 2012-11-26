@@ -8,10 +8,6 @@ module Macroape
         doc = %q{
         Command-line format:
         eval_similarity <1st matrix pat-file> <2nd matrix pat-file> [options]
-             or on windows
-        type <1st matrix pat-file> <2nd matrix pat-file> | eval_similarity .stdin .stdin [options]
-             or in linux
-        cat <1st matrix pat-file> <2nd matrix pat-file> | eval_similarity .stdin .stdin [options]
 
         Options:
           [-p <P-value>]
@@ -23,10 +19,6 @@ module Macroape
 
         Examples:
           eval_similarity motifs/KLF4.pat motifs/SP1.pat -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
-             or on windows
-          type motifs/SP1.pat | eval_similarity motifs/KLF4.pat .stdin -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
-             or in linux
-          cat motifs/KLF4.pat motifs/SP1.pat | eval_similarity .stdin .stdin -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
         }
         doc.gsub!(/^#{doc[/\A +/]}/,'')
         if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
