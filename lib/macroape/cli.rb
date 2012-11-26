@@ -40,7 +40,7 @@ module Macroape
 
       def self.threshold_infos_string(infos)
         result_strings = infos.collect { |info|
-          "#{ info[:expected_pvalue] }\t#{ info[:real_pvalue] }\t#{ info[:recognized_words] }\t#{ info[:threshold] }" 
+          "#{ info[:expected_pvalue] }\t#{ info[:real_pvalue] }\t#{ info[:recognized_words] }\t#{ info[:threshold] }"
         }
         <<-EOS.strip_doc
           # P: requested P-value
@@ -65,8 +65,8 @@ module Macroape
         result << "#P\t#{infos[:pvalue]}\t#P-Value"
         pvalue_boundary = infos[:strong_threshold] ? 'lower' : 'upper'
         result << "#PB\t#{pvalue_boundary}\t#P-value boundary"
-        result << "#BQ\t#{infos[:query_background].join(' ')}#background of query motif"  unless infos[:query_background] == [1,1,1,1]
-        result << "#BC\t#{infos[:collection_background].join(' ')}#background of collection motif"  unless infos[:collection_background] == [1,1,1,1]
+        result << "#BQ\t#{infos[:query_background].join(' ')}#background for query matrix"  unless infos[:query_background] == [1,1,1,1]
+        result << "#BC\t#{infos[:collection_background].join(' ')}#background for collection"  unless infos[:collection_background] == [1,1,1,1]
 
         result.join("\n")
       end
