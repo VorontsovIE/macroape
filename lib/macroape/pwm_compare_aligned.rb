@@ -8,7 +8,7 @@ module Macroape
     make_parameters :max_pair_hash_size
 
     attr_reader :first, :second, :length, :shift, :orientation, :first_length, :second_length, :parameters
-    
+
     def initialize(first_unaligned, second_unaligned, shift, orientation)
       @parameters = OpenStruct.new
       @shift, @orientation = shift, orientation
@@ -18,7 +18,7 @@ module Macroape
 
       first, second = first_unaligned, second_unaligned
       second = second.reverse_complement  if revcomp?
-      
+
       if shift > 0
         second = second.left_augment(shift)
       else
@@ -28,8 +28,6 @@ module Macroape
       @first = first.right_augment(@length - first.length)
       @second = second.right_augment(@length - second.length)
     end
-    
-    
 
     def direct?
       orientation == :direct
@@ -90,8 +88,8 @@ module Macroape
     end
 
     def jaccard(first_threshold, second_threshold)
-      f = first.counts_by_thresholds(first_threshold).first
-      s = second.counts_by_thresholds(second_threshold).first
+      f = first.count_by_threshold(first_threshold)
+      s = second.count_by_threshold(second_threshold)
       if f == 0 || s == 0
         return {similarity: -1, tanimoto: -1, recognized_by_both: 0,
               recognized_by_first: f,

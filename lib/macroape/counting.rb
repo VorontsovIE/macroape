@@ -109,8 +109,12 @@ module Bioinform
       }
     end
 
+    def count_by_threshold(threshold)
+      counts_by_thresholds(threshold).first
+    end
+
     def pvalue_by_threshold(threshold)
-      counts_by_thresholds(threshold).first / vocabulary_volume
+      count_by_threshold(threshold) / vocabulary_volume
     end
   end
 end
