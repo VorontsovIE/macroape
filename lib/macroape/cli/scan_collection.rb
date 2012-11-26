@@ -42,7 +42,9 @@ module Macroape
         pvalue = 0.0005
         cutoff = 0.05 # minimal similarity to output
         collection = YAML.load_file(collection_file)
-        background_query = collection.parameters.background
+        collection_background = collection.parameters.background
+        query_background = collection_background
+
         rough_discretization = collection.parameters.rough_discretization
         precise_discretization = collection.parameters.precise_discretization
         max_hash_size = 1000000
@@ -54,8 +56,8 @@ module Macroape
         until argv.empty?
           case argv.shift
             when '-bq'
-              background_query = argv.shift(4).map(&:to_f)
-              raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless background_query == background_query.reverse
+              query_background = argv.shift(4).map(&:to_f)
+              raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless query_background == query_background.reverse
             when '-p'
               pvalue = argv.shift.to_f
             when '-m'
@@ -91,7 +93,7 @@ module Macroape
         end
 
         query_pwm = data_model.new(query_input).to_pwm
-        query_pwm.set_parameters(background: background_query, max_hash_size: max_hash_size)
+        query_pwm.set_parameters(background: query_background, max_hash_size: max_hash_size)
 
         query_pwm_rough = query_pwm.discrete(rough_discretization)
         query_pwm_precise = query_pwm.discrete(precise_discretization)
@@ -120,7 +122,7 @@ module Macroape
         collection.each do |motif|
           name = motif.name
           STDERR.puts name unless silent
-          motif.set_parameters(background: collection.parameters.background, max_hash_size: max_hash_size)
+          motif.set_parameters(background: collection_background, max_hash_size: max_hash_size)
           if motif.rough[pvalue]
             collection_pwm_rough = motif.pwm.discrete(rough_discretization)
             collection_threshold_rough = motif.rough[pvalue] * rough_discretization
@@ -143,8 +145,9 @@ module Macroape
                                                       minimal_similarity: minimal_similarity,
                                                       pvalue: pvalue,
                                                       strong_threshold: strong_threshold,
-                                                      background_query: background_query)
-
+                                                      collection_background: collection_background,
+                                                      query_background: query_background)
+        puts ''
         puts "#pwm\tsimilarity\tshift\toverlap\torientation"
         similarities.sort_by do |name, info|
           info[:similarity]

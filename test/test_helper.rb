@@ -69,7 +69,7 @@ module Helpers
     capture_output{ Macroape::CLI::EvalAlignment.main(param_list.shellsplit)}
   end
   def self.scan_collection_output(param_list)
-    capture_output{ Macroape::CLI::ScanCollection.main(param_list.shellsplit) }.lines.to_a.reject{|line| line.start_with? '#' }.reject(&:empty?).join
+    capture_output{ Macroape::CLI::ScanCollection.main(param_list.shellsplit) }.lines.to_a.map(&:strip).reject{|line| line.start_with? '#' }.reject(&:empty?).join("\n")
   end
   def self.scan_collection_stderr(param_list)
     capture_stderr{ Macroape::CLI::ScanCollection.main(param_list.shellsplit) }

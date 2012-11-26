@@ -51,10 +51,10 @@ module Macroape
           #{result_strings.join("\n")}
         EOS
       end
-      
+
       def self.scan_collection_parameters_string(infos)
         result = []
-        result << "#M\t#{infos[:cutoff]}\tminimal similarity to output"
+        result << "#MS\t#{infos[:cutoff]}\tminimal similarity to output"
         if infos[:precision_mode] == :precise
           result << "#VR\t#{infos[:rough_discretization]}\t#discretization value, rough"
           result << "#VP\t#{infos[:precise_discretization]}\t#discretization value, precise"
@@ -65,7 +65,8 @@ module Macroape
         result << "#P\t#{infos[:pvalue]}\t#P-Value"
         pvalue_boundary = infos[:strong_threshold] ? 'lower' : 'upper'
         result << "#PB\t#{pvalue_boundary}\t#P-value boundary"
-        result << "#B\t#{infos[:background_query].join(' ')}#background of query motif"  unless infos[:background_query] == [1,1,1,1]
+        result << "#BQ\t#{infos[:query_background].join(' ')}#background of query motif"  unless infos[:query_background] == [1,1,1,1]
+        result << "#BC\t#{infos[:collection_background].join(' ')}#background of collection motif"  unless infos[:collection_background] == [1,1,1,1]
 
         result.join("\n")
       end
