@@ -147,8 +147,7 @@ module Macroape
                                                       strong_threshold: strong_threshold,
                                                       collection_background: collection_background,
                                                       query_background: query_background)
-        puts ''
-        puts "#pwm\tsimilarity\tshift\toverlap\torientation"
+        puts "# pwm\tsimilarity\tshift\toverlap\torientation"
         similarities.sort_by do |name, info|
           info[:similarity]
         end.reverse.each do |name, info|

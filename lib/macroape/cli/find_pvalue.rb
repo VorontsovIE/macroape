@@ -13,12 +13,6 @@ module Macroape
             [-d <discretization level>]
             [-b <background probabilities, ACGT - 4 numbers, space-delimited, sum should be equal to 1>]
 
-          Output format:
-            threshold_1 count_1  pvalue_1
-            threshold_2 count_2  pvalue_2
-            threshold_3 count_3  pvalue_3
-          The results are printed out in the same order as in the given threshold list.
-
           Examples:
             find_pvalue motifs/KLF4.pat 7.32 -d 1000 -b 0.2 0.3 0.2 0.3
             find_pvalue motifs/KLF4.pat 7.32 4.31 5.42
@@ -71,11 +65,16 @@ module Macroape
         pwm.set_parameters(background: background, max_hash_size: max_hash_size).discrete!(discretization)
 
         counts = pwm.counts_by_thresholds(* thresholds.map{|count| count * discretization})
+        infos = []
         thresholds.each do |threshold|
           count = counts[threshold * discretization]
-          pvalue = count / pwm.vocabulary_volume
-          puts "#{threshold}\t#{count}\t#{pvalue}"
+          pvalue = count.to_f / pwm.vocabulary_volume
+          infos << {threshold: threshold,
+                    number_of_recognized_words: count,
+                    pvalue: pvalue}
         end
+
+        puts Helper.find_pvalue_info_string(infos)
       rescue => err
         STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse -help option for help\n"
       end

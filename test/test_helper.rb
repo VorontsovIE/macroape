@@ -60,7 +60,7 @@ module Helpers
     split_on_lines( capture_output{ Macroape::CLI::AlignMotifs.main(param_list.shellsplit)} )
   end
   def self.find_pvalue_output(param_list)
-    split_on_lines( capture_output{ Macroape::CLI::FindPValue.main(param_list.shellsplit)} )
+    capture_output{ Macroape::CLI::FindPValue.main(param_list.shellsplit)} .lines.to_a.map(&:strip).reject{|line| line.start_with? '#' }.reject(&:empty?).map{|line|line.split("\t")}
   end
   def self.eval_similarity_output(param_list)
     capture_output{ Macroape::CLI::EvalSimilarity.main(param_list.shellsplit)}

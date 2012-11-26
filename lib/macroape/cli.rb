@@ -70,6 +70,19 @@ module Macroape
 
         result.join("\n")
       end
+
+      def self.find_pvalue_info_string(infos)
+        result_strings = infos.collect do |info|
+          "#{ info[:threshold] }\t#{ info[:number_of_recognized_words] }\t#{ info[:pvalue] }"
+        end
+        <<-EOS.strip_doc
+          # T: threshold
+          # W: number of recognized words
+          # P: P-value
+          # T\tW\tP
+          #{result_strings.join("\n")}
+        EOS
+      end
     end
   end
 end
