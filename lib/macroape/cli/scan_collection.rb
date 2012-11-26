@@ -27,7 +27,7 @@ module Macroape
           scan_collection motifs/KLF4.pat collection.yaml -p 0.005 --precise 0.03
         }
         doc.gsub!(/^#{doc[/\A +/]}/,'')
-        if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
+        if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
           STDERR.puts doc
           exit
         end

@@ -27,7 +27,7 @@ module Macroape
           preprocess_collection ./motifs -p 0.001 0.0005 0.0001 -d 1 10 -b 0.2 0.3 0.2 0.3 -o collection.yaml
         }
         doc.gsub!(/^#{doc[/\A +/]}/,'')
-        if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
+        if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
           STDERR.puts doc
           exit
         end

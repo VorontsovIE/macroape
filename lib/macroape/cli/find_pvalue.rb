@@ -18,7 +18,7 @@ module Macroape
             find_pvalue motifs/KLF4.pat 7.32 4.31 5.42
         }
         doc.gsub!(/^#{doc[/\A +/]}/,'')
-        if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
+        if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
           STDERR.puts doc
           exit
         end

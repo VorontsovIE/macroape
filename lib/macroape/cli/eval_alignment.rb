@@ -22,7 +22,7 @@ module Macroape
           eval_alignment motifs/KLF4.pat motifs/SP1.pat 3 revcomp
         }
         doc.gsub!(/^#{doc[/\A +/]}/,'')
-        if ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
+        if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
           STDERR.puts doc
           exit
         end
