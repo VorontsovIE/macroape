@@ -69,7 +69,7 @@ module Helpers
     capture_output{ Macroape::CLI::EvalAlignment.main(param_list.shellsplit)}
   end
   def self.scan_collection_output(param_list)
-    capture_output{ Macroape::CLI::ScanCollection.main(param_list.shellsplit) }
+    capture_output{ Macroape::CLI::ScanCollection.main(param_list.shellsplit) }.lines.to_a.reject{|line| line.start_with? '#' }.reject(&:empty?).join
   end
   def self.scan_collection_stderr(param_list)
     capture_stderr{ Macroape::CLI::ScanCollection.main(param_list.shellsplit) }
@@ -100,7 +100,7 @@ module Helpers
 
         when 'A1'  then infos[:matrix_first_alignment] = value
         when 'A2'  then infos[:matrix_second_alignment] = value
-        
+
         when 'V' then infos[:discretization] = value
       end
     end

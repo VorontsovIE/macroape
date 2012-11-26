@@ -1,4 +1,3 @@
-#pwm	similarity	shift	overlap	orientation
 KLF4_f2	1.0	0	10	direct	*
 SP1_f1	0.2420758234928527	-1	10	direct	*
 GABPA_f1	0.00043527658136684877	-8	5	direct

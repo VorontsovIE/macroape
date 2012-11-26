@@ -43,6 +43,8 @@ module Macroape
         cutoff = 0.05 # minimal similarity to output
         collection = YAML.load_file(collection_file)
         background_query = collection.parameters.background
+        rough_discretization = collection.parameters.rough_discretization
+        precise_discretization = collection.parameters.precise_discretization
         max_hash_size = 1000000
         max_pair_hash_size = 1000
         strong_threshold = false
@@ -91,8 +93,8 @@ module Macroape
         query_pwm = data_model.new(query_input).to_pwm
         query_pwm.set_parameters(background: background_query, max_hash_size: max_hash_size)
 
-        query_pwm_rough = query_pwm.discrete(collection.parameters.rough_discretization)
-        query_pwm_precise = query_pwm.discrete(collection.parameters.precise_discretization)
+        query_pwm_rough = query_pwm.discrete(rough_discretization)
+        query_pwm_precise = query_pwm.discrete(precise_discretization)
 
         if strong_threshold
           query_threshold_rough, query_rough_real_pvalue = query_pwm_rough.threshold_and_real_pvalue(pvalue)
@@ -103,13 +105,13 @@ module Macroape
         end
 
         if query_precise_real_pvalue == 0
-          $stderr.puts "Query motif #{query_pwm.name} gives 0 recognized words for a given P-value of #{pvalue} with the precise discretization level of #{collection.parameters.precise_discretization}. It's impossible to scan collection for this motif"
+          $stderr.puts "Query motif #{query_pwm.name} gives 0 recognized words for a given P-value of #{pvalue} with the precise discretization level of #{precise_discretization}. It's impossible to scan collection for this motif"
           return
         end
 
         if query_rough_real_pvalue == 0
           query_pwm_rough, query_threshold_rough = query_pwm_precise, query_threshold_precise
-          $stderr.puts "Query motif #{query_pwm.name} gives 0 recognized words for a given P-value of #{pvalue} with the rough discretization level of #{collection.parameters.rough_discretization}. Forcing precise discretization level of #{collection.parameters.precise_discretization}"
+          $stderr.puts "Query motif #{query_pwm.name} gives 0 recognized words for a given P-value of #{pvalue} with the rough discretization level of #{rough_discretization}. Forcing precise discretization level of #{precise_discretization}"
         end
 
         similarities = {}
@@ -120,19 +122,28 @@ module Macroape
           STDERR.puts name unless silent
           motif.set_parameters(background: collection.parameters.background, max_hash_size: max_hash_size)
           if motif.rough[pvalue]
-            collection_pwm_rough = motif.pwm.discrete(collection.parameters.rough_discretization)
-            collection_threshold_rough = motif.rough[pvalue] * collection.parameters.rough_discretization
+            collection_pwm_rough = motif.pwm.discrete(rough_discretization)
+            collection_threshold_rough = motif.rough[pvalue] * rough_discretization
             info = Macroape::PWMCompare.new(query_pwm_rough, collection_pwm_rough).set_parameters(max_pair_hash_size: max_pair_hash_size).jaccard(query_threshold_rough, collection_threshold_rough)
             precision_file_mode[name] = :rough
           end
           if !motif.rough[pvalue] || (precision_mode == :precise) && (info[:similarity] >= minimal_similarity)
-            collection_pwm_precise = motif.pwm.discrete(collection.parameters.precise_discretization)
-            collection_threshold_precise = motif.precise[pvalue] * collection.parameters.precise_discretization
+            collection_pwm_precise = motif.pwm.discrete(precise_discretization)
+            collection_threshold_precise = motif.precise[pvalue] * precise_discretization
             info = Macroape::PWMCompare.new(query_pwm_precise, collection_pwm_precise).set_parameters(max_pair_hash_size: max_pair_hash_size).jaccard(query_threshold_precise, collection_threshold_precise)
             precision_file_mode[name] = :precise
           end
           similarities[name] = info
         end
+
+        puts Helper.scan_collection_parameters_string(cutoff: cutoff,
+                                                      precision_mode:  precision_mode,
+                                                      rough_discretization: rough_discretization,
+                                                      precise_discretization: precise_discretization,
+                                                      minimal_similarity: minimal_similarity,
+                                                      pvalue: pvalue,
+                                                      strong_threshold: strong_threshold,
+                                                      background_query: background_query)
 
         puts "#pwm\tsimilarity\tshift\toverlap\torientation"
         similarities.sort_by do |name, info|

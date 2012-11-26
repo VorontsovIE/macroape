@@ -51,6 +51,24 @@ module Macroape
           #{result_strings.join("\n")}
         EOS
       end
+      
+      def self.scan_collection_parameters_string(infos)
+        result = []
+        result << "#M\t#{infos[:cutoff]}\tminimal similarity to output"
+        if infos[:precision_mode] == :precise
+          result << "#VR\t#{infos[:rough_discretization]}\t#discretization value, rough"
+          result << "#VP\t#{infos[:precise_discretization]}\t#discretization value, precise"
+          result << "#MP\t#{infos[:minimal_similarity]}\t#minimal similarity for the 2nd pass in 'precise' mode"
+        else
+          result << "#V\t#{infos[:rough_discretization]}\t#discretization value"
+        end
+        result << "#P\t#{infos[:pvalue]}\t#P-Value"
+        pvalue_boundary = infos[:strong_threshold] ? 'lower' : 'upper'
+        result << "#PB\t#{pvalue_boundary}\t#P-value boundary"
+        result << "#B\t#{infos[:background_query].join(' ')}#background of query motif"  unless infos[:background_query] == [1,1,1,1]
+
+        result.join("\n")
+      end
     end
   end
 end
