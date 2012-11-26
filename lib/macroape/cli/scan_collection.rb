@@ -138,23 +138,21 @@ module Macroape
           similarities[name] = info
         end
 
-        puts Helper.scan_collection_parameters_string(cutoff: cutoff,
-                                                      precision_mode:  precision_mode,
-                                                      rough_discretization: rough_discretization,
-                                                      precise_discretization: precise_discretization,
-                                                      minimal_similarity: minimal_similarity,
-                                                      pvalue: pvalue,
-                                                      strong_threshold: strong_threshold,
-                                                      collection_background: collection_background,
-                                                      query_background: query_background)
-        puts "# pwm\tsimilarity\tshift\toverlap\torientation"
-        similarities.sort_by do |name, info|
-          info[:similarity]
-        end.reverse.each do |name, info|
-          precision_text = (precision_file_mode[name] == :precise) ? "\t*" : ""
-          puts "#{name}\t#{info[:similarity]}\t#{info[:shift]}\t#{info[:overlap]}\t#{info[:orientation]}#{precision_text}" if info[:similarity] >= cutoff
+        similarities.each do |name, info|
+          info[:precision_mode] = precision_file_mode[name]
         end
 
+        similarities_to_output = similarities.sort_by{|name, info| info[:similarity] }.reverse.select{|name,info| info[:similarity] >= cutoff }
+        puts Helper.scan_collection_infos_string( similarities_to_output,
+                                                  {cutoff: cutoff,
+                                                  precision_mode: precision_mode,
+                                                  rough_discretization: rough_discretization,
+                                                  precise_discretization: precise_discretization,
+                                                  minimal_similarity: minimal_similarity,
+                                                  pvalue: pvalue,
+                                                  strong_threshold: strong_threshold,
+                                                  collection_background: collection_background,
+                                                  query_background: query_background} )
       rescue => err
         STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse -help option for help\n"
       end

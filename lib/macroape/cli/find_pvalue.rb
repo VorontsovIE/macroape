@@ -74,7 +74,9 @@ module Macroape
                     pvalue: pvalue}
         end
 
-        puts Helper.find_pvalue_info_string(infos)
+        puts Helper.find_pvalue_info_string( infos,
+                                            {discretization: discretization,
+                                            background: background} )
       rescue => err
         STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse -help option for help\n"
       end

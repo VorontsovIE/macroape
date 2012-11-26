@@ -38,6 +38,8 @@ module Macroape
         EOS
       end
 
+############################################
+
       def self.threshold_infos_string(infos)
         result_strings = infos.collect { |info|
           "#{ info[:expected_pvalue] }\t#{ info[:real_pvalue] }\t#{ info[:recognized_words] }\t#{ info[:threshold] }"
@@ -52,30 +54,53 @@ module Macroape
         EOS
       end
 
-      def self.scan_collection_parameters_string(infos)
+############################################
+
+      def self.scan_collection_parameters_string(parameters)
         result = []
-        result << "#MS\t#{infos[:cutoff]}\tminimal similarity to output"
-        if infos[:precision_mode] == :precise
-          result << "#VR\t#{infos[:rough_discretization]}\t#discretization value, rough"
-          result << "#VP\t#{infos[:precise_discretization]}\t#discretization value, precise"
-          result << "#MP\t#{infos[:minimal_similarity]}\t#minimal similarity for the 2nd pass in 'precise' mode"
+        result << "#MS\t#{parameters[:cutoff]}\tminimal similarity to output"
+        if parameters[:precision_mode] == :precise
+          result << "#VR\t#{parameters[:rough_discretization]}\t#discretization value, rough"
+          result << "#VP\t#{parameters[:precise_discretization]}\t#discretization value, precise"
+          result << "#MP\t#{parameters[:minimal_similarity]}\t#minimal similarity for the 2nd pass in 'precise' mode"
         else
-          result << "#V\t#{infos[:rough_discretization]}\t#discretization value"
+          result << "#V\t#{parameters[:rough_discretization]}\t#discretization value"
         end
-        result << "#P\t#{infos[:pvalue]}\t#P-Value"
-        pvalue_boundary = infos[:strong_threshold] ? 'lower' : 'upper'
+        result << "#P\t#{parameters[:pvalue]}\t#P-Value"
+        pvalue_boundary = parameters[:strong_threshold] ? 'lower' : 'upper'
         result << "#PB\t#{pvalue_boundary}\t#P-value boundary"
-        result << "#BQ\t#{infos[:query_background].join(' ')}#background for query matrix"  unless infos[:query_background] == [1,1,1,1]
-        result << "#BC\t#{infos[:collection_background].join(' ')}#background for collection"  unless infos[:collection_background] == [1,1,1,1]
+        result << "#BQ\t#{parameters[:query_background].join(' ')}#background for query matrix"  unless parameters[:query_background] == [1,1,1,1]
+        result << "#BC\t#{parameters[:collection_background].join(' ')}#background for collection"  unless parameters[:collection_background] == [1,1,1,1]
 
         result.join("\n")
       end
 
-      def self.find_pvalue_info_string(infos)
+############################################
+
+      def self.scan_collection_infos_string(infos, parameters)
+        result_strings = infos.collect do |name, info|
+          precision_text = (info[:precision_mode] == :precise) ? "\t*" : ""
+          "#{name}\t#{info[:similarity]}\t#{info[:shift]}\t#{info[:overlap]}\t#{info[:orientation]}#{precision_text}"
+        end
+        <<-EOS
+          #{scan_collection_parameters_string(parameters)}
+          # pwm\tsimilarity\tshift\toverlap\torientation
+          #{result_strings.join("\n")}
+        EOS
+      end
+
+############################################
+
+      def self.find_pvalue_info_string(infos, parameters)
         result_strings = infos.collect do |info|
           "#{ info[:threshold] }\t#{ info[:number_of_recognized_words] }\t#{ info[:pvalue] }"
         end
+        parameters_data = []
+        parameters_data << "# V\t#{parameters[:discretization]}\t#discretization value"
+        parameters_data << "# B\t#{parameters[:background]}\t#background"  unless parameters[:background] == [1,1,1,1]
+        parameters_string = parameters_data.join("\n")
         <<-EOS.strip_doc
+          #{parameters_string}
           # T: threshold
           # W: number of recognized words
           # P: P-value
