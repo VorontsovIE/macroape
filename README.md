@@ -23,8 +23,8 @@ Or install it yourself as:
   MacroAPE have 7 command line tools:
   
 ### Tools for calculating thresholds and pvalues:
-  * find_threshold \<PWM file\> [-p \<pvalue\> (by default: 0.0005)]
-  * find_pvalue \<PWM file\> \<threshold\>
+  * find_threshold \<PWM file\> [\<pvalue(by default: 0.0005)\>...]
+  * find_pvalue \<PWM file\> \<threshold\>...
   
 ### Tools for evaluating Jaccard similarity measure in the best alignment and in certain alignment:
   * eval_similarity \<first PWM file\> \<second PWM file\>
