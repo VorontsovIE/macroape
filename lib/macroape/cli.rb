@@ -68,7 +68,7 @@ module Macroape
 
       def self.scan_collection_parameters_string(parameters)
         result = []
-        result << "#MS\t#{parameters[:cutoff]}\tminimal similarity to output"
+        result << "#MS\t#{parameters[:cutoff]}\t#minimal similarity to output"
         if parameters[:precision_mode] == :precise
           result << "#VR\t#{parameters[:rough_discretization]}\t#discretization value, rough"
           result << "#VP\t#{parameters[:precise_discretization]}\t#discretization value, precise"
@@ -92,7 +92,7 @@ module Macroape
           precision_text = (info[:precision_mode] == :precise) ? "\t*" : ""
           "#{name}\t#{info[:similarity]}\t#{info[:shift]}\t#{info[:overlap]}\t#{info[:orientation]}#{precision_text}"
         end
-        <<-EOS
+        <<-EOS.strip_doc
           #{scan_collection_parameters_string(parameters)}
           # pwm\tsimilarity\tshift\toverlap\torientation
           #{result_strings.join("\n")}
