@@ -94,7 +94,7 @@ module Macroape
         end
         <<-EOS.strip_doc
           #{scan_collection_parameters_string(parameters)}
-          # pwm\tsimilarity\tshift\toverlap\torientation
+          # motif\tsimilarity\tshift\toverlap\torientation
           #{result_strings.join("\n")}
         EOS
       end
