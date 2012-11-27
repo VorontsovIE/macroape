@@ -39,7 +39,7 @@ module Macroape
         rough_discretization = 1
         precise_discretization = 10
         output_file = 'collection.yaml'
-        max_hash_size = 1000000
+        max_hash_size = 10000000
 
         data_source = argv.shift
 

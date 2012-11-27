@@ -47,8 +47,8 @@ module Macroape
 
         rough_discretization = collection.parameters.rough_discretization
         precise_discretization = collection.parameters.precise_discretization
-        max_hash_size = 1000000
-        max_pair_hash_size = 1000
+        max_hash_size = 10000000
+        max_pair_hash_size = 10000
         strong_threshold = false
 
         silent = false

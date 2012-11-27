@@ -32,8 +32,8 @@ module Macroape
         first_background = [1,1,1,1]
         second_background = [1,1,1,1]
 
-        max_hash_size = 1000000
-        max_pair_hash_size = 1000
+        max_hash_size = 10000000
+        max_pair_hash_size = 10000
         strong_threshold = false
 
         data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM

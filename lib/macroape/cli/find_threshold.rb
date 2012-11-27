@@ -27,7 +27,7 @@ module Macroape
         background = [1,1,1,1]
         default_pvalues = [0.0005]
         discretization = 10000
-        max_hash_size = 1000000
+        max_hash_size = 10000000
         data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
         strong_threshold = true
 
