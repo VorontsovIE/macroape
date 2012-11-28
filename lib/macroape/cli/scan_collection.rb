@@ -24,8 +24,8 @@ module Macroape
             Attention! The shift and orientation are reported for the collection matrix relative to the query matrix.
 
         Example:
-          scan_collection motifs/KLF4.pat collection.yaml
-          scan_collection motifs/KLF4.pat collection.yaml -p 0.005 --precise 0.03
+          scan_collection motifs/KLF4.pat hocomoco_ad_uniform.yaml
+          scan_collection motifs/KLF4.pat hocomoco_ad_uniform.yaml -p 0.0005 --precise 0.03
         }
         doc.gsub!(/^#{doc[/\A +/]}/,'')
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
