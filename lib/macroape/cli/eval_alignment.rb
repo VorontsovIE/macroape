@@ -13,7 +13,7 @@ module Macroape
           [-p <P-value>]
           [-d <discretization level>]
           [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
-          [--strong-threshold]
+          [--boundary lower|upper] Upper boundary (default) means that the obtained P-value is greater than or equal to the requested P-value
           [--first-threshold <threshold for the first matrix>]
           [--second-threshold <threshold for the second matrix>]
 
@@ -34,7 +34,7 @@ module Macroape
         second_background = [1,1,1,1]
         max_hash_size = 10000000
         max_pair_hash_size = 10000
-        strong_threshold = false
+        pvalue_boundary = :upper
 
         data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
 
@@ -77,8 +77,9 @@ module Macroape
               first_background = argv.shift.split(',').map(&:to_f)
             when '-b2'
               second_background = argv.shift.split(',').map(&:to_f)
-            when '--strong-threshold'
-              strong_threshold = true
+            when '--boundary'
+              pvalue_boundary = argv.shift.to_sym
+              raise 'boundary should be either lower or upper'  unless  pvalue_boundary == :lower || pvalue_boundary == :upper
             when '--first-threshold'
               threshold_first = argv.shift.to_f
             when '--second-threshold'
@@ -118,7 +119,7 @@ module Macroape
         if threshold_first
           threshold_first *= discretization
         else
-          if strong_threshold
+          if pvalue_boundary == :lower
             threshold_first = pwm_first.threshold(pvalue)
           else
             threshold_first = pwm_first.weak_threshold(pvalue)
@@ -128,7 +129,7 @@ module Macroape
         if threshold_second
           threshold_second *= discretization
         else
-          if strong_threshold
+          if pvalue_boundary == :lower
             threshold_second = pwm_second.threshold(pvalue)
           else
             threshold_second = pwm_second.weak_threshold(pvalue)

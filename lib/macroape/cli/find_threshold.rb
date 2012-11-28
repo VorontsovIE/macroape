@@ -12,7 +12,7 @@ module Macroape
           Options:
             [-d <discretization level>]
             [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
-            [--weak-threshold]
+            [--boundary lower|upper] Lower boundary (default) means that the obtained P-value is less than or equal to the requested P-value
 
           Example:
             find_threshold motifs/KLF4.pat
@@ -29,7 +29,9 @@ module Macroape
         discretization = 10000
         max_hash_size = 10000000
         data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
-        strong_threshold = true
+
+        pvalue_boundary = :lower
+
 
         filename = argv.shift
         raise 'No input. You should specify input file' unless filename
@@ -53,8 +55,11 @@ module Macroape
               max_hash_size = argv.shift.to_i
             when '-d'
               discretization = argv.shift.to_f
-            when '--weak-threshold'
+            when '--boundary upper'
               strong_threshold = false
+            when '--boundary'
+              pvalue_boundary = argv.shift.to_sym
+              raise 'boundary should be either lower or upper'  unless  pvalue_boundary == :lower || pvalue_boundary == :upper
             end
         end
 
@@ -74,7 +79,7 @@ module Macroape
                     real_pvalue: real_pvalue,
                     recognized_words: pwm.vocabulary_volume * real_pvalue }
         end
-        if strong_threshold
+        if pvalue_boundary == :lower
           pwm.thresholds(*pvalues, &collect_infos_proc)
         else
           pwm.weak_thresholds(*pvalues, &collect_infos_proc)

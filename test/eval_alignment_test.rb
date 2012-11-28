@@ -46,7 +46,7 @@ class TestEvalAlignment < Test::Unit::TestCase
                                   matrix_first_alignment:  '.>>>>>>>>>>',
                                   matrix_second_alignment: '>>>>>>>>>>>',
                                   discretization: 10.0},
-                                  Helpers.eval_alignment_output('KLF4_f2.pwm SP1_f1.pwm -1 direct --strong-threshold'))
+                                  Helpers.eval_alignment_output('KLF4_f2.pwm SP1_f1.pwm -1 direct --boundary lower'))
   end
 
   def test_process_custom_thresholds

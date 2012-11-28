@@ -92,8 +92,7 @@ module Macroape
           result << "#V\t#{parameters[:rough_discretization]}\t#discretization value"
         end
         result << "#P\t#{parameters[:pvalue]}\t#P-Value"
-        pvalue_boundary = parameters[:strong_threshold] ? 'lower' : 'upper'
-        result << "#PB\t#{pvalue_boundary}\t#P-value boundary"
+        result << "#PB\t#{parameters[:pvalue_boundary]}\t#P-value boundary"
         result << "#BQ\t#{background_string(parameters[:query_background])}#background for query matrix"  unless parameters[:query_background] == [1,1,1,1]
         result << "#BC\t#{background_string(parameters[:collection_background])}#background for collection"  unless parameters[:collection_background] == [1,1,1,1]
 
@@ -119,7 +118,7 @@ module Macroape
       def self.find_pvalue_info_string(infos, parameters)
         parameters_data = []
         parameters_data << "# V\t#{parameters[:discretization]}\t#discretization value"
-        
+
         if parameters[:background] == [1,1,1,1]
           result_strings = infos.collect do |info|
             "#{ info[:threshold] }\t#{ info[:number_of_recognized_words] }\t#{ info[:pvalue] }"

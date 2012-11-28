@@ -15,7 +15,7 @@ module Macroape
           [-c <similarity cutoff>] minimal similarity to be included in output, '-c 0.05' by default, [--all] to print all results
           [--precise [<level>]] minimal similarity to check on the second pass in precise mode, off by default, '--precise 0.01' if level is not set
           [--silent] - hide current progress information during scan (by default this information's written into stderr)
-          [--strong-threshold]
+          [--boundary lower|upper] Upper boundary (default) means that the obtained P-value is greater than or equal to the requested P-value
           [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
 
         Output format:
@@ -50,7 +50,7 @@ module Macroape
         precise_discretization = collection.parameters.precise_discretization
         max_hash_size = 10000000
         max_pair_hash_size = 10000
-        strong_threshold = false
+        pvalue_boundary = :upper
 
         silent = false
         precision_mode = :rough
@@ -71,8 +71,9 @@ module Macroape
               cutoff = 0.0
             when '--silent'
               silent = true
-            when '--strong-threshold'
-              strong_threshold = true
+            when '--boundary'
+              pvalue_boundary = argv.shift.to_sym
+              raise 'boundary should be either lower or upper'  unless  pvalue_boundary == :lower || pvalue_boundary == :upper
             when '--precise'
               precision_mode = :precise
               begin
@@ -99,7 +100,7 @@ module Macroape
         query_pwm_rough = query_pwm.discrete(rough_discretization)
         query_pwm_precise = query_pwm.discrete(precise_discretization)
 
-        if strong_threshold
+        if pvalue_boundary == :lower
           query_threshold_rough, query_rough_real_pvalue = query_pwm_rough.threshold_and_real_pvalue(pvalue)
           query_threshold_precise, query_precise_real_pvalue = query_pwm_precise.threshold_and_real_pvalue(pvalue)
         else
@@ -151,7 +152,7 @@ module Macroape
                                                   precise_discretization: precise_discretization,
                                                   minimal_similarity: minimal_similarity,
                                                   pvalue: pvalue,
-                                                  strong_threshold: strong_threshold,
+                                                  pvalue_boundary: pvalue_boundary,
                                                   collection_background: collection_background,
                                                   query_background: query_background} )
       rescue => err

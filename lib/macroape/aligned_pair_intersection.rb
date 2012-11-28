@@ -18,8 +18,8 @@ module Macroape
         [result, result]
       end
     end
-  
-  
+
+
     # block has form: {|score,letter| contribution to count by `letter` with `score` }
     def get_counts(threshold_first, threshold_second, &count_contribution_block)
       # scores_on_first_pwm, scores_on_second_pwm --> count
@@ -34,7 +34,7 @@ module Macroape
           raise 'Hash overflow in Macroape::AlignedPairIntersection#counts_for_two_matrices_with_different_probabilities'
         end
       end
-      scores.inject(0.0){|sum,(score_first, hsh)| sum + hsh.inject(0.0){|sum,(score_second, count)| sum + count }}      
+      scores.inject(0.0){|sum,(score_first, hsh)| sum + hsh.inject(0.0){|sum,(score_second, count)| sum + count }}
     end
 
     # wouldn't work without count_contribution_block
@@ -52,7 +52,7 @@ module Macroape
               end
             end
           end
-          
+
         end
       end
       new_scores

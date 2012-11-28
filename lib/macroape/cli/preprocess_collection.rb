@@ -17,7 +17,7 @@ module Macroape
           [-o <output file>]
           [--silent] - don't show current progress information during scan (by default this information's written into stderr)
           [--pcm] - treats your input motifs as PCM-s. Motifs are converted to PWMs internally so output is the same as for according PWMs
-          [--strong-threshold]
+          [--boundary lower|upper] Upper boundary (default) means that the obtained P-value is greater than or equal to the requested P-value
           [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
 
         The tool stores preprocessed Macroape collection to the specified YAML-file.
@@ -48,7 +48,7 @@ module Macroape
         pvalues = []
         silent = false
         output_file_specified = false
-        strong_threshold = false
+        pvalue_boundary = :upper
 
         until argv.empty?
           case argv.shift
@@ -73,8 +73,9 @@ module Macroape
               max_hash_size = argv.shift.to_i
             when '--silent'
               silent = true
-            when '--strong-threshold'
-              strong_threshold = true
+            when '--boundary'
+              pvalue_boundary = argv.shift.to_sym
+              raise 'boundary should be either lower or upper'  unless  pvalue_boundary == :lower || pvalue_boundary == :upper
             end
         end
         pvalues = default_pvalues  if pvalues.empty?
@@ -136,13 +137,13 @@ module Macroape
             end
           end
 
-          if strong_threshold
+          if pvalue_boundary == :lower
             pwm.discrete(rough_discretization).thresholds(*pvalues, &fill_rough_infos)
           else
             pwm.discrete(rough_discretization).weak_thresholds(*pvalues, &fill_rough_infos)
           end
 
-          if strong_threshold
+          if pvalue_boundary == :lower
             pwm.discrete(precise_discretization).thresholds(*pvalues, &fill_precise_infos)
           else
             pwm.discrete(precise_discretization).weak_thresholds(*pvalues,&fill_precise_infos)

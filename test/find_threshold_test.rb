@@ -15,7 +15,7 @@ class FindThresholdTest < Test::Unit::TestCase
                                   real_pvalue: 0.0010004043579101562,
                                   number_of_recognized_words: 1049.0,
                                   threshold: 4.1718},
-                                  Helpers.find_threshold_output("KLF4_f2.pwm 0.001 --weak-threshold") )
+                                  Helpers.find_threshold_output("KLF4_f2.pwm 0.001 --boundary upper") )
     # additional consistency checks
     assert_equal Helpers.obtain_pvalue_by_threshold("KLF4_f2.pwm 4.1718"), '0.0010004043579101562'
   end
@@ -69,7 +69,7 @@ class FindThresholdTest < Test::Unit::TestCase
                                   threshold: '-0.10449000000000001'},
                                   Helpers.find_threshold_output("KLF4_f2.pwm -b 0.4,0.1,0.1,0.4") )
     # additional consistency checks
-    assert_equal Helpers.obtain_pvalue_by_threshold("KLF4_f2.pwm -0.10449000000000001 -b 0.4,0.1,0.1,0.4"), '0.0004996429000000166' # here real pvalue differs at last digits =\ 
+    assert_equal Helpers.obtain_pvalue_by_threshold("KLF4_f2.pwm -0.10449000000000001 -b 0.4,0.1,0.1,0.4"), '0.0004996429000000166' # here real pvalue differs at last digits =\
   end
   def test_process_pwm_from_stdin
     assert_equal Helpers.find_threshold_output('KLF4_f2.pwm'),

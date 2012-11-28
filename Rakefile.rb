@@ -8,7 +8,7 @@ namespace :spec do
     t.libs << "test"
     t.test_files = FileList['test/*_test.rb']
     t.verbose = true
-  end  
+  end
   RSpec::Core::RakeTask.new
 end
 
@@ -19,23 +19,23 @@ namespace :benchmark do
   task :run do
     require 'open3'
     time = Time.now.strftime("%d-%m-%Y, %H:%M:%S sec")
-    File.open('benchmark/benchmark.log','a') do |f| 
-      f.puts "=========================================================\n#{time}\n"  
+    File.open('benchmark/benchmark.log','a') do |f|
+      f.puts "=========================================================\n#{time}\n"
       Dir.glob('benchmark/*_benchmark.rb') do |benchmark_filename|
         Open3.popen3("ruby -I ./benchmark #{benchmark_filename}") do |inp, out, err, wait_thr|
           benchmark_name = File.basename(benchmark_filename)
           out_str = out.read
           err_str = err.read
-          
+
           benchmark_infos =  "-------------------\n#{benchmark_name}:\n#{out_str}\n"
           benchmark_infos_to_file = benchmark_infos
           puts benchmark_infos
-          
+
           if err_str && !err_str.empty?
             STDERR.puts(err_str)
             benchmark_infos_to_file = benchmark_infos + "\n!!!\nError:\n#{err_str}\n"
           end
-          
+
           # add info about git commit (if everything is commited, otherwise to commit one should use special option -c)
           f.puts benchmark_infos_to_file
         end

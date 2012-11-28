@@ -26,7 +26,7 @@ class TestEvalSimilarity < Test::Unit::TestCase
                                   matrix_first_alignment:  '.>>>>>>>>>>',
                                   matrix_second_alignment: '>>>>>>>>>>>',
                                   discretization: 10.0},
-                                  Helpers.eval_similarity_output('KLF4_f2.pwm SP1_f1.pwm --strong-threshold'))
+                                  Helpers.eval_similarity_output('KLF4_f2.pwm SP1_f1.pwm --boundary lower'))
   end
 
   def test_process_weak_thresholds
@@ -67,7 +67,7 @@ class TestEvalSimilarity < Test::Unit::TestCase
                                   matrix_second_alignment: '.>>>>>>>>>.',
                                   shift: 1,
                                   orientation: 'direct'},
-                                  Helpers.eval_similarity_output('SP1_f1.pwm AHR_si.pwm --strong-threshold'))
+                                  Helpers.eval_similarity_output('SP1_f1.pwm AHR_si.pwm --boundary lower'))
   end
 
   def test_recognize_orientation_of_alignment
