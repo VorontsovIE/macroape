@@ -46,7 +46,7 @@ module Macroape
         until argv.empty?
           case argv.shift
             when '-b'
-              background = argv.shift(4).map(&:to_f)
+              background = argv.shift.split(',').map(&:to_f)
             when '-d'
               discretization = argv.shift.to_f
             when '-m'

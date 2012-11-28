@@ -48,7 +48,7 @@ module Macroape
         until argv.empty?
           case argv.shift
             when '-b'
-              background = argv.shift(4).map(&:to_f)
+              background = argv.shift.split(',').map(&:to_f)
             when '-m'
               max_hash_size = argv.shift.to_i
             when '-d'

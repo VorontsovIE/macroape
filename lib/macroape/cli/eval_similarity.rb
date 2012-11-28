@@ -52,11 +52,11 @@ module Macroape
             when '-md'
               max_pair_hash_size = argv.shift.to_i
             when '-b'
-              second_background = first_background = argv.shift(4).map(&:to_f)
+              second_background = first_background = argv.shift.split(',').map(&:to_f)
             when '-b1'
-              first_background = argv.shift(4).map(&:to_f)
+              first_background = argv.shift.split(',').map(&:to_f)
             when '-b2'
-              second_background = argv.shift(4).map(&:to_f)
+              second_background = argv.shift.split(',').map(&:to_f)
             when '--strong-threshold'
               strong_threshold = true
             when '--first-threshold'

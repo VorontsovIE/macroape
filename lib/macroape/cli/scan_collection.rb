@@ -56,7 +56,7 @@ module Macroape
         until argv.empty?
           case argv.shift
             when '-bq'
-              query_background = argv.shift(4).map(&:to_f)
+              query_background = argv.shift.split(',').map(&:to_f)
               raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless query_background == query_background.reverse
             when '-p'
               pvalue = argv.shift.to_f

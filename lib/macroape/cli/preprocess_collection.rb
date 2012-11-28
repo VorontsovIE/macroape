@@ -54,7 +54,7 @@ module Macroape
         until argv.empty?
           case argv.shift
             when '-b'
-              background = argv.shift(4).map(&:to_f)
+              background = argv.shift.split(',').map(&:to_f)
               raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless background == background.reverse
             when '-p'
               loop do

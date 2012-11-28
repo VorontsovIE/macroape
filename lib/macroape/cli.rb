@@ -117,21 +117,34 @@ module Macroape
 ############################################
 
       def self.find_pvalue_info_string(infos, parameters)
-        result_strings = infos.collect do |info|
-          "#{ info[:threshold] }\t#{ info[:number_of_recognized_words] }\t#{ info[:pvalue] }"
-        end
         parameters_data = []
         parameters_data << "# V\t#{parameters[:discretization]}\t#discretization value"
-        parameters_data << "# B\t#{background_string(parameters[:background])}\t#background"  unless parameters[:background] == [1,1,1,1]
-        parameters_string = parameters_data.join("\n")
-        <<-EOS.strip_doc
-          #{parameters_string}
-          # T: threshold
-          # W: number of recognized words
-          # P: P-value
-          # T\tW\tP
-          #{result_strings.join("\n")}
-        EOS
+        
+        if parameters[:background] == [1,1,1,1]
+          result_strings = infos.collect do |info|
+            "#{ info[:threshold] }\t#{ info[:number_of_recognized_words] }\t#{ info[:pvalue] }"
+          end
+          <<-EOS.strip_doc
+            #{parameters_data.join("\n")}
+            # T: threshold
+            # W: number of recognized words
+            # P: P-value
+            # T\tW\tP
+            #{result_strings.join("\n")}
+          EOS
+        else
+          parameters_data << "# B\t#{background_string(parameters[:background])}\t#background"
+          result_strings = infos.collect do |info|
+            "#{ info[:threshold] }\t#{ info[:pvalue] }"
+          end
+          <<-EOS.strip_doc
+            #{parameters_data.join("\n")}
+            # T: threshold
+            # P: P-value
+            # T\tP
+            #{result_strings.join("\n")}
+          EOS
+        end
       end
     end
   end
