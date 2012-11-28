@@ -5,23 +5,23 @@ module Macroape
     module EvalAlignment
 
       def self.main(argv)
-        doc = %q{
-        Command-line format:
-        eval_alignment <1st matrix pat-file> <2nd matrix pat-file> <shift> <orientation(direct/revcomp)> [options]
+        doc = <<-EOS.strip_doc
+          Command-line format:
+          eval_alignment <1st matrix pat-file> <2nd matrix pat-file> <shift> <orientation(direct/revcomp)> [options]
 
-        Options:
-          [-p <P-value>]
-          [-d <discretization level>]
-          [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
-          [--boundary lower|upper] Upper boundary (default) means that the obtained P-value is greater than or equal to the requested P-value
-          [--first-threshold <threshold for the first matrix>]
-          [--second-threshold <threshold for the second matrix>]
+          Options:
+            [-p <P-value>]
+            [-d <discretization level>]
+            [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
+            [--boundary lower|upper] Upper boundary (default) means that the obtained P-value is greater than or equal to the requested P-value
+            [--first-threshold <threshold for the first matrix>]
+            [--second-threshold <threshold for the second matrix>]
 
-        Examples:
-          eval_alignment motifs/KLF4_f2.pat motifs/SP1_f1.pat -1 direct -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
-          eval_alignment motifs/KLF4.pat motifs/SP1.pat 3 revcomp
-        }
-        doc.gsub!(/^#{doc[/\A +/]}/,'')
+          Examples:
+            eval_alignment motifs/KLF4_f2.pat motifs/SP1_f1.pat -1 direct -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
+            eval_alignment motifs/KLF4.pat motifs/SP1.pat 3 revcomp
+        EOS
+
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
           STDERR.puts doc
           exit

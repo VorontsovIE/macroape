@@ -6,28 +6,28 @@ module Macroape
     module ScanCollection
 
       def self.main(argv)
-        doc = %q{
-        Command-line format:
-        scan_collection <pat-file> <collection> [options]
+        doc = <<-EOS.strip_doc
+          Command-line format:
+          scan_collection <pat-file> <collection> [options]
 
-        Options:
-          [-p <P-value>]
-          [-c <similarity cutoff>] minimal similarity to be included in output, '-c 0.05' by default, [--all] to print all results
-          [--precise [<level>]] minimal similarity to check on the second pass in precise mode, off by default, '--precise 0.01' if level is not set
-          [--silent] - hide current progress information during scan (by default this information's written into stderr)
-          [--boundary lower|upper] Upper boundary (default) means that the obtained P-value is greater than or equal to the requested P-value
-          [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
+          Options:
+            [-p <P-value>]
+            [-c <similarity cutoff>] minimal similarity to be included in output, '-c 0.05' by default, [--all] to print all results
+            [--precise [<level>]] minimal similarity to check on the second pass in precise mode, off by default, '--precise 0.01' if level is not set
+            [--silent] - hide current progress information during scan (by default this information's written into stderr)
+            [--boundary lower|upper] Upper boundary (default) means that the obtained P-value is greater than or equal to the requested P-value
+            [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
 
-        Output format:
-         <name> <jaccard index> <shift> <overlap> <orientation> * [in case that result calculated on the second pass(in precise mode)]
-            Attention! Name can contain whitespace characters.
-            Attention! The shift and orientation are reported for the collection matrix relative to the query matrix.
+          Output format:
+           <name> <jaccard index> <shift> <overlap> <orientation> * [in case that result calculated on the second pass(in precise mode)]
+              Attention! Name can contain whitespace characters.
+              Attention! The shift and orientation are reported for the collection matrix relative to the query matrix.
 
-        Example:
-          scan_collection motifs/KLF4.pat hocomoco_ad_uniform.yaml
-          scan_collection motifs/KLF4.pat hocomoco_ad_uniform.yaml -p 0.0005 --precise 0.03
-        }
-        doc.gsub!(/^#{doc[/\A +/]}/,'')
+          Example:
+            scan_collection motifs/KLF4.pat hocomoco_ad_uniform.yaml
+            scan_collection motifs/KLF4.pat hocomoco_ad_uniform.yaml -p 0.0005 --precise 0.03
+        EOS
+
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
           STDERR.puts doc
           exit

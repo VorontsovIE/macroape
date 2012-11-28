@@ -5,7 +5,7 @@ module Macroape
     module FindPValue
 
       def self.main(argv)
-        doc = %q{
+        doc = <<-EOS.strip_doc
           Command-line format:
           find_pvalue <pat-file> <threshold list>... [options]
 
@@ -16,8 +16,8 @@ module Macroape
           Examples:
             find_pvalue motifs/KLF4.pat 7.32
             find_pvalue motifs/KLF4.pat 7.32 4.31 5.42 -d 1000 -b 0.2 0.3 0.2 0.3
-        }
-        doc.gsub!(/^#{doc[/\A +/]}/,'')
+        EOS
+
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
           STDERR.puts doc
           exit

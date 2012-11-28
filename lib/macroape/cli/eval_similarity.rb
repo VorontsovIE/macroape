@@ -5,7 +5,7 @@ module Macroape
     module EvalSimilarity
 
       def self.main(argv)
-        doc = %q{
+        doc = <<-EOS.strip_doc
         Command-line format:
         eval_similarity <1st matrix pat-file> <2nd matrix pat-file> [options]
 
@@ -19,8 +19,8 @@ module Macroape
 
         Examples:
           eval_similarity motifs/KLF4.pat motifs/SP1.pat -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
-        }
-        doc.gsub!(/^#{doc[/\A +/]}/,'')
+        EOS
+
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
           STDERR.puts doc
           exit

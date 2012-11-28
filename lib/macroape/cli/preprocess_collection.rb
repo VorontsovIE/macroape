@@ -7,25 +7,25 @@ module Macroape
     module PreprocessCollection
 
       def self.main(argv)
-        doc = %q{
-        Command-line format:
+        doc = <<-EOS.strip_doc
+          Command-line format:
           preprocess_collection <file or folder with PWMs or .stdin with filenames> [options]
 
-        Options:
-          [-p <list of P-values>]
-          [-d <rough discretization> <precise discretization>]
-          [-o <output file>]
-          [--silent] - don't show current progress information during scan (by default this information's written into stderr)
-          [--pcm] - treats your input motifs as PCM-s. Motifs are converted to PWMs internally so output is the same as for according PWMs
-          [--boundary lower|upper] Upper boundary (default) means that the obtained P-value is greater than or equal to the requested P-value
-          [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
+          Options:
+            [-p <list of P-values>]
+            [-d <rough discretization> <precise discretization>]
+            [-o <output file>]
+            [--silent] - don't show current progress information during scan (by default this information's written into stderr)
+            [--pcm] - treats your input motifs as PCM-s. Motifs are converted to PWMs internally so output is the same as for according PWMs
+            [--boundary lower|upper] Upper boundary (default) means that the obtained P-value is greater than or equal to the requested P-value
+            [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
 
-        The tool stores preprocessed Macroape collection to the specified YAML-file.
+          The tool stores preprocessed Macroape collection to the specified YAML-file.
 
-        Example:
-          preprocess_collection ./motifs -p 0.001 0.0005 0.0001 -d 1 10 -b 0.2 0.3 0.2 0.3 -o collection.yaml
-        }
-        doc.gsub!(/^#{doc[/\A +/]}/,'')
+          Example:
+            preprocess_collection ./motifs -p 0.001 0.0005 0.0001 -d 1 10 -b 0.2 0.3 0.2 0.3 -o collection.yaml
+        EOS
+
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
           STDERR.puts doc
           exit
