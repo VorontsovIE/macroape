@@ -62,15 +62,4 @@ class TestPreprocessCollection < Test::Unit::TestCase
     }
     assert_equal YAML.load(File.read('test_collection.yaml')), YAML.load(File.read('test_collection.yaml.tmp'))
   end
-
-  def test_with_name_specified
-    Helpers.run_preprocess_collection('test_collection -n my_collection -p 0.0005 0.0001 0.00005 --silent --strong-threshold')
-    assert_equal YAML.load(File.read('test_collection.yaml')).set_parameters(name:'my_collection'), YAML.load(File.read('my_collection.yaml'))
-    File.delete('my_collection.yaml')
-  end
-
-  def test_with_name_and_output_specified
-    Helpers.run_preprocess_collection('test_collection -n my_collection -o test_collection.yaml.tmp -p 0.0005 0.0001 0.00005 --silent --strong-threshold')
-    assert_equal YAML.load(File.read('test_collection.yaml')).set_parameters(name:'my_collection'), YAML.load(File.read('test_collection.yaml.tmp'))
-  end
 end

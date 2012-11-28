@@ -12,13 +12,14 @@ module Macroape
 
         Options:
           [-p <P-value>]
-          [-c <similarity cutoff (minimal similarity to be included in output)> ] or [--all], '-c 0.05' by default
-          [--precise [<level, minimal similarity to check on a more precise discretization level on the second pass>]], off by default, '--precise 0.01' if level is not set
-          [--silent] - don't show current progress information during scan (by default this information's written into stderr)
+          [-c <similarity cutoff>] minimal similarity to be included in output, '-c 0.05' by default, [--all] to print all results
+          [--precise [<level>]] minimal similarity to check on the second pass in precise mode, off by default, '--precise 0.01' if level is not set
+          [--silent] - hide current progress information during scan (by default this information's written into stderr)
           [--strong-threshold]
+          [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
 
         Output format:
-         <name> <similarity jaccard index> <shift> <overlap> <orientation> * [in case that result calculated on the second pass(in precise mode)]
+         <name> <jaccard index> <shift> <overlap> <orientation> * [in case that result calculated on the second pass(in precise mode)]
             Attention! Name can contain whitespace characters.
             Attention! The shift and orientation are reported for the collection matrix relative to the query matrix.
 
@@ -55,7 +56,7 @@ module Macroape
         precision_mode = :rough
         until argv.empty?
           case argv.shift
-            when '-bq'
+            when '-b'
               query_background = argv.shift.split(',').map(&:to_f)
               raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless query_background == query_background.reverse
             when '-p'

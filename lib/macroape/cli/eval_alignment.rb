@@ -12,7 +12,7 @@ module Macroape
         Options:
           [-p <P-value>]
           [-d <discretization level>]
-          [-b <background probabilities, ACGT - 4 numbers, space-delimited, sum should be equal to 1>]
+          [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
           [--strong-threshold]
           [--first-threshold <threshold for the first matrix>]
           [--second-threshold <threshold for the second matrix>]

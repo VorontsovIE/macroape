@@ -14,12 +14,11 @@ module Macroape
         Options:
           [-p <list of P-values>]
           [-d <rough discretization> <precise discretization>]
-          [-b <background probabilities, ACGT - 4 numbers, space-delimited, sum should be equal to 1>]
           [-o <output file>]
-          [-n <name>] - specify name for a collection. Default filename is based on this parameter
           [--silent] - don't show current progress information during scan (by default this information's written into stderr)
           [--pcm] - treats your input motifs as PCM-s. Motifs are converted to PWMs internally so output is the same as for according PWMs
           [--strong-threshold]
+          [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
 
         The tool stores preprocessed Macroape collection to the specified YAML-file.
 
@@ -72,8 +71,6 @@ module Macroape
               output_file_specified = true
             when '-m'
               max_hash_size = argv.shift.to_i
-            when '-n'
-              collection_name = argv.shift
             when '--silent'
               silent = true
             when '--strong-threshold'
@@ -86,10 +83,6 @@ module Macroape
                                 precise_discretization: precise_discretization,
                                 background: background,
                                 pvalues: pvalues)
-        if collection_name
-          collection.name = collection_name
-          output_file = "#{collection_name}.yaml"  if !output_file_specified
-        end
 
         if File.directory?(data_source)
           motifs = Dir.glob(File.join(data_source,'*')).sort.map do |filename|
