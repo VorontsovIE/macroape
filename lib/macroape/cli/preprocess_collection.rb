@@ -9,12 +9,11 @@ module Macroape
       def self.main(argv)
         doc = <<-EOS.strip_doc
           Command-line format:
-          preprocess_collection <file or folder with PWMs or .stdin with filenames> [options]
+          preprocess_collection <file or folder with PWMs or .stdin with filenames> <output file> [options]
 
           Options:
             [-p <list of P-values>]
             [-d <rough discretization>,<precise discretization>] - set discretization rates, comma delimited (no spaces allowed), order doesn't matter
-            [-o <output file>]
             [--silent] - don't show current progress information during scan (by default this information's written into stderr)
             [--pcm] - treats your input motifs as PCM-s. Motifs are converted to PWMs internally so output is the same as for according PWMs
             [--boundary lower|upper] Upper boundary (default) means that the obtained P-value is greater than or equal to the requested P-value
@@ -23,7 +22,7 @@ module Macroape
           The tool stores preprocessed Macroape collection to the specified YAML-file.
 
           Example:
-            preprocess_collection ./motifs -p 0.001 0.0005 0.0001 -d 1 10 -b 0.2 0.3 0.2 0.3 -o collection.yaml
+            preprocess_collection ./motifs  collection.yaml -p 0.001 0.0005 0.0001 -d 1 10 -b 0.2 0.3 0.2 0.3
         EOS
 
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
@@ -37,17 +36,17 @@ module Macroape
         background = [1,1,1,1]
         rough_discretization = 1
         precise_discretization = 10
-        output_file = 'collection.yaml'
         max_hash_size = 10000000
 
         data_source = argv.shift
+        output_file = argv.shift
 
         raise 'No input. You should specify file or folder with pwms' unless data_source
         raise "Error! File or folder #{data_source} doesn't exist" unless Dir.exist?(data_source) || File.exist?(data_source) || data_source == '.stdin'
+        raise 'You should specify output file'  unless output_file
 
         pvalues = []
         silent = false
-        output_file_specified = false
         pvalue_boundary = :upper
 
         until argv.empty?
@@ -66,9 +65,6 @@ module Macroape
               end
             when '-d'
               rough_discretization, precise_discretization = argv.shift.split(',').map(&:to_f).sort
-            when '-o'
-              output_file = argv.shift
-              output_file_specified = true
             when '-m'
               max_hash_size = argv.shift.to_i
             when '--silent'
