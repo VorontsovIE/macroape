@@ -85,6 +85,7 @@ module Macroape
                                 background: background,
                                 pvalues: pvalues)
 
+        data_source = data_source.gsub("\\",'/')
         if File.directory?(data_source)
           motifs = Dir.glob(File.join(data_source,'*')).sort.map do |filename|
             pwm = data_model.new(File.read(filename))
