@@ -61,7 +61,15 @@ class FindThresholdTest < Test::Unit::TestCase
                                   threshold: 5.281000000000001},
                                   Helpers.find_threshold_output("KLF4_f2.pwm -d 100") )
     # additional consistency checks
-    assert_equal Helpers.obtain_pvalue_by_threshold("KLF4_f2.pwm 4.17189"), '0.00099945068359375'
+    assert_equal Helpers.obtain_pvalue_by_threshold("KLF4_f2.pwm 5.281000000000001 -d 100"), '0.0004978179931640625'
+  end
+  def test_custom_background
+    assert_threshold_info_output({requested_pvalue: 0.0005,
+                                  real_pvalue: '0.00049964290000001',
+                                  threshold: '-0.10449000000000001'},
+                                  Helpers.find_threshold_output("KLF4_f2.pwm -b 0.4 0.1 0.1 0.4") )
+    # additional consistency checks
+    assert_equal Helpers.obtain_pvalue_by_threshold("KLF4_f2.pwm -0.10449000000000001 -b 0.4 0.1 0.1 0.4"), '0.0004996429000000166' # here real pvalue differs at last digits =\ 
   end
   def test_process_pwm_from_stdin
     assert_equal Helpers.find_threshold_output('KLF4_f2.pwm'),

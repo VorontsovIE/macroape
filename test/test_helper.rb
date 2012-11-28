@@ -116,12 +116,23 @@ module Helpers
 
   def parse_threshold_infos_string(infos_string)
     infos = []
-    infos_string.lines.map(&:strip).reject{|line| line.start_with?('#')}.reject(&:empty?).tap(&:shift).each do |line|
-      requested_pvalue, real_pvalue, number_of_recognized_words, threshold = line.split
-      infos << {requested_pvalue: requested_pvalue,
+    infos_string.lines.map(&:strip).reject{|line| line.start_with?('#')}.reject(&:empty?).each do |line|
+      info_data = line.split
+      if info_data.size == 4
+        requested_pvalue, real_pvalue, number_of_recognized_words, threshold = info_data
+        info = {requested_pvalue: requested_pvalue,
                 real_pvalue: real_pvalue,
                 number_of_recognized_words: number_of_recognized_words,
                 threshold: threshold }
+      elsif info_data.size == 3
+        requested_pvalue, real_pvalue, threshold = info_data
+        info = {requested_pvalue: requested_pvalue,
+                real_pvalue: real_pvalue,
+                threshold: threshold }
+      else
+        raise 'can\'t parse threshold infos table'
+      end
+      infos << info
     end
     infos
   end

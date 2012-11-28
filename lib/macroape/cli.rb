@@ -50,18 +50,33 @@ module Macroape
         parameters_data << "# B\t#{background_string(parameters[:background])}\t#background"  unless parameters[:background] == [1,1,1,1]
         parameters_string = parameters_data.join("\n")
 
-        result_strings = infos.collect { |info|
-          "#{ info[:expected_pvalue] }\t#{ info[:real_pvalue] }\t#{ info[:recognized_words] }\t#{ info[:threshold] }"
-        }
-        <<-EOS.strip_doc
-          #{parameters_string}
-          # P: requested P-value
-          # AP: actual P-value
-          # W: number of recognized words
-          # T: threshold
-          P\tAP\tW\tT
-          #{result_strings.join("\n")}
-        EOS
+        if parameters[:background] == [1, 1, 1, 1]
+          result_strings = infos.collect { |info|
+            "#{ info[:expected_pvalue] }\t#{ info[:real_pvalue] }\t#{ info[:recognized_words] }\t#{ info[:threshold] }"
+          }
+          <<-EOS.strip_doc
+            #{parameters_string}
+            # P: requested P-value
+            # AP: actual P-value
+            # W: number of recognized words
+            # T: threshold
+            # P\tAP\tW\tT
+            #{result_strings.join("\n")}
+          EOS
+        else
+          result_strings = infos.collect { |info|
+            "#{ info[:expected_pvalue] }\t#{ info[:real_pvalue] }\t#{ info[:threshold] }"
+          }
+          <<-EOS.strip_doc
+            #{parameters_string}
+            # P: requested P-value
+            # AP: actual P-value
+            # T: threshold
+            # P\tAP\tT
+            #{result_strings.join("\n")}
+          EOS
+        end
+
       end
 
 ############################################
