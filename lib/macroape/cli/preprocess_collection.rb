@@ -110,7 +110,7 @@ module Macroape
         pwms = motifs.map(&:to_pwm)
 
         pwms.each_with_index do |pwm,index|
-          STDERR.puts "#{index + 1} -- Name: #{pwm.name}, Length: #{pwm.length}"  unless silent
+          STDERR.puts "Motif #{pwm.name}, length: #{pwm.length} (#{index+1} of #{pwms.size}, #{index*100/pwms.size}% complete)"  unless silent
 
           # When support of onefile collections is introduced - then here should be check if name exists.
           # Otherwise it should skip motif and tell you about this
@@ -151,6 +151,7 @@ module Macroape
           end
           collection.add_pm(pwm, info)  unless skip_motif
         end
+        STDERR.puts "100% complete. Saving results"  unless silent
         File.open(output_file, 'w') do |f|
           f.puts(collection.to_yaml)
         end

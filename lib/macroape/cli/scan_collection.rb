@@ -121,28 +121,26 @@ module Macroape
         similarities = {}
         precision_file_mode = {}
 
-        collection.each do |motif|
+        collection.each_with_index do |motif, index|
           name = motif.name
-          STDERR.puts name unless silent
+          STDERR.puts "Testing motif #{name} (#{index+1} of #{collection.size}, #{index*100/collection.size}% complete)"  unless silent
           motif.set_parameters(background: collection_background, max_hash_size: max_hash_size)
           if motif.rough[pvalue]
             collection_pwm_rough = motif.pwm.discrete(rough_discretization)
             collection_threshold_rough = motif.rough[pvalue] * rough_discretization
             info = Macroape::PWMCompare.new(query_pwm_rough, collection_pwm_rough).set_parameters(max_pair_hash_size: max_pair_hash_size).jaccard(query_threshold_rough, collection_threshold_rough)
-            precision_file_mode[name] = :rough
+            info[:precision_mode] = :rough
           end
           if !motif.rough[pvalue] || (precision_mode == :precise) && (info[:similarity] >= minimal_similarity)
             collection_pwm_precise = motif.pwm.discrete(precise_discretization)
             collection_threshold_precise = motif.precise[pvalue] * precise_discretization
             info = Macroape::PWMCompare.new(query_pwm_precise, collection_pwm_precise).set_parameters(max_pair_hash_size: max_pair_hash_size).jaccard(query_threshold_precise, collection_threshold_precise)
-            precision_file_mode[name] = :precise
+            info[:precision_mode] = :precise
           end
           similarities[name] = info
         end
 
-        similarities.each do |name, info|
-          info[:precision_mode] = precision_file_mode[name]
-        end
+        STDERR.puts "100% complete"  unless silent
 
         similarities_to_output = similarities.sort_by{|name, info| info[:similarity] }.reverse.select{|name,info| info[:similarity] >= cutoff }
         puts Helper.scan_collection_infos_string( similarities_to_output,
