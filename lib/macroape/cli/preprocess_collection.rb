@@ -13,7 +13,7 @@ module Macroape
 
           Options:
             [-p <list of P-values>]
-            [-d <rough discretization> <precise discretization>]
+            [-d <rough discretization>,<precise discretization>] - set discretization rates, comma delimited (no spaces allowed), order doesn't matter
             [-o <output file>]
             [--silent] - don't show current progress information during scan (by default this information's written into stderr)
             [--pcm] - treats your input motifs as PCM-s. Motifs are converted to PWMs internally so output is the same as for according PWMs
@@ -65,7 +65,7 @@ module Macroape
                 end
               end
             when '-d'
-              rough_discretization, precise_discretization = argv.shift(2).map(&:to_f).sort
+              rough_discretization, precise_discretization = argv.shift.split(',').map(&:to_f).sort
             when '-o'
               output_file = argv.shift
               output_file_specified = true
