@@ -6,7 +6,7 @@ module Macroape
     module AlignMotifs
 
       def self.main(argv)
-        doc = <<-DOCOPT
+        doc = <<-DOCOPT.strip_doc
           Align motifs tool.
           It takes motifs and builds alignment of each motif to the first (leader) motif.
 
@@ -23,7 +23,6 @@ module Macroape
             --pcm           Use PCMs instead of PWMs as input
         DOCOPT
 
-        doc.gsub!(/^#{doc[/\A +/]}/,'')
         options = Docopt::docopt(doc, argv: argv)
 
         data_model = options['--pcm'] ? Bioinform::PCM : Bioinform::PWM
