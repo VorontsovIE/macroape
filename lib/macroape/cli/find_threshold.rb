@@ -7,7 +7,7 @@ module Macroape
       def self.main(argv)
         doc = <<-EOS.strip_doc
           Command-line format:
-          find_threshold <pat-file> [<list of P-values>...] [options]
+          #{run_tool_cmd} <pat-file> [<list of P-values>...] [options]
 
           Options:
             [-d <discretization level>]
@@ -15,8 +15,8 @@ module Macroape
             [--boundary lower|upper] Lower boundary (default) means that the obtained P-value is less than or equal to the requested P-value
 
           Example:
-            find_threshold motifs/KLF4.pat
-            find_threshold motifs/KLF4.pat 0.001 0.0001 0.0005 -d 1000 -b 0.4 0.3 0.2 0.1
+            #{run_tool_cmd} motifs/KLF4.pat
+            #{run_tool_cmd} motifs/KLF4.pat 0.001 0.0001 0.0005 -d 1000 -b 0.4 0.3 0.2 0.1
         EOS
 
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}

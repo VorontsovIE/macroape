@@ -4,11 +4,10 @@ require 'yaml'
 module Macroape
   module CLI
     module ScanCollection
-
       def self.main(argv)
         doc = <<-EOS.strip_doc
           Command-line format:
-          scan_collection <pat-file> <collection> [options]
+          #{run_tool_cmd} <pat-file> <collection> [options]
 
           Options:
             [-p <P-value>]
@@ -24,8 +23,8 @@ module Macroape
               Attention! The shift and orientation are reported for the collection matrix relative to the query matrix.
 
           Example:
-            scan_collection motifs/KLF4.pat hocomoco_ad_uniform.yaml
-            scan_collection motifs/KLF4.pat hocomoco_ad_uniform.yaml -p 0.0005 --precise 0.03
+            #{run_tool_cmd} motifs/KLF4.pat hocomoco_ad_uniform.yaml
+            #{run_tool_cmd} motifs/KLF4.pat hocomoco_ad_uniform.yaml -p 0.0005 --precise 0.03
         EOS
 
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}

@@ -1,5 +1,24 @@
 require 'bioinform/support/strip_doc'
 
+class String
+  def snake_case
+    gsub(/[A-Z]+/){|big| "_#{big.downcase}" }.sub(/^_/,'')
+  end
+end
+
+class Module
+  def run_tool_cmd
+    if Macroape::STANDALONE
+      "ruby #{tool_name}.rb"
+    else
+      tool_name
+    end
+  end
+  def tool_name
+    self.name.split('::').last.snake_case
+  end
+end
+
 module Macroape
   module CLI
     class OutputInformation

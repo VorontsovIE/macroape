@@ -7,15 +7,15 @@ module Macroape
       def self.main(argv)
         doc = <<-EOS.strip_doc
           Command-line format:
-          find_pvalue <pat-file> <threshold list>... [options]
+          #{run_tool_cmd} <pat-file> <threshold list>... [options]
 
           Options:
             [-d <discretization level>]
             [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
 
           Examples:
-            find_pvalue motifs/KLF4.pat 7.32
-            find_pvalue motifs/KLF4.pat 7.32 4.31 5.42 -d 1000 -b 0.2 0.3 0.2 0.3
+            #{run_tool_cmd} motifs/KLF4.pat 7.32
+            #{run_tool_cmd} motifs/KLF4.pat 7.32 4.31 5.42 -d 1000 -b 0.2 0.3 0.2 0.3
         EOS
 
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}

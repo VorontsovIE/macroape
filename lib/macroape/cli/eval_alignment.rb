@@ -7,7 +7,7 @@ module Macroape
       def self.main(argv)
         doc = <<-EOS.strip_doc
           Command-line format:
-          eval_alignment <1st matrix pat-file> <2nd matrix pat-file> <shift> <orientation(direct/revcomp)> [options]
+          #{run_tool_cmd} <1st matrix pat-file> <2nd matrix pat-file> <shift> <orientation(direct/revcomp)> [options]
 
           Options:
             [-p <P-value>]
@@ -18,8 +18,8 @@ module Macroape
             [--second-threshold <threshold for the second matrix>]
 
           Examples:
-            eval_alignment motifs/KLF4_f2.pat motifs/SP1_f1.pat -1 direct -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
-            eval_alignment motifs/KLF4.pat motifs/SP1.pat 3 revcomp
+            #{run_tool_cmd} motifs/KLF4_f2.pat motifs/SP1_f1.pat -1 direct -p 0.0005 -d 100 -b 0.4 0.3 0.2 0.1
+            #{run_tool_cmd} motifs/KLF4.pat motifs/SP1.pat 3 revcomp
         EOS
 
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}

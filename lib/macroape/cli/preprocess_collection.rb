@@ -9,7 +9,7 @@ module Macroape
       def self.main(argv)
         doc = <<-EOS.strip_doc
           Command-line format:
-          preprocess_collection <file or folder with PWMs or .stdin with filenames> <output file> [options]
+          #{run_tool_cmd} <file or folder with PWMs or .stdin with filenames> <output file> [options]
 
           Options:
             [-p <list of P-values>]
@@ -22,7 +22,7 @@ module Macroape
           The tool stores preprocessed Macroape collection to the specified YAML-file.
 
           Example:
-            preprocess_collection ./motifs  collection.yaml -p 0.001 0.0005 0.0001 -d 1 10 -b 0.2 0.3 0.2 0.3
+            #{run_tool_cmd} ./motifs  collection.yaml -p 0.001 0.0005 0.0001 -d 1 10 -b 0.2 0.3 0.2 0.3
         EOS
 
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
