@@ -22,7 +22,7 @@ module Macroape
           The tool stores preprocessed Macroape collection to the specified YAML-file.
 
           Example:
-            #{run_tool_cmd} ./motifs  collection.yaml -p 0.001 0.0005 0.0001 -d 1 10 -b 0.2 0.3 0.2 0.3
+            #{run_tool_cmd} ./motifs  collection.yaml -p 0.001 0.0005 0.0001 -d 1 10 -b 0.2,0.3,0.3,0.2
         EOS
 
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}

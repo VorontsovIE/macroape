@@ -15,7 +15,7 @@ module Macroape
 
           Examples:
             #{run_tool_cmd} motifs/KLF4.pat 7.32
-            #{run_tool_cmd} motifs/KLF4.pat 7.32 4.31 5.42 -d 1000 -b 0.2 0.3 0.2 0.3
+            #{run_tool_cmd} motifs/KLF4.pat 7.32 4.31 5.42 -d 1000 -b 0.2,0.3,0.3,0.2
         EOS
 
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
