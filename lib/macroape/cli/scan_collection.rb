@@ -137,12 +137,13 @@ module Macroape
             info = Macroape::PWMCompare.new(query_pwm_precise, collection_pwm_precise).set_parameters(max_pair_hash_size: max_pair_hash_size).jaccard(query_threshold_precise, collection_threshold_precise)
             info[:precision_mode] = :precise
           end
+          info[:name] = name
           similarities[name] = info
         end
 
         STDERR.puts "100% complete"  unless silent
 
-        similarities_to_output = similarities.sort_by{|name, info| info[:similarity] }.reverse.select{|name,info| info[:similarity] >= cutoff }
+        similarities_to_output = similarities.sort_by{|name, info| info[:similarity] }.reverse.select{|name,info| info[:similarity] >= cutoff }.map{|name,info|info}
         puts Helper.scan_collection_infos_string( similarities_to_output,
                                                   {cutoff: cutoff,
                                                   precision_mode: precision_mode,
