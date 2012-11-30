@@ -139,7 +139,8 @@ module Helpers
 
   def assert_threshold_info_output(*expected_infos, info_string)
     infos = parse_threshold_infos_string(info_string)
-    infos.zip(expected_infos).each do |info, expected_info|
+    expected_infos.zip(infos).each do |expected_info, info|
+      assert_not_nil info
       expected_info.each do |key, value|
         assert_equal value.to_s, info[key]
       end
