@@ -103,6 +103,8 @@ module Macroape
 
       def self.similarity_info_string(info)
         OutputInformation.new { |infos|
+          infos.add_parameter('V', 'discretization', info[:discretization] )
+
           infos.add_parameter!('S', 'similarity', info[:similarity])
           infos.add_parameter!('D', 'distance (1-similarity)', info[:tanimoto])
           infos.add_parameter!('L', 'length of the alignment', info[:alignment_length])
@@ -117,7 +119,6 @@ module Macroape
           infos.add_parameter!('W2', 'number of words recognized by the 2nd model', info[:recognized_by_second] )
           infos.add_parameter!('P2', 'P-value for the 2nd matrix', info[:real_pvalue_second] )
           infos.add_parameter!('T2', 'threshold for the 2nd matrix', info[:threshold_second] )
-          infos.add_parameter!('V', 'discretization', info[:discretization] )
         }.result
       end
 

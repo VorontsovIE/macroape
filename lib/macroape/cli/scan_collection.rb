@@ -13,7 +13,7 @@ module Macroape
             [-p <P-value>]
             [-c <similarity cutoff>] minimal similarity to be included in output, '-c 0.05' by default, [--all] to print all results
             [--precise [<level>]] minimal similarity to check on the second pass in precise mode, off by default, '--precise 0.01' if level is not set
-            [--silent] - hide current progress information during scan (by default this information's written into stderr)
+            [--silent] - hide current progress information during scan (printed to stderr by default)
             [--boundary lower|upper] Upper boundary (default) means that the obtained P-value is greater than or equal to the requested P-value
             [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
 
