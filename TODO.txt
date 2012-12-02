@@ -1,6 +1,4 @@
 ToDo:
-3) make output of real pvalue in similarity evaluation
-4) make verbose output mode which describes parameters
 6)
 # TODO:  FIX: this test fails due to floating point precision error: estimated threshold is -19.0418 but '-19.0418'.to_f * 10000 = -190417.99999999997
 # A workaround exists: we can use fractions, i.e. ('-19.0418'.to_r * 10000).to_f = -190418.0 but it obscures code and being used uncarefully can involve huge slowdown.
@@ -19,7 +17,7 @@ ToDo:
 8)(TODO: for theoretically consistency, while making small inconsistences to old calculations)
   When we work with strong threshold, we round matrix up(in order to overrate threshold comparing to real thus taking underrated pvalue) and take upper bound of discrete-thresholds fork.
   When we are estimating lower bound of threshold (weak threshold) we take lower bound of fork of discrete thresholds. But we should ALSO (not done yet) take matrix discreted down! This'd allow us give exact answer on a question in which range real threshold should lay with given P-value, now we correctly estimate only lower bound of threshold(upper bound of P-value)
-
+9) '[--pcm] - treat the input file as Position Count Matrix. PCM-to-PWM transformation to be done internally.' - insert this option to all tools helpstrings
 
 Specs and tests:
   create spec on use of MaxHashSize, MaxHashSizeDouble
