@@ -158,7 +158,7 @@ module Macroape
           infos.add_table_parameter_without_description('shift', :shift)
           infos.add_table_parameter_without_description('overlap', :overlap)
           infos.add_table_parameter_without_description('orientation', :orientation)
-          infos.add_table_parameter_without_description('precision text', :precision_mode){|precision| precision == :precise ? '*' : '' }
+          infos.add_table_parameter_without_description('precise mode', :precision_mode){|precision| precision == :precise ? '*' : '' }
         }.result
       end
 
