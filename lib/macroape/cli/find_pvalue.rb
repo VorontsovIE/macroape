@@ -14,8 +14,8 @@ module Macroape
             [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
 
           Examples:
-            #{run_tool_cmd} motifs/KLF4.pat 7.32
-            #{run_tool_cmd} motifs/KLF4.pat 7.32 4.31 5.42 -d 1000 -b 0.2,0.3,0.3,0.2
+            #{run_tool_cmd} motifs/KLF4_f2.pat 7.32
+            #{run_tool_cmd} motifs/KLF4_f2.pat 7.32 4.31 5.42 -d 1000 -b 0.2,0.3,0.3,0.2
         EOS
 
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}

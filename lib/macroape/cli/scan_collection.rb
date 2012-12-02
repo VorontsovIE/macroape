@@ -23,8 +23,8 @@ module Macroape
               Attention! The shift and orientation are reported for the collection matrix relative to the query matrix.
 
           Example:
-            #{run_tool_cmd} motifs/KLF4.pat hocomoco_ad_uniform.yaml
-            #{run_tool_cmd} motifs/KLF4.pat hocomoco_ad_uniform.yaml -p 0.0005 --precise 0.03
+            #{run_tool_cmd} motifs/KLF4_f2.pat hocomoco_ad_uniform.yaml
+            #{run_tool_cmd} motifs/KLF4_f2.pat hocomoco_ad_uniform.yaml -p 0.0005 --precise 0.03
         EOS
 
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}

@@ -18,7 +18,7 @@ module Macroape
           [--second-threshold <threshold for the second matrix>]
 
         Examples:
-          #{run_tool_cmd} motifs/KLF4.pat motifs/SP1.pat -p 0.0005 -d 100 -b 0.3,0.2,0.2,0.3
+          #{run_tool_cmd} motifs/KLF4_f2.pat motifs/SP1_f1.pat -p 0.0005 -d 100 -b 0.3,0.2,0.2,0.3
         EOS
 
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
