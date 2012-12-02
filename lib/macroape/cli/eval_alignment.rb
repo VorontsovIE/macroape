@@ -12,8 +12,9 @@ module Macroape
           Options:
             [-p <P-value>]
             [-d <discretization level>]
-            [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
+            [--pcm] - treat the input file as Position Count Matrix. PCM-to-PWM transformation to be done internally.
             [--boundary lower|upper] Upper boundary (default) means that the obtained P-value is greater than or equal to the requested P-value
+            [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
             [--first-threshold <threshold for the first matrix>]
             [--second-threshold <threshold for the second matrix>]
 
