@@ -23,9 +23,14 @@ module Macroape
   module CLI
     class OutputInformation
       def initialize(data = nil)
+        @table_parameter_descriptions = []
+
         @parameter_descriptions = []
         @parameter_value_infos = []
-        @parameter_callbacks = []
+
+        @resulting_value_descriptions = []
+        @resulting_value_infos = []
+
         @table_headers = []
         @table_rows = []
         @table_rows_callbacks = []
@@ -34,11 +39,8 @@ module Macroape
       end
 
       def result
-        parameters_info = <<-EOS.strip_doc
-          #{@parameter_descriptions.join("\n")}
-          #{@parameter_value_infos.zip(@parameter_callbacks).map{|value,callback| callback ? callback.call(value) : value}.join("\n")}
-        EOS
-        @data  ?  "#{parameters_info}#{resulting_table}"  :  parameters_info
+        parameters_info = (@resulting_value_descriptions + @resulting_value_infos + @parameter_descriptions + @parameter_value_infos).join("\n")
+        @data  ?  "#{resulting_table}\n#{parameters_info}"  :  parameters_info
       end
 
       def add_parameter(param_name, help_string, value, &block)
@@ -46,23 +48,21 @@ module Macroape
         add_parameter_without_description(param_name, value, &block)
       end
 
-      def add_parameter!(param_name, help_string, value, &block)
-        parameter_description(param_name, help_string)
-        add_parameter_without_description!(param_name, value, &block)
+      def add_resulting_value(param_name, help_string, value, &block)
+        resulting_value_description(param_name, help_string)
+        add_resulting_value_without_description(param_name, value, &block)
       end
 
       def add_parameter_without_description(param_name, value, &block)
         @parameter_value_infos << "# #{param_name} = #{value}"
-        @parameter_callbacks << block
       end
 
-      def add_parameter_without_description!(param_name, value, &block)
-        @parameter_value_infos << "#{param_name}\t#{value}"
-        @parameter_callbacks << block
+      def add_resulting_value_without_description(param_name, value, &block)
+        @resulting_value_infos << "#{param_name}\t#{value}"
       end
 
       def add_table_parameter(param_name, help_string, key_in_hash, &block)
-        parameter_description(param_name, help_string)
+        table_parameter_description(param_name, help_string)
         add_table_parameter_without_description(param_name, key_in_hash, &block)
       end
 
@@ -72,13 +72,16 @@ module Macroape
         @table_rows_callbacks << block
       end
 
-      # printed only if it is not wordwise [1,1,1,1]
-      def background_parameter(param_name, help_string, value, &block)
-        add_parameter(param_name, help_string, value.join(' '), &block)  unless value == [1,1,1,1]
-      end
-
       def parameter_description(param_name, help_string)
         @parameter_descriptions << "# #{param_name}: #{help_string}"
+      end
+
+      def table_parameter_description(param_name, help_string)
+        @table_parameter_descriptions << "# #{param_name}: #{help_string}"
+      end
+
+      def resulting_value_description(param_name, help_string)
+        @resulting_value_descriptions << "# #{param_name}: #{help_string}"
       end
 
       def table_content
@@ -88,14 +91,16 @@ module Macroape
       end
 
       def header_content
-        @table_headers.join("\t")
+        '# ' + @table_headers.join("\t")
       end
 
       def resulting_table
-        <<-EOS.strip_doc
-          # #{header_content}
-          #{table_content}
-        EOS
+        @table_parameter_descriptions.join("\n") + "\n" + header_content + "\n" + table_content
+      end
+
+      # printed only if it is not wordwise [1,1,1,1]
+      def background_parameter(param_name, help_string, value, &block)
+        add_parameter(param_name, help_string, value.join(' '), &block)  unless value == [1,1,1,1]
       end
     end
 
@@ -105,20 +110,20 @@ module Macroape
         OutputInformation.new { |infos|
           infos.add_parameter('V', 'discretization', info[:discretization] )
 
-          infos.add_parameter!('S', 'similarity', info[:similarity])
-          infos.add_parameter!('D', 'distance (1-similarity)', info[:tanimoto])
-          infos.add_parameter!('L', 'length of the alignment', info[:alignment_length])
-          infos.add_parameter!('SH', 'shift of the 2nd PWM relative to the 1st', info[:shift])
-          infos.add_parameter!('OR', 'orientation of the 2nd PWM relative to the 1st', info[:orientation])
-          infos.add_parameter!('A1', 'aligned 1st matrix', info[:text].lines.to_a.first.strip )
-          infos.add_parameter!('A2', 'aligned 2nd matrix', info[:text].lines.to_a.last.strip )
-          infos.add_parameter!('W', 'number of words recognized by both models (model = PWM + threshold)', info[:recognized_by_both] )
-          infos.add_parameter!('W1', 'number of words and recognized by the first model', info[:recognized_by_first] )
-          infos.add_parameter!('P1', 'P-value for the 1st matrix', info[:real_pvalue_first] )
-          infos.add_parameter!('T1', 'threshold for the 1st matrix', info[:threshold_first] )
-          infos.add_parameter!('W2', 'number of words recognized by the 2nd model', info[:recognized_by_second] )
-          infos.add_parameter!('P2', 'P-value for the 2nd matrix', info[:real_pvalue_second] )
-          infos.add_parameter!('T2', 'threshold for the 2nd matrix', info[:threshold_second] )
+          infos.add_resulting_value('S', 'similarity', info[:similarity])
+          infos.add_resulting_value('D', 'distance (1-similarity)', info[:tanimoto])
+          infos.add_resulting_value('L', 'length of the alignment', info[:alignment_length])
+          infos.add_resulting_value('SH', 'shift of the 2nd PWM relative to the 1st', info[:shift])
+          infos.add_resulting_value('OR', 'orientation of the 2nd PWM relative to the 1st', info[:orientation])
+          infos.add_resulting_value('A1', 'aligned 1st matrix', info[:text].lines.to_a.first.strip )
+          infos.add_resulting_value('A2', 'aligned 2nd matrix', info[:text].lines.to_a.last.strip )
+          infos.add_resulting_value('W', 'number of words recognized by both models (model = PWM + threshold)', info[:recognized_by_both] )
+          infos.add_resulting_value('W1', 'number of words and recognized by the first model', info[:recognized_by_first] )
+          infos.add_resulting_value('P1', 'P-value for the 1st matrix', info[:real_pvalue_first] )
+          infos.add_resulting_value('T1', 'threshold for the 1st matrix', info[:threshold_first] )
+          infos.add_resulting_value('W2', 'number of words recognized by the 2nd model', info[:recognized_by_second] )
+          infos.add_resulting_value('P2', 'P-value for the 2nd matrix', info[:real_pvalue_second] )
+          infos.add_resulting_value('T2', 'threshold for the 2nd matrix', info[:threshold_second] )
         }.result
       end
 
