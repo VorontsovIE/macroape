@@ -39,8 +39,8 @@ module Macroape
       end
 
       def result
-        parameters_info = (@resulting_value_descriptions.zip(@resulting_value_infos).flatten + @parameter_descriptions.zip(@parameter_value_infos).flatten).join("\n")
-        @data  ?  "#{resulting_table}\n#{parameters_info}"  :  parameters_info
+        parameters_info = (@parameter_descriptions.zip(@parameter_value_infos).flatten + @resulting_value_descriptions.zip(@resulting_value_infos).flatten).join("\n")
+        @data  ?  "#{parameters_info}\n#{resulting_table}"  :  parameters_info
       end
 
       def add_parameter(param_name, description, value, &block)
