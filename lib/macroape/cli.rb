@@ -43,26 +43,18 @@ module Macroape
         @data  ?  "#{resulting_table}\n#{parameters_info}"  :  parameters_info
       end
 
-      def add_parameter(param_name, help_string, value, &block)
-        parameter_description(param_name, help_string)
-        add_parameter_without_description(param_name, value, &block)
-      end
-
-      def add_resulting_value(param_name, help_string, value, &block)
-        resulting_value_description(param_name, help_string)
-        add_resulting_value_without_description(param_name, value, &block)
-      end
-
-      def add_parameter_without_description(param_name, value, &block)
+      def add_parameter(param_name, description, value, &block)
+        @parameter_descriptions << parameter_description_string(param_name, description)
         @parameter_value_infos << "# #{param_name} = #{value}"
       end
 
-      def add_resulting_value_without_description(param_name, value, &block)
+      def add_resulting_value(param_name, description, value, &block)
+        @resulting_value_descriptions << parameter_description_string(param_name, description)
         @resulting_value_infos << "#{param_name}\t#{value}"
       end
 
-      def add_table_parameter(param_name, help_string, key_in_hash, &block)
-        table_parameter_description(param_name, help_string)
+      def add_table_parameter(param_name, description, key_in_hash, &block)
+        @table_parameter_descriptions << parameter_description_string(param_name, description)
         add_table_parameter_without_description(param_name, key_in_hash, &block)
       end
 
@@ -72,16 +64,8 @@ module Macroape
         @table_rows_callbacks << block
       end
 
-      def parameter_description(param_name, help_string)
-        @parameter_descriptions << "# #{param_name}: #{help_string}"
-      end
-
-      def table_parameter_description(param_name, help_string)
-        @table_parameter_descriptions << "# #{param_name}: #{help_string}"
-      end
-
-      def resulting_value_description(param_name, help_string)
-        @resulting_value_descriptions << "# #{param_name}: #{help_string}"
+      def parameter_description_string(param_name, description)
+        "# #{param_name}: #{description}"
       end
 
       def table_content
@@ -99,8 +83,8 @@ module Macroape
       end
 
       # printed only if it is not wordwise [1,1,1,1]
-      def background_parameter(param_name, help_string, value, &block)
-        add_parameter(param_name, help_string, value.join(' '), &block)  unless value == [1,1,1,1]
+      def background_parameter(param_name, description, value, &block)
+        add_parameter(param_name, description, value.join(','), &block)  unless value == [1,1,1,1]
       end
     end
 
