@@ -12,7 +12,7 @@ module Macroape
           #{run_tool_cmd} <file or folder with PWMs or .stdin with filenames> <output file> [options]
 
           Options:
-            [-p <list of P-values>]
+            [-p <list of P-values>] - comma separated(no spaces allowed) list of P-values to precalculate thresholds
             [-d <rough discretization>,<precise discretization>] - set discretization rates, comma delimited (no spaces allowed), order doesn't matter
             [--silent] - hide current progress information during scan (printed to stderr by default)
             [--pcm] - treat the input file as Position Count Matrix. PCM-to-PWM transformation to be done internally.
@@ -22,7 +22,7 @@ module Macroape
           The tool preprocesses and stores Macroape motif collection in the specified YAML-file.
 
           Example:
-            #{run_tool_cmd} ./motifs  collection.yaml -p 0.001 0.0005 0.0001 -d 1 10 -b 0.2,0.3,0.3,0.2
+            #{run_tool_cmd} ./motifs  collection.yaml -p 0.001,0.0005,0.0001 -d 1,10 -b 0.2,0.3,0.3,0.2
         EOS
 
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
@@ -55,14 +55,7 @@ module Macroape
               background = argv.shift.split(',').map(&:to_f)
               raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless background == background.reverse
             when '-p'
-              loop do
-                begin
-                  Float(argv.first)
-                  pvalues << argv.shift.to_f
-                rescue
-                  raise StopIteration
-                end
-              end
+              pvalues = argv.shift.split(',').map(&:to_f)
             when '-d'
               rough_discretization, precise_discretization = argv.shift.split(',').map(&:to_f).sort
             when '--max-hash-size'
