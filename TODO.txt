@@ -17,7 +17,6 @@ ToDo:
 8)(TODO: for theoretically consistency, while making small inconsistences to old calculations)
   When we work with strong threshold, we round matrix up(in order to overrate threshold comparing to real thus taking underrated pvalue) and take upper bound of discrete-thresholds fork.
   When we are estimating lower bound of threshold (weak threshold) we take lower bound of fork of discrete thresholds. But we should ALSO (not done yet) take matrix discreted down! This'd allow us give exact answer on a question in which range real threshold should lay with given P-value, now we correctly estimate only lower bound of threshold(upper bound of P-value)
-9) '[--pcm] - treat the input file as Position Count Matrix. PCM-to-PWM transformation to be done internally.' - insert this option to all tools helpstrings
 
 Specs and tests:
   create spec on use of MaxHashSize, MaxHashSizeDouble
