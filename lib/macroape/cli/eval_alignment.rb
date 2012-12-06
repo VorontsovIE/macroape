@@ -68,9 +68,9 @@ module Macroape
               pvalue = argv.shift.to_f
             when '-d'
               discretization = argv.shift.to_f
-            when '-m'
+            when '--max-hash-size'
               max_hash_size = argv.shift.to_i
-            when '-md'
+            when '--max-2d-hash-size'
               max_pair_hash_size = argv.shift.to_i
             when '-b'
               second_background = first_background = argv.shift.split(',').map(&:to_f)

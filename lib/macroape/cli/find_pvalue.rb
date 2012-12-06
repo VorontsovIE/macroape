@@ -50,7 +50,7 @@ module Macroape
               background = argv.shift.split(',').map(&:to_f)
             when '-d'
               discretization = argv.shift.to_f
-            when '-m'
+            when '--max-hash-size'
               max_hash_size = argv.shift.to_i
           end
         end

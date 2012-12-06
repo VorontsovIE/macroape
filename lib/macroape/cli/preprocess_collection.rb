@@ -65,7 +65,7 @@ module Macroape
               end
             when '-d'
               rough_discretization, precise_discretization = argv.shift.split(',').map(&:to_f).sort
-            when '-m'
+            when '--max-hash-size'
               max_hash_size = argv.shift.to_i
             when '--silent'
               silent = true

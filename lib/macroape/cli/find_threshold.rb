@@ -52,7 +52,7 @@ module Macroape
           case argv.shift
             when '-b'
               background = argv.shift.split(',').map(&:to_f)
-            when '-m'
+            when '--max-hash-size'
               max_hash_size = argv.shift.to_i
             when '-d'
               discretization = argv.shift.to_f

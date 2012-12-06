@@ -61,9 +61,9 @@ module Macroape
               raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless query_background == query_background.reverse
             when '-p'
               pvalue = argv.shift.to_f
-            when '-m'
+            when '--max-hash-size'
               max_hash_size = argv.shift.to_i
-            when '-md'
+            when '--max-2d-hash-size'
               max_pair_hash_size = argv.shift.to_i
             when '-c'
               cutoff = argv.shift.to_f
