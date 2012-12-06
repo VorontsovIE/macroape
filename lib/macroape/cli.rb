@@ -79,7 +79,11 @@ module Macroape
       end
 
       def resulting_table
-        @table_parameter_descriptions.join("\n") + "\n" + header_content + "\n" + table_content
+        if @table_parameter_descriptions.empty?
+          header_content + "\n" + table_content
+        else
+          @table_parameter_descriptions.join("\n") + "\n" + header_content + "\n" + table_content
+        end
       end
 
       # printed only if it is not wordwise [1,1,1,1]
