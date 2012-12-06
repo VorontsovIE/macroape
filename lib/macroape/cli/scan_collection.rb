@@ -19,7 +19,7 @@ module Macroape
             [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
 
           Output format:
-           <name> <jaccard index> <shift> <overlap> <orientation> * [in case that result calculated on the second pass(in precise mode)]
+           <name> <jaccard index> <shift> <overlap> <orientation> ['*' in case that result was calculated on the second pass (in precise mode), '.' otherwise]
               Attention! Name can contain whitespace characters.
               Attention! The shift and orientation are reported for the collection matrix relative to the query matrix.
 

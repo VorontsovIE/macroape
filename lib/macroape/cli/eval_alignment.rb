@@ -85,7 +85,6 @@ module Macroape
               threshold_first = argv.shift.to_f
             when '--second-threshold'
               threshold_second = argv.shift.to_f
-
           end
         end
         raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless first_background == first_background.reverse
@@ -139,7 +138,11 @@ module Macroape
         info = cmp.alignment_infos.merge( cmp.jaccard(threshold_first, threshold_second) )
         info.merge!(threshold_first: threshold_first / discretization,
                     threshold_second: threshold_second / discretization,
-                    discretization: discretization)
+                    discretization: discretization,
+                    first_background: first_background,
+                    second_background: second_background,
+                    requested_pvalue: pvalue,
+                    pvalue_boundary: pvalue_boundary)
         puts Helper.similarity_info_string(info)
 
       rescue => err

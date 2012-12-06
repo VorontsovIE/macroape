@@ -119,7 +119,11 @@ module Macroape
         info = cmp.jaccard(threshold_first, threshold_second)
         info.merge!(threshold_first: threshold_first.to_f / discretization,
                     threshold_second: threshold_second.to_f / discretization,
-                    discretization: discretization)
+                    discretization: discretization,
+                    first_background: first_background,
+                    second_background: second_background,
+                    requested_pvalue: pvalue,
+                    pvalue_boundary: pvalue_boundary)
         puts Helper.similarity_info_string(info)
 
       rescue => err

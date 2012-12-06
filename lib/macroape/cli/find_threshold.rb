@@ -56,8 +56,6 @@ module Macroape
               max_hash_size = argv.shift.to_i
             when '-d'
               discretization = argv.shift.to_f
-            when '--boundary upper'
-              strong_threshold = false
             when '--boundary'
               pvalue_boundary = argv.shift.to_sym
               raise 'boundary should be either lower or upper'  unless  pvalue_boundary == :lower || pvalue_boundary == :upper
@@ -87,7 +85,8 @@ module Macroape
         end
         puts Helper.threshold_infos_string(infos,
                                           {discretization: discretization,
-                                          background: background} )
+                                          background: background,
+                                          pvalue_boundary: pvalue_boundary} )
       rescue => err
         STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse --help option for help\n\n#{doc}"
       end

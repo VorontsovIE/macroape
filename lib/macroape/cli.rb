@@ -38,9 +38,15 @@ module Macroape
         yield self  if block_given?
       end
 
+      def parameters_info
+        [*@parameter_descriptions, *@parameter_value_infos]
+      end
+      def resulting_values_info
+        [*@resulting_value_descriptions, *@resulting_value_infos]
+      end
       def result
-        parameters_info = (@parameter_descriptions.zip(@parameter_value_infos).flatten + @resulting_value_descriptions.zip(@resulting_value_infos).flatten).join("\n")
-        @data  ?  "#{parameters_info}\n#{resulting_table}"  :  parameters_info
+        [parameters_info, resulting_values_info, resulting_table].reject(&:empty?).map{|b|b.join("\n")}.join("\n#\n")
+        #[*parameters_info, '#', *resulting_values_info, '#', *resulting_table].join("\n")
       end
 
       def add_parameter(param_name, description, value, &block)
@@ -71,7 +77,7 @@ module Macroape
       def table_content
         @data.map{|info|
           @table_rows.zip(@table_rows_callbacks).map{|row,callback| callback ? callback.call(info[row]) : info[row] }.join("\t")
-        }.join("\n")
+        }
       end
 
       def header_content
@@ -79,11 +85,7 @@ module Macroape
       end
 
       def resulting_table
-        if @table_parameter_descriptions.empty?
-          header_content + "\n" + table_content
-        else
-          @table_parameter_descriptions.join("\n") + "\n" + header_content + "\n" + table_content
-        end
+        @data ? [*@table_parameter_descriptions, header_content, *table_content] : []
       end
 
       # printed only if it is not wordwise [1,1,1,1]
@@ -97,6 +99,14 @@ module Macroape
       def self.similarity_info_string(info)
         OutputInformation.new { |infos|
           infos.add_parameter('V', 'discretization', info[:discretization] )
+          infos.add_parameter('P', 'requested P-value', info[:requested_pvalue])
+          infos.add_parameter('PB', 'P-value boundary', info[:pvalue_boundary])
+          if info[:first_background] == info[:second_background]
+            infos.background_parameter('B', 'background', info[:first_background])
+          else
+            infos.background_parameter('B1', 'background for the 1st model', info[:first_background])
+            infos.background_parameter('B2', 'background for the 2nd model', info[:second_background])
+          end
 
           infos.add_resulting_value('S', 'similarity', info[:similarity])
           infos.add_resulting_value('D', 'distance (1-similarity)', info[:tanimoto])
@@ -120,6 +130,7 @@ module Macroape
       def self.threshold_infos_string(data, parameters)
         OutputInformation.new(data) { |infos|
           infos.add_parameter('V', 'discretization value', parameters[:discretization])
+          infos.add_parameter('PB', 'P-value boundary', parameters[:pvalue_boundary])
           infos.background_parameter('B', 'background', parameters[:background])
 
           infos.add_table_parameter('P', 'requested P-value', :expected_pvalue)
