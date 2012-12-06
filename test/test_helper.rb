@@ -26,6 +26,16 @@ module Helpers
     $stderr = orig_stderr
   end
 
+  def self.suppress_output(&block)
+    orig_stdout, orig_stderr = $stdout, $stderr
+    captured_stdout, captured_stderr = StringIO.new, StringIO.new
+    $stdout, $stderr = captured_stdout, captured_stderr
+    yield
+  ensure
+    $stdout = orig_stdout
+    $stderr = orig_stderr
+  end
+
   # Method stubs $stdin not STDIN !
   def self.provide_stdin(input, &block)
     orig_stdin = $stdin
@@ -75,7 +85,7 @@ module Helpers
     capture_stderr{ Macroape::CLI::ScanCollection.main(param_list.shellsplit) }
   end
   def self.run_preprocess_collection(param_list)
-    Macroape::CLI::PreprocessCollection.main(param_list.shellsplit)
+    suppress_output{ Macroape::CLI::PreprocessCollection.main(param_list.shellsplit) }
   end
 
   def parse_similarity_infos_string(info_string)
