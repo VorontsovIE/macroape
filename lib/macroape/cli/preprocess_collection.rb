@@ -144,6 +144,13 @@ module Macroape
         File.open(output_file, 'w') do |f|
           f.puts(collection.to_yaml)
         end
+        puts OutputInformation.new{|infos|
+          infos.add_parameter('P', 'P-value list', pvalues.join(','))
+          infos.add_parameter('VR', 'discretization value, rough', rough_discretization)
+          infos.add_parameter('VP', 'discretization value, precise', precise_discretization)
+          infos.add_parameter('PB', 'P-value boundary', pvalue_boundary)
+          infos.background_parameter('B', 'background', background)
+        }.result
       rescue => err
         STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse --help option for help\n\n#{doc}"
       end
