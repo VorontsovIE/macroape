@@ -99,7 +99,9 @@ module Macroape
       def self.similarity_info_string(info)
         OutputInformation.new { |infos|
           infos.add_parameter('V', 'discretization', info[:discretization] )
-          infos.add_parameter('P', 'requested P-value', info[:requested_pvalue])
+          infos.add_parameter('P', 'requested P-value', info[:requested_pvalue])  unless info[:predefined_threshold_first] && info[:predefined_threshold_second]
+          infos.add_parameter('T1', 'threshold for the 1st matrix', info[:predefined_threshold_first] )  if info[:predefined_threshold_first]
+          infos.add_parameter('T2', 'threshold for the 2nd matrix', info[:predefined_threshold_second] )  if info[:predefined_threshold_second]
           infos.add_parameter('PB', 'P-value boundary', info[:pvalue_boundary])
           if info[:first_background] == info[:second_background]
             infos.background_parameter('B', 'background', info[:first_background])
@@ -118,10 +120,10 @@ module Macroape
           infos.add_resulting_value('W', 'number of words recognized by both models (model = PWM + threshold)', info[:recognized_by_both] )
           infos.add_resulting_value('W1', 'number of words and recognized by the first model', info[:recognized_by_first] )
           infos.add_resulting_value('P1', 'P-value for the 1st matrix', info[:real_pvalue_first] )
-          infos.add_resulting_value('T1', 'threshold for the 1st matrix', info[:threshold_first] )
+          infos.add_resulting_value('T1', 'threshold for the 1st matrix', info[:threshold_first] )  unless info[:predefined_threshold_first]
           infos.add_resulting_value('W2', 'number of words recognized by the 2nd model', info[:recognized_by_second] )
           infos.add_resulting_value('P2', 'P-value for the 2nd matrix', info[:real_pvalue_second] )
-          infos.add_resulting_value('T2', 'threshold for the 2nd matrix', info[:threshold_second] )
+          infos.add_resulting_value('T2', 'threshold for the 2nd matrix', info[:threshold_second] )  unless info[:predefined_threshold_second]
         }.result
       end
 

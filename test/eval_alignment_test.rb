@@ -54,8 +54,9 @@ class TestEvalAlignment < Test::Unit::TestCase
                                    words_recognized_by_both: 1901.0,
                                    words_recognized_by_first: 4348.0,
                                    words_recognized_by_second: 4222.0,
-                                   threshold_first: 4.7,
-                                   threshold_second: 4.6},
+#                                   threshold_first: 4.7,
+#                                   threshold_second: 4.6
+                                   },
                                    Helpers.eval_alignment_output('KLF4_f2.pwm SP1_f1.pwm -1 direct --first-threshold 4.7 --second-threshold 4.6'))
   end
   def test_process_not_optimal_alignment

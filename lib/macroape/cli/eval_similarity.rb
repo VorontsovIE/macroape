@@ -62,9 +62,9 @@ module Macroape
               pvalue_boundary = argv.shift.to_sym
               raise 'boundary should be either lower or upper'  unless  pvalue_boundary == :lower || pvalue_boundary == :upper
             when '--first-threshold'
-              threshold_first = argv.shift.to_f
+              predefined_threshold_first = argv.shift.to_f
             when '--second-threshold'
-              threshold_second = argv.shift.to_f
+              predefined_threshold_second = argv.shift.to_f
           end
         end
         raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless first_background == first_background.reverse
@@ -96,8 +96,8 @@ module Macroape
 
         cmp = Macroape::PWMCompare.new(pwm_first, pwm_second).set_parameters(max_pair_hash_size: max_pair_hash_size)
 
-        if threshold_first
-          threshold_first *= discretization
+        if predefined_threshold_first
+          threshold_first = predefined_threshold_first * discretization
         else
           if pvalue_boundary == :lower
             threshold_first = pwm_first.threshold(pvalue)
@@ -106,8 +106,8 @@ module Macroape
           end
         end
 
-        if threshold_second
-          threshold_second *= discretization
+        if predefined_threshold_second
+          threshold_second = predefined_threshold_second * discretization
         else
           if pvalue_boundary == :lower
             threshold_second = pwm_second.threshold(pvalue)
@@ -117,7 +117,9 @@ module Macroape
         end
 
         info = cmp.jaccard(threshold_first, threshold_second)
-        info.merge!(threshold_first: threshold_first.to_f / discretization,
+        info.merge!(predefined_threshold_first: predefined_threshold_first,
+                    predefined_threshold_second: predefined_threshold_second,
+                    threshold_first: threshold_first.to_f / discretization,
                     threshold_second: threshold_second.to_f / discretization,
                     discretization: discretization,
                     first_background: first_background,
