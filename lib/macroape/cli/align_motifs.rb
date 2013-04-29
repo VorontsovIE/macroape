@@ -1,4 +1,5 @@
 require_relative '../../macroape'
+require 'shellwords'
 
 module Macroape
   module CLI
@@ -15,7 +16,9 @@ module Macroape
             pwm_file_3  shift_3  orientation_3
 
           Usage:
-            #{run_tool_cmd} [options] <pm-files>...
+            #{run_tool_cmd} [options] <leader pm> <rest pm files>...
+              or
+            ls rest_pms/*.pm | #{run_tool_cmd} [options] <leader pm>
 
           Options:
             [-p <P-value>]
@@ -62,22 +65,25 @@ module Macroape
           end
         end
 
-        motif_files = argv
-        leader_pwm_file = motif_files[0]
-        rest_pwms_file = motif_files[1..-1]
+        leader_pwm_file = argv.shift
+        rest_pwms_file = argv
+        rest_pwms_file += $stdin.read.shellsplit  unless $stdin.tty?
+        rest_pwms_file.reject!{|filename| File.expand_path(filename) == File.expand_path(leader_pwm_file)}
 
-        shifts = {leader_pwm_file => [0,:direct]}
+        shifts = []
+        shifts << [leader_pwm_file, 0, :direct]
         pwm_first = data_model.new(File.read(leader_pwm_file)).to_pwm
-        pwm_first.set_parameters(background: leader_background).discrete!(discretization)
+        pwm_first.set_parameters(background: leader_background, max_hash_size: max_hash_size).discrete!(discretization)
 
         rest_pwms_file.each do |motif_name|
           pwm_second = data_model.new(File.read(motif_name)).to_pwm
-          pwm_second.set_parameters(background: rest_motifs_background).discrete!(discretization)
-          info = Macroape::PWMCompare.new(pwm_first, pwm_second).jaccard_by_pvalue(pvalue)
-          shifts[motif_name] = [info[:shift], info[:orientation]]
+          pwm_second.set_parameters(background: rest_motifs_background, max_hash_size: max_hash_size).discrete!(discretization)
+          cmp = Macroape::PWMCompare.new(pwm_first, pwm_second).set_parameters(max_pair_hash_size: max_pair_hash_size)
+          info = cmp.jaccard_by_pvalue(pvalue)
+          shifts << [motif_name, info[:shift], info[:orientation]]
         end
 
-        shifts.each do |motif_name, (shift,orientation)|
+        shifts.each do |motif_name, shift,orientation|
           puts "#{motif_name}\t#{shift}\t#{orientation}"
         end
       rescue => err

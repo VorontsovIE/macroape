@@ -21,4 +21,17 @@ class TestAlignmotifs < Test::Unit::TestCase
                   %w[SP1_f1_revcomp.pcm -1 revcomp]],
       Helpers.align_motifs_output('--pcm KLF4_f2.pcm  KLF3_f1.pcm  SP1_f1_revcomp.pcm')
   end
+  def test_names_from_stdin
+    assert_equal [%w[KLF4_f2.pwm 0 direct],
+                  %w[KLF3_f1.pwm -4 direct],
+                  %w[SP1_f1_revcomp.pwm -1 revcomp]],
+      Helpers.provide_stdin('KLF3_f1.pwm  SP1_f1_revcomp.pwm'){ Helpers.align_motifs_output('KLF4_f2.pwm') }
+  end
+  def test_names_from_stdin_duplicate_leader
+    assert_equal [%w[KLF4_f2.pwm 0 direct],
+                  %w[KLF3_f1.pwm -4 direct],
+                  %w[SP1_f1_revcomp.pwm -1 revcomp]],
+      Helpers.provide_stdin('KLF3_f1.pwm KLF4_f2.pwm SP1_f1_revcomp.pwm'){ Helpers.align_motifs_output('KLF4_f2.pwm') }
+  end
+
 end
