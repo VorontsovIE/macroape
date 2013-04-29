@@ -17,7 +17,7 @@ Or install it yourself as:
     $ gem install macroape
 
 ## Usage
-  For more information read manual at https://docs.google.com/document/pub?id=1_jsxhMNzMzy4d2d_byAd3n6Szg5gEcqG_Sf7w9tEqWw (not last version but comprehensive description of approach)
+  For more information read manual at https://docs.google.com/document/pub?id=1_jsxhMNzMzy4d2d_byAd3n6Szg5gEcqG_Sf7w9tEqWw
 
 ## Basic usage as a command-line tool
   MacroAPE have 7 command line tools:
@@ -31,7 +31,7 @@ Or install it yourself as:
   * eval_alignment \<first PWM file\> \<second PWM file\> \<shift of second matrix\> \<orientation of second matrix(direct|revcomp)\>
   
 ### Tools for looking through collection for the motifs most similar to a query motif
-  * preprocess_collection \<folder with motif files\> [-o \<collection output file\>]
+  * preprocess_collection \<folder with motif files\> \<collection output file\>
   * scan_collection \<query PWM file\> \<collection file\>
   
 ### Tool for finding mutual alignment of several motifs relative to first(leader) motif. It's designed to use with sequence_logo to draw logos of clusters
