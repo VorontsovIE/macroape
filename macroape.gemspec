@@ -15,6 +15,5 @@ Gem::Specification.new do |gem|
   gem.require_paths = ["lib"]
   gem.version       = Macroape::VERSION
   
-  gem.add_dependency('bioinform', '= 0.1.9')
-  gem.add_dependency('docopt', '= 0.5.0')
+  gem.add_dependency('bioinform', '~> 0.1.10')
 end
