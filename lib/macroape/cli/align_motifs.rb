@@ -18,6 +18,8 @@ module Macroape
           Usage:
             #{run_tool_cmd} [options] <leader pm> <rest pm files>...
               or
+            ls rest_pms/*.pm | #{run_tool_cmd} [options]
+              or
             ls rest_pms/*.pm | #{run_tool_cmd} [options] <leader pm>
 
           Options:
@@ -28,7 +30,7 @@ module Macroape
             [-b <background probabilities] ACGT - 4 numbers, comma-delimited(spaces not allowed), sum should be equal to 1, like 0.25,0.24,0.26,0.25
         EOS
 
-        if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
+        if (argv.empty? && $stdin.tty?) || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
           $stderr.puts doc
           exit
         end
@@ -65,10 +67,11 @@ module Macroape
           end
         end
 
-        leader_pwm_file = argv.shift
-        rest_pwms_file = argv
-        rest_pwms_file += $stdin.read.shellsplit  unless $stdin.tty?
-        rest_pwms_file.reject!{|filename| File.expand_path(filename) == File.expand_path(leader_pwm_file)}
+        pwm_files = argv
+        pwm_files += $stdin.read.shellsplit  unless $stdin.tty?
+        leader_pwm_file = pwm_files.first
+        rest_pwm_files = pwm_files[1..-1]
+        rest_pwm_files.reject!{|filename| File.expand_path(filename) == File.expand_path(leader_pwm_file)}
 
         raise 'Specify leader file'  unless leader_pwm_file
 
@@ -77,7 +80,7 @@ module Macroape
         pwm_first = data_model.new(File.read(leader_pwm_file)).to_pwm
         pwm_first.set_parameters(background: leader_background, max_hash_size: max_hash_size).discrete!(discretization)
 
-        rest_pwms_file.each do |motif_name|
+        rest_pwm_files.each do |motif_name|
           pwm_second = data_model.new(File.read(motif_name)).to_pwm
           pwm_second.set_parameters(background: rest_motifs_background, max_hash_size: max_hash_size).discrete!(discretization)
           cmp = Macroape::PWMCompare.new(pwm_first, pwm_second).set_parameters(max_pair_hash_size: max_pair_hash_size)
