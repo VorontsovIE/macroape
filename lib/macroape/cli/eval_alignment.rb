@@ -24,7 +24,7 @@ module Macroape
         EOS
 
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
-          STDERR.puts doc
+          $stderr.puts doc
           exit
         end
 
@@ -148,7 +148,7 @@ module Macroape
         puts Helper.similarity_info_string(info)
 
       rescue => err
-        STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse --help option for help\n\n#{doc}"
+        $stderr.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse --help option for help\n\n#{doc}"
       end
 
     end

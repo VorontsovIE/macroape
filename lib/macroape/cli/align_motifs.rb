@@ -29,7 +29,7 @@ module Macroape
         EOS
 
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
-          STDERR.puts doc
+          $stderr.puts doc
           exit
         end
 
@@ -70,6 +70,8 @@ module Macroape
         rest_pwms_file += $stdin.read.shellsplit  unless $stdin.tty?
         rest_pwms_file.reject!{|filename| File.expand_path(filename) == File.expand_path(leader_pwm_file)}
 
+        raise 'Specify leader file'  unless leader_pwm_file
+
         shifts = []
         shifts << [leader_pwm_file, 0, :direct]
         pwm_first = data_model.new(File.read(leader_pwm_file)).to_pwm
@@ -87,7 +89,7 @@ module Macroape
           puts "#{motif_name}\t#{shift}\t#{orientation}"
         end
       rescue => err
-        STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse --help option for help\n\n#{doc}"
+        $stderr.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse --help option for help\n\n#{doc}"
       end
 
     end

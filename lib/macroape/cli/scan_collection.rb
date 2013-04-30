@@ -29,7 +29,7 @@ module Macroape
         EOS
 
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
-          STDERR.puts doc
+          $stderr.puts doc
           exit
         end
 
@@ -123,7 +123,7 @@ module Macroape
 
         collection.each_with_index do |motif, index|
           name = motif.name
-          STDERR.puts "Testing motif #{name} (#{index+1} of #{collection.size}, #{index*100/collection.size}% complete)"  unless silent
+          $stderr.puts "Testing motif #{name} (#{index+1} of #{collection.size}, #{index*100/collection.size}% complete)"  unless silent
           motif.set_parameters(background: collection_background, max_hash_size: max_hash_size)
           if motif.rough[pvalue]
             collection_pwm_rough = motif.pwm.discrete(rough_discretization)
@@ -141,7 +141,7 @@ module Macroape
           similarities[name] = info
         end
 
-        STDERR.puts "100% complete"  unless silent
+        $stderr.puts "100% complete"  unless silent
 
         similarities_to_output = similarities.sort_by{|name, info| info[:similarity] }.reverse.select{|name,info| info[:similarity] >= cutoff }.map{|name,info|info}
         puts Helper.scan_collection_infos_string( similarities_to_output,
@@ -155,7 +155,7 @@ module Macroape
                                                   collection_background: collection_background,
                                                   query_background: query_background} )
       rescue => err
-        STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse --help option for help\n\n#{doc}"
+        $stderr.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse --help option for help\n\n#{doc}"
       end
 
     end

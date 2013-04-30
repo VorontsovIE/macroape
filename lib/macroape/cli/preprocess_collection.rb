@@ -26,7 +26,7 @@ module Macroape
         EOS
 
         if argv.empty? || ['-h', '--h', '-help', '--help'].any?{|help_option| argv.include?(help_option)}
-          STDERR.puts doc
+          $stderr.puts doc
           exit
         end
 
@@ -99,7 +99,7 @@ module Macroape
         pwms = motifs.map(&:to_pwm)
 
         pwms.each_with_index do |pwm,index|
-          STDERR.puts "Motif #{pwm.name}, length: #{pwm.length} (#{index+1} of #{pwms.size}, #{index*100/pwms.size}% complete)"  unless silent
+          $stderr.puts "Motif #{pwm.name}, length: #{pwm.length} (#{index+1} of #{pwms.size}, #{index*100/pwms.size}% complete)"  unless silent
 
           # When support of onefile collections is introduced - then here should be check if name exists.
           # Otherwise it should skip motif and tell you about this
@@ -140,7 +140,7 @@ module Macroape
           end
           collection.add_pm(pwm, info)  unless skip_motif
         end
-        STDERR.puts "100% complete. Saving results"  unless silent
+        $stderr.puts "100% complete. Saving results"  unless silent
         File.open(output_file, 'w') do |f|
           f.puts(collection.to_yaml)
         end
@@ -152,7 +152,7 @@ module Macroape
           infos.background_parameter('B', 'background', background)
         }.result
       rescue => err
-        STDERR.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse --help option for help\n\n#{doc}"
+        $stderr.puts "\n#{err}\n#{err.backtrace.first(5).join("\n")}\n\nUse --help option for help\n\n#{doc}"
       end
 
     end
