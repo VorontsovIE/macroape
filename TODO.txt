@@ -1,3 +1,5 @@
+Fix align_motifs so that keys can go after arguments (use OptionParser in other words)
+
 ToDo:
 6)
 # TODO:  FIX: this test fails due to floating point precision error: estimated threshold is -19.0418 but '-19.0418'.to_f * 10000 = -190417.99999999997
