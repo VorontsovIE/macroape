@@ -33,7 +33,7 @@ module Macroape
 
         @table_headers = []
         @table_rows = []
-        @table_rows_callbacks = []
+        @table_rows_callbacks = {}
         @data = data
         yield self  if block_given?
       end
@@ -67,7 +67,7 @@ module Macroape
       def add_table_parameter_without_description(param_name, key_in_hash, &block)
         @table_headers << param_name
         @table_rows << key_in_hash
-        @table_rows_callbacks << block
+        @table_rows_callbacks[key_in_hash] = block
       end
 
       def parameter_description_string(param_name, description)
@@ -76,7 +76,7 @@ module Macroape
 
       def table_content
         @data.map{|info|
-          @table_rows.zip(@table_rows_callbacks).map{|row,callback| callback ? callback.call(info[row]) : info[row] }.join("\t")
+          @table_rows.map{|row| @table_rows_callbacks[row] ? @table_rows_callbacks[row].call(info[row]) : info[row] }.join("\t")
         }
       end
 
