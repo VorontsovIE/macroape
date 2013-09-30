@@ -6,6 +6,9 @@ describe Bioinform::PWM do
   let :matrix_second do [[1,2,3,4],[2,3,4,5]] end
   let :pwm_first do Bioinform::PWM.new(matrix_first) end
   let :pwm_second do Bioinform::PWM.new(matrix_second) end
+  let :background do [0.1,0.4,0.4,0.1] end
+  let :pwm_first_on_background do pwm_first.tap{|pwm| pwm.set_parameters(background: background)} end
+  let :pwm_second_on_background do pwm_second.tap{|pwm| pwm.set_parameters(background: background)} end
 
   context '#count_distribution_after_threshold' do
 
@@ -19,6 +22,19 @@ describe Bioinform::PWM do
 
       distribution_second = pwm_second.count_distribution_after_threshold(5)
       distribution_second.should == { 5=>3, 6=>4, 7=>3, 8=>2, 9=>1 }
+    end
+
+    it 'for PWMs on different background it should contain the same scores (keys of hash)' do
+      pwm_first.count_distribution_after_threshold(0).keys.sort.should == pwm_first_on_background.count_distribution_after_threshold(0).keys.sort
+      pwm_first.count_distribution_after_threshold(13).keys.sort.should == pwm_first_on_background.count_distribution_after_threshold(13).keys.sort
+    end
+
+    it 'should return hash of score => count for all scores >= threshold  when calculated on background' do
+      distribution_second = pwm_second_on_background.count_distribution_after_threshold(0)
+      distribution_second.should have_nearly_the_same_values({ 3=>0.01, 4=>0.08, 5=>0.24, 6=>0.34, 7=>0.24, 8=>0.08, 9=>0.01 }, 1e-7 )
+
+      distribution_second = pwm_second_on_background.count_distribution_after_threshold(5)
+      distribution_second.should have_nearly_the_same_values({ 5=>0.24, 6=>0.34, 7=>0.24, 8=>0.08, 9=>0.01 }, 1e-7 )
     end
 
     it 'should use existing precalculated hash @count_distribution if it exists' do
@@ -48,4 +64,46 @@ describe Bioinform::PWM do
     end
   end
 
+  context '#pvalue_by_threshold' do
+    it 'should return probability to be >= than threshold' do
+      pwm_second.pvalue_by_threshold(7).should be_within(1e-7).of(6.0/16)
+    end
+    it 'should return probability to be >= than threshold when calculated on background' do
+      pwm_second_on_background.pvalue_by_threshold(7).should be_within(1e-7).of(0.33)
+    end
+  end
+  context '#threshold' do
+    it 'should return threshold such that according pvalue doesn\'t exceed requested value' do
+      requested_pvalue = 6.0/16
+      threshold = pwm_second.threshold(requested_pvalue)
+      pwm_second.pvalue_by_threshold(threshold).should <= requested_pvalue
+    end
+    it 'should return threshold such that according pvalue doesn\'t exceed requested value when calculated on background' do
+      requested_pvalue = 0.33
+      threshold = pwm_second_on_background.threshold(requested_pvalue)
+      pwm_second_on_background.pvalue_by_threshold(threshold).should <= requested_pvalue
+    end
+    it 'should return threshold such that according pvalue doesn\'t exceed requested value when actual pvalue isn\'t exact equal to requested' do
+      requested_pvalue = 0.335
+      threshold = pwm_second_on_background.threshold(requested_pvalue)
+      pwm_second_on_background.pvalue_by_threshold(threshold).should <= requested_pvalue
+    end
+  end
+  context '#weak_threshold' do
+  it 'should return threshold such that according pvalue exceed requested value' do
+      requested_pvalue = 6.0/16
+      threshold = pwm_second.weak_threshold(requested_pvalue)
+      pwm_second.pvalue_by_threshold(threshold).should >= requested_pvalue
+    end
+    it 'should return threshold such that according pvalue exceed requested value when calculated on background' do
+      requested_pvalue = 0.33
+      threshold = pwm_second_on_background.weak_threshold(requested_pvalue)
+      pwm_second_on_background.pvalue_by_threshold(threshold).should >= requested_pvalue
+    end
+    it 'should return threshold such that according pvalue exceed requested value when actual pvalue isn\'t exact equal to requested' do
+      requested_pvalue = 0.335
+      threshold = pwm_second_on_background.weak_threshold(requested_pvalue)
+      pwm_second_on_background.pvalue_by_threshold(threshold).should >= requested_pvalue
+    end
+  end
 end

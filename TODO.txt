@@ -1,3 +1,8 @@
+Why  Helpers.find_threshold_output('SP1_f1.pwm 0.8 -d 10')  on java works only for pvalues less or equal than 0.5, but 0.55 or 0.8 breaks the program (it doesn't stop). My hypothesis is that gauss threshold estimation fails
+
+
+Make --same-strand mode which disallows revcomp transformation of motif - so it'll be possible to compare RNA-PWMs.
+
 Fix align_motifs so that keys can go after arguments (use OptionParser in other words)
 
 ToDo:
