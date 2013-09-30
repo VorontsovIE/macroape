@@ -90,6 +90,7 @@ module Macroape
           filelist.each do |filename|
             motif = data_model.new(File.read(filename))
             motif.name ||= File.basename(filename, File.extname(filename))
+            motif.set_parameters(background: background)
             motifs << motif
           end
         else

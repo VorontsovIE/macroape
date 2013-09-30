@@ -94,7 +94,7 @@ module Macroape
           query_input = File.read(filename)
         end
 
-        query_pwm = data_model.new(query_input).to_pwm
+        query_pwm = data_model.new(query_input).set_parameters(background: query_background).to_pwm
         query_pwm.set_parameters(background: query_background, max_hash_size: max_hash_size)
 
         query_pwm_rough = query_pwm.discrete(rough_discretization)
