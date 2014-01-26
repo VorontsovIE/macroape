@@ -67,4 +67,4 @@ Or install it yourself as:
 
 If you're developing both macroape and bioinform - it may be useful to know that test_helper and spec_helper expands require path in such a way that if you have two "cousin" folders: macroape and bioinform then macroape specs will require bioinform from development folder not from gem. It can save you lots of time not to rebuild-reinstall bioinform gem each time it get some changes
 
-Copyright (c) 2011-2012 Ilya Vorontsov, Ivan Kulakovskiy, Vsevolod Makeev
+Copyright (c) 2011-2014 Ilya Vorontsov, Ivan Kulakovskiy, Vsevolod Makeev
