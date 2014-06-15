@@ -69,7 +69,7 @@ module Macroape
         end
         pvalues = default_pvalues  if pvalues.empty?
 
-        collection = Bioinform::Collection.new(rough_discretization: rough_discretization,
+        collection = Macroape::ThresholdingParametersCollection.new(rough_discretization: rough_discretization,
                                 precise_discretization: precise_discretization,
                                 background: background,
                                 pvalues: pvalues)

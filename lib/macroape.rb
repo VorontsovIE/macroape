@@ -4,6 +4,7 @@ require_relative 'macroape/counting'
 require_relative 'macroape/aligned_pair_intersection'
 require_relative 'macroape/pwm_compare_aligned'
 require_relative 'macroape/pwm_compare'
+require_relative 'macroape/thresholding_parameters_collection'
 require_relative 'macroape/cli'
 
 module Macroape

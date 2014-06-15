@@ -1,20 +1,17 @@
---- !ruby/object:Bioinform::Collection
+--- !ruby/object:Macroape::ThresholdingParametersCollection
 container:
 - !ruby/object:Bioinform::Motif
   parameters: !ruby/object:OpenStruct
     table:
       :original_data_model: :pwm
       :pwm: !ruby/object:Bioinform::PWM
-        parameters: !ruby/object:OpenStruct
-          table:
-            :name: GABPA_f1
-            :background: &15478152
-            - 1
-            - 1
-            - 1
-            - 1
-            :max_hash_size: 1000000
-          modifiable: true
+        :name: GABPA_f1
+        :background: &15478152
+        - 1
+        - 1
+        - 1
+        - 1
+        :max_hash_size: 1000000
         matrix:
         - - -0.1106670158341858
           - 0.013801606113892391
@@ -82,12 +79,9 @@ container:
     table:
       :original_data_model: :pwm
       :pwm: !ruby/object:Bioinform::PWM
-        parameters: !ruby/object:OpenStruct
-          table:
-            :name: KLF4_f2
-            :background: *15478152
-            :max_hash_size: 1000000
-          modifiable: true
+        :name: KLF4_f2
+        :background: *15478152
+        :max_hash_size: 1000000
         matrix:
         - - 0.30861857265872605
           - -2.254321000121579
@@ -143,12 +137,9 @@ container:
     table:
       :original_data_model: :pwm
       :pwm: !ruby/object:Bioinform::PWM
-        parameters: !ruby/object:OpenStruct
-          table:
-            :name: SP1_f1
-            :background: *15478152
-            :max_hash_size: 1000000
-          modifiable: true
+        :name: SP1_f1
+        :background: *15478152
+        :max_hash_size: 1000000
         matrix:
         - - -0.24435707885585292
           - -0.674823404693731
@@ -203,12 +194,10 @@ container:
         0.0001: 7.709999999999999
         0.0005: 5.61
     modifiable: true
-parameters: !ruby/object:OpenStruct
-  table:
-    :rough_discretization: 1
-    :precise_discretization: 10
-    :background: *15478152
-    :pvalues:
-    - 0.0005
-    - 0.0001
-    - 5.0e-05
+:rough_discretization: 1
+:precise_discretization: 10
+:background: *15478152
+:pvalues:
+- 0.0005
+- 0.0001
+- 5.0e-05

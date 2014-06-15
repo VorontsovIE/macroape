@@ -43,11 +43,11 @@ module Macroape
         pvalue = 0.0005
         cutoff = 0.05 # minimal similarity to output
         collection = YAML.load_file(collection_file)
-        collection_background = collection.parameters.background
+        collection_background = collection.background
         query_background = collection_background
 
-        rough_discretization = collection.parameters.rough_discretization
-        precise_discretization = collection.parameters.precise_discretization
+        rough_discretization = collection.rough_discretization
+        precise_discretization = collection.precise_discretization
         max_hash_size = 10000000
         max_pair_hash_size = 10000
         pvalue_boundary = :upper
@@ -85,7 +85,7 @@ module Macroape
           end
         end
 
-        raise "Thresholds for pvalue #{pvalue} aren't presented in collection (#{collection.parameters.pvalues.join(', ')}). Use one of listed pvalues or recalculate the collection with needed pvalue" unless collection.parameters.pvalues.include? pvalue
+        raise "Thresholds for pvalue #{pvalue} aren't presented in collection (#{collection.pvalues.join(', ')}). Use one of listed pvalues or recalculate the collection with needed pvalue" unless collection.pvalues.include? pvalue
 
         if filename == '.stdin'
           query_input = $stdin.read
