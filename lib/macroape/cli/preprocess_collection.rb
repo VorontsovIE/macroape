@@ -106,7 +106,7 @@ module Macroape
           # Otherwise it should skip motif and tell you about this
           # Also two command line options to fail on skipping or to skip silently should be included
 
-          info = OpenStruct.new(rough: {}, precise: {})
+          info = {rough: {}, precise: {}}
           pwm.tap{|x| x.background = background; max_hash_size = max_hash_size }
           skip_motif = false
 
@@ -115,7 +115,7 @@ module Macroape
             if real_pvalue == 0
               $stderr.puts "#{pwm.name} at pvalue #{pvalue} has threshold that yields real-pvalue 0 in rough mode. Rough calculation will be skipped"
             else
-              info.rough[pvalue] = threshold / rough_discretization
+              info[:rough][pvalue] = threshold / rough_discretization
             end
           end
 
@@ -124,7 +124,7 @@ module Macroape
               $stderr.puts "#{pwm.name} at pvalue #{pvalue} has threshold that yields real-pvalue 0 in precise mode. Motif will be excluded from collection"
               skip_motif = true
             else
-              info.precise[pvalue] = threshold / precise_discretization
+              info[:precise][pvalue] = threshold / precise_discretization
             end
           end
 

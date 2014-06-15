@@ -17,5 +17,10 @@ module Macroape
         (background == other.background) &&
         (pvalues == other.pvalues)
     end
+
+    def add_pm(pm, info)
+      container << Macroape::MotifWithThresholds.new(info.merge(pm: pm))
+      self
+    end
   end
 end

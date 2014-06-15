@@ -124,7 +124,7 @@ module Macroape
         collection.each_with_index do |motif, index|
           name = motif.name
           $stderr.puts "Testing motif #{name} (#{index+1} of #{collection.size}, #{index*100/collection.size}% complete)"  unless silent
-          motif.tap{|x| x.background = collection_background; max_hash_size = max_hash_size }
+          motif.tap{|x| x.background = collection_background; x.max_hash_size = max_hash_size }
           if motif.rough[pvalue]
             collection_pwm_rough = motif.pwm.discrete(rough_discretization)
             collection_threshold_rough = motif.rough[pvalue] * rough_discretization
