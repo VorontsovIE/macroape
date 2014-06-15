@@ -94,8 +94,8 @@ module Macroape
           query_input = File.read(filename)
         end
 
-        query_pwm = data_model.new(query_input).set_parameters(background: query_background).to_pwm
-        query_pwm.set_parameters(background: query_background, max_hash_size: max_hash_size)
+        query_pwm = data_model.new(query_input).tap{|x| x.background = query_background }.to_pwm
+        query_pwm.tap{|x| x.background = query_background; x.max_hash_size = max_hash_size }
 
         query_pwm_rough = query_pwm.discrete(rough_discretization)
         query_pwm_precise = query_pwm.discrete(precise_discretization)
@@ -124,17 +124,17 @@ module Macroape
         collection.each_with_index do |motif, index|
           name = motif.name
           $stderr.puts "Testing motif #{name} (#{index+1} of #{collection.size}, #{index*100/collection.size}% complete)"  unless silent
-          motif.set_parameters(background: collection_background, max_hash_size: max_hash_size)
+          motif.tap{|x| x.background = collection_background; max_hash_size = max_hash_size }
           if motif.rough[pvalue]
             collection_pwm_rough = motif.pwm.discrete(rough_discretization)
             collection_threshold_rough = motif.rough[pvalue] * rough_discretization
-            info = Macroape::PWMCompare.new(query_pwm_rough, collection_pwm_rough).set_parameters(max_pair_hash_size: max_pair_hash_size).jaccard(query_threshold_rough, collection_threshold_rough)
+            info = Macroape::PWMCompare.new(query_pwm_rough, collection_pwm_rough).tap{|x| x.max_pair_hash_size = max_pair_hash_size }.jaccard(query_threshold_rough, collection_threshold_rough)
             info[:precision_mode] = :rough
           end
           if !motif.rough[pvalue] || (precision_mode == :precise) && (info[:similarity] >= minimal_similarity)
             collection_pwm_precise = motif.pwm.discrete(precise_discretization)
             collection_threshold_precise = motif.precise[pvalue] * precise_discretization
-            info = Macroape::PWMCompare.new(query_pwm_precise, collection_pwm_precise).set_parameters(max_pair_hash_size: max_pair_hash_size).jaccard(query_threshold_precise, collection_threshold_precise)
+            info = Macroape::PWMCompare.new(query_pwm_precise, collection_pwm_precise).tap{|x| x.max_pair_hash_size = max_pair_hash_size }.jaccard(query_threshold_precise, collection_threshold_precise)
             info[:precision_mode] = :precise
           end
           info[:name] = name

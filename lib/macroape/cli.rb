@@ -182,7 +182,6 @@ module Macroape
           infos.add_table_parameter('P', 'P-value', :pvalue)
         }.result
       end
-
     end
   end
 end

@@ -57,6 +57,5 @@ module Macroape
       end
       new_scores
     end
-
   end
 end

@@ -7,8 +7,8 @@ describe Bioinform::PWM do
   let :pwm_first do Bioinform::PWM.new(matrix_first) end
   let :pwm_second do Bioinform::PWM.new(matrix_second) end
   let :background do [0.1,0.4,0.4,0.1] end
-  let :pwm_first_on_background do pwm_first.tap{|pwm| pwm.set_parameters(background: background)} end
-  let :pwm_second_on_background do pwm_second.tap{|pwm| pwm.set_parameters(background: background)} end
+  let :pwm_first_on_background do pwm_first.tap{|pwm| pwm.tap{|x| x.background = background }} end
+  let :pwm_second_on_background do pwm_second.tap{|pwm| pwm.tap{|x| x.background = background }}  end
 
   context '#count_distribution_after_threshold' do
 

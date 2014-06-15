@@ -39,5 +39,4 @@ class TestAlignmotifs < Test::Unit::TestCase
                   %w[SP1_f1_revcomp.pwm -1 revcomp]],
       Helpers.provide_stdin('KLF3_f1.pwm KLF4_f2.pwm SP1_f1_revcomp.pwm'){ Helpers.align_motifs_output('KLF4_f2.pwm') }
   end
-
 end

@@ -36,4 +36,3 @@ class FindPvalueTest < Test::Unit::TestCase
                 Helpers.provide_stdin(File.read 'KLF4_f2.pwm'){  Helpers.find_pvalue_output('.stdin 1') }
   end
 end
-

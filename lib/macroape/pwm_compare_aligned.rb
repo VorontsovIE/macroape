@@ -1,16 +1,13 @@
-require 'bioinform/support/parameters'
 require_relative 'aligned_pair_intersection'
 
 module Macroape
   class PWMCompareAligned
-    include Bioinform::Parameters
     # sets or gets limit of summary size of calculation hash. It's a defence against overuse CPU resources by non-appropriate data
-    make_parameters :max_pair_hash_size
+    attr_accessor :max_pair_hash_size
 
-    attr_reader :first, :second, :length, :shift, :orientation, :first_length, :second_length, :parameters
+    attr_reader :first, :second, :length, :shift, :orientation, :first_length, :second_length
 
     def initialize(first_unaligned, second_unaligned, shift, orientation)
-      @parameters = OpenStruct.new
       @shift, @orientation = shift, orientation
 
       @first_length, @second_length = first_unaligned.length, second_unaligned.length
@@ -126,5 +123,4 @@ module Macroape
       end
     end
   end
-
 end

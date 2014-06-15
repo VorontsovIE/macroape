@@ -77,13 +77,13 @@ module Macroape
 
         shifts = []
         shifts << [leader_pwm_file, 0, :direct]
-        pwm_first = data_model.new(File.read(leader_pwm_file)).set_parameters(background: leader_background).to_pwm
-        pwm_first.set_parameters(background: leader_background, max_hash_size: max_hash_size).discrete!(discretization)
+        pwm_first = data_model.new(File.read(leader_pwm_file)).tap{|x| x.background = leader_background }.to_pwm
+        pwm_first.tap{|x| x.background = leader_background; x.max_hash_size = max_hash_size }.discrete!(discretization)
 
         rest_pwm_files.each do |motif_name|
-          pwm_second = data_model.new(File.read(motif_name)).set_parameters(background: rest_motifs_background).to_pwm
-          pwm_second.set_parameters(background: rest_motifs_background, max_hash_size: max_hash_size).discrete!(discretization)
-          cmp = Macroape::PWMCompare.new(pwm_first, pwm_second).set_parameters(max_pair_hash_size: max_pair_hash_size)
+          pwm_second = data_model.new(File.read(motif_name)).tap{|x| x.background = rest_motifs_background }.to_pwm
+          pwm_second.tap{|x| x.background = rest_motifs_background; x.max_hash_size = max_hash_size }.discrete!(discretization)
+          cmp = Macroape::PWMCompare.new(pwm_first, pwm_second).tap{|x| x.max_pair_hash_size = max_pair_hash_size }
           info = cmp.jaccard_by_pvalue(pvalue)
           shifts << [motif_name, info[:shift], info[:orientation]]
         end

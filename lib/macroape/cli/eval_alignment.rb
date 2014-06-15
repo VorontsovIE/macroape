@@ -92,29 +92,31 @@ module Macroape
 
         if first_file == '.stdin' || second_file == '.stdin'
           input = $stdin.read
-          parser = data_model.choose_parser(input).new(input)
+          parser = data_model.choose_parser(input)
         end
 
+        multi_parser = Bioinform::CollectionParser.new(parser, input)
+
         if first_file == '.stdin'
-          input_first = parser.parse
+          input_first = multi_parser.parse
         else
           raise "Error! File #{first_file} don't exist" unless File.exist?(first_file)
           input_first = File.read(first_file)
         end
-        pwm_first = data_model.new(input_first).set_parameters(background: first_background).to_pwm
+        pwm_first = data_model.new(input_first).tap{|x| x.background = first_background }.to_pwm
 
         if second_file == '.stdin'
-          input_second = parser.parse
+          input_second = multi_parser.parse
         else
           raise "Error! File #{second_file} don't exist" unless File.exist?(second_file)
           input_second = File.read(second_file)
         end
-        pwm_second = data_model.new(input_second).set_parameters(background: second_background).to_pwm
+        pwm_second = data_model.new(input_second).tap{|x| x.background = second_background }.to_pwm
 
-        pwm_first.set_parameters(background: first_background, max_hash_size: max_hash_size).discrete!(discretization)
-        pwm_second.set_parameters(background: second_background, max_hash_size: max_hash_size).discrete!(discretization)
+        pwm_first.tap{|x| x.background = first_background; x.max_hash_size = max_hash_size }.discrete!(discretization)
+        pwm_second.tap{|x| x.background = second_background; x.max_hash_size = max_hash_size }.discrete!(discretization)
 
-        cmp = Macroape::PWMCompareAligned.new(pwm_first, pwm_second, shift, orientation).set_parameters(max_pair_hash_size: max_pair_hash_size)
+        cmp = Macroape::PWMCompareAligned.new(pwm_first, pwm_second, shift, orientation).tap{|x| x.max_pair_hash_size = max_pair_hash_size }
 
         if predefined_threshold_first
           threshold_first = predefined_threshold_first * discretization

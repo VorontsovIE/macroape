@@ -90,7 +90,7 @@ module Macroape
           filelist.each do |filename|
             motif = data_model.new(File.read(filename))
             motif.name ||= File.basename(filename, File.extname(filename))
-            motif.set_parameters(background: background)
+            motif.tap{|x| x.background = background }
             motifs << motif
           end
         else
@@ -107,7 +107,7 @@ module Macroape
           # Also two command line options to fail on skipping or to skip silently should be included
 
           info = OpenStruct.new(rough: {}, precise: {})
-          pwm.set_parameters(background: background, max_hash_size: max_hash_size)
+          pwm.tap{|x| x.background = background; max_hash_size = max_hash_size }
           skip_motif = false
 
 

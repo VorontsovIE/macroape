@@ -68,8 +68,8 @@ module Macroape
           raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
           input = File.read(filename)
         end
-        pwm = data_model.new(input).set_parameters(background: background).to_pwm
-        pwm.set_parameters(background: background, max_hash_size: max_hash_size).discrete!(discretization)
+        pwm = data_model.new(input).tap{|x| x.background = background }.to_pwm
+        pwm.tap{|x| x.background = background; x.max_hash_size = max_hash_size }.discrete!(discretization)
 
         infos = []
         collect_infos_proc = ->(pvalue, threshold, real_pvalue) do

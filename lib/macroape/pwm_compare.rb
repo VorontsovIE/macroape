@@ -1,14 +1,9 @@
-require 'bioinform/support/parameters'
-
 module Macroape
   class PWMCompare
-    include Bioinform::Parameters
     # sets or gets limit of summary size of calculation hash. It's a defence against overuse CPU resources by non-appropriate data
-    make_parameters :max_pair_hash_size
-
-    attr_reader :first, :second, :parameters
+    attr_accessor :max_pair_hash_size
+    attr_reader :first, :second
     def initialize(first, second)
-      @parameters = OpenStruct.new
       @first = first
       @second = second
     end
@@ -33,7 +28,7 @@ module Macroape
 
     def each_alignment
       (-second.length..first.length).to_a.product([:direct,:revcomp]) do |shift, orientation|
-        yield PWMCompareAligned.new(first, second, shift, orientation).set_parameters(max_pair_hash_size: max_pair_hash_size)
+        yield PWMCompareAligned.new(first, second, shift, orientation).tap{|x| x.max_pair_hash_size = max_pair_hash_size }
       end
     end
 
