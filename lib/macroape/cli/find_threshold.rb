@@ -69,7 +69,7 @@ module Macroape
           input = File.read(filename)
         end
         pwm = data_model.new(input).tap{|x| x.background = background }.to_pwm
-        pwm.tap{|x| x.background = background; x.max_hash_size = max_hash_size }.discrete!(discretization)
+        pwm = pwm.tap{|x| x.background = background; x.max_hash_size = max_hash_size }.discrete(discretization)
 
         infos = []
         collect_infos_proc = ->(pvalue, threshold, real_pvalue) do

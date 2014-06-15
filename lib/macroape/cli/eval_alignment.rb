@@ -113,8 +113,8 @@ module Macroape
         end
         pwm_second = data_model.new(input_second).tap{|x| x.background = second_background }.to_pwm
 
-        pwm_first.tap{|x| x.background = first_background; x.max_hash_size = max_hash_size }.discrete!(discretization)
-        pwm_second.tap{|x| x.background = second_background; x.max_hash_size = max_hash_size }.discrete!(discretization)
+        pwm_first = pwm_first.tap{|x| x.background = first_background; x.max_hash_size = max_hash_size }.discrete(discretization)
+        pwm_second = pwm_second.tap{|x| x.background = second_background; x.max_hash_size = max_hash_size }.discrete(discretization)
 
         cmp = Macroape::PWMCompareAligned.new(pwm_first, pwm_second, shift, orientation).tap{|x| x.max_pair_hash_size = max_pair_hash_size }
 
