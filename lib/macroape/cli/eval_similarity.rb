@@ -72,7 +72,7 @@ module Macroape
 
         if first_file == '.stdin' || second_file == '.stdin'
           input = $stdin.read
-          parser = data_model.choose_parser(input)
+          parser = Bioinform::Parser.choose(input, data_model)
         end
 
         multi_parser = Bioinform::CollectionParser.new(parser, input)

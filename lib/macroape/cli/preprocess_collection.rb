@@ -83,7 +83,7 @@ module Macroape
           end
         elsif File.file?(data_source)
           input = File.read(data_source)
-          motifs = data_model.split_on_motifs(input)
+          motifs = Bioinform::Parser.split_on_motifs(input, data_model)
         elsif data_source == '.stdin'
           filelist = $stdin.read.shellsplit
           motifs = []
