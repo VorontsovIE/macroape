@@ -90,7 +90,11 @@ module Macroape
 
       # printed only if it is not wordwise [1,1,1,1]
       def background_parameter(param_name, description, value, &block)
-        add_parameter(param_name, description, value.join(','), &block)  unless value == [1,1,1,1]
+        if value.is_a?(Bioinform::Background)
+          add_parameter(param_name, description, value.to_s, &block)  unless value.wordwise?
+        else
+          add_parameter(param_name, description, value.join(','), &block)  unless value == [1,1,1,1]
+        end
       end
     end
 
@@ -137,7 +141,7 @@ module Macroape
 
           infos.add_table_parameter('P', 'requested P-value', :expected_pvalue)
           infos.add_table_parameter('AP', 'actual P-value', :real_pvalue)
-          infos.add_table_parameter('W', 'number of recognized words', :recognized_words)  if parameters[:background] == [1, 1, 1, 1]
+          infos.add_table_parameter('W', 'number of recognized words', :recognized_words)  if parameters[:background].wordwise?
           infos.add_table_parameter('T', 'threshold', :threshold)
         }.result
       end
@@ -178,7 +182,7 @@ module Macroape
           infos.background_parameter('B', 'background', parameters[:background])
 
           infos.add_table_parameter('T', 'threshold', :threshold)
-          infos.add_table_parameter('W', 'number of recognized words', :number_of_recognized_words)  if parameters[:background] == [1,1,1,1]
+          infos.add_table_parameter('W', 'number of recognized words', :number_of_recognized_words)  if parameters[:background].wordwise?
           infos.add_table_parameter('P', 'P-value', :pvalue)
         }.result
       end

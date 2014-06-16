@@ -35,15 +35,15 @@ module Macroape
           exit
         end
 
-        leader_background = [1,1,1,1]
-        rest_motifs_background = [1,1,1,1]
+        leader_background = Bioinform::Background::Wordwise
+        rest_motifs_background = Bioinform::Background::Wordwise
         discretization = 1
         pvalue = 0.0005
         max_hash_size = 10000000
         max_pair_hash_size = 10000
         pvalue_boundary = :upper
 
-        data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
+        data_model = argv.delete('--pcm') ? :pcm : :pwm
 
         while argv.first && argv.first.start_with?('-')
           case argv.shift
@@ -56,11 +56,11 @@ module Macroape
             when '--max-2d-hash-size'
               max_pair_hash_size = argv.shift.to_i
             when '-b'
-              rest_motifs_background = leader_background = argv.shift.split(',').map(&:to_f)
+              rest_motifs_background = leader_background = Bioinform::Background.from_string(argv.shift)
             when '-b1'
-              leader_background = argv.shift.split(',').map(&:to_f)
+              leader_background = Bioinform::Background.from_string(argv.shift)
             when '-b2'
-              rest_motifs_background = argv.shift.split(',').map(&:to_f)
+              rest_motifs_background = Bioinform::Background.from_string(argv.shift)
             when '--boundary'
               pvalue_boundary = argv.shift.to_sym
               raise 'boundary should be either lower or upper'  unless  pvalue_boundary == :lower || pvalue_boundary == :upper
@@ -77,13 +77,33 @@ module Macroape
 
         shifts = []
         shifts << [leader_pwm_file, 0, :direct]
-        pwm_first = data_model.new(File.read(leader_pwm_file)).tap{|x| x.background = leader_background }.to_pwm
-        pwm_first = pwm_first.tap{|x| x.background = leader_background; x.max_hash_size = max_hash_size }.discrete(discretization)
+
+        input_first = File.read(leader_pwm_file)
+        input_first = Bioinform::Parser.choose(input_first).parse!(input_first)
+        case data_model
+        when :pcm
+          pcm_first = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PCM.new(input_first.matrix), input_first.name )
+          pwm_first = Bioinform::ConversionAlgorithms::PCM2PWMConverter_.new(pseudocount: :log, background: leader_background).convert(pcm_first)
+        when :pwm
+          pwm_first = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PWM.new(input_first.matrix), input_first.name )
+        end
+
+        pwm_first = pwm_first.discreted(discretization)
+        counting_first = PWMCounting.new(pwm_first, background: leader_background, max_hash_size: max_hash_size)
 
         rest_pwm_files.each do |motif_name|
-          pwm_second = data_model.new(File.read(motif_name)).tap{|x| x.background = rest_motifs_background }.to_pwm
-          pwm_second = pwm_second.tap{|x| x.background = rest_motifs_background; x.max_hash_size = max_hash_size }.discrete(discretization)
-          cmp = Macroape::PWMCompare.new(pwm_first, pwm_second).tap{|x| x.max_pair_hash_size = max_pair_hash_size }
+          input_second = File.read(motif_name)
+          input_second = Bioinform::Parser.choose(input_second).parse!(input_second)
+          case data_model
+          when :pcm
+            pcm_second = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PCM.new(input_second.matrix), input_second.name )
+            pwm_second = Bioinform::ConversionAlgorithms::PCM2PWMConverter_.new(pseudocount: :log, background: rest_motifs_background).convert(pcm_second)
+          when :pwm
+            pwm_second = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PWM.new(input_second.matrix), input_second.name )
+          end
+          pwm_second = pwm_second.discreted(discretization)
+          counting_second = PWMCounting.new(pwm_second, background: rest_motifs_background, max_hash_size: max_hash_size)
+          cmp = Macroape::PWMCompare.new(counting_first, counting_second).tap{|x| x.max_pair_hash_size = max_pair_hash_size }
           info = cmp.jaccard_by_pvalue(pvalue)
           shifts << [motif_name, info[:shift], info[:orientation]]
         end

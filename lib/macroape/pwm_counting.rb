@@ -1,9 +1,61 @@
 require 'bioinform'
 
-module Bioinform
-  class PWM
-    # sets or gets limit size of calculation hash. It's a defence against overuse CPU resources by non-appropriate data
-    attr_accessor :max_hash_size
+module Macroape
+  class PWMCounting
+    attr_accessor :pwm, :max_hash_size, :background
+
+    def initialize(pwm, background: Bioinform::Background::Wordwise, max_hash_size: nil)
+      @pwm = pwm
+      @background = background
+      @max_hash_size = max_hash_size
+    end
+
+    def matrix
+      pwm.matrix
+    end
+
+    def vocabulary_volume
+      background.volume ** length
+    end
+
+    def threshold_gauss_estimation(max_pvalue)
+      pwm.threshold_gauss_estimation(max_pvalue)
+    end
+
+    def length
+      pwm.length
+    end
+
+    def best_score
+      best_suffix(0)
+    end
+
+    def worst_score
+      worst_suffix(0)
+    end
+
+    # best score of suffix s[i..l]
+    def best_suffix(i)
+      matrix[i...length].map(&:max).inject(0.0, &:+)
+    end
+
+    def worst_suffix(i)
+      matrix[i...length].map(&:min).inject(0.0, &:+)
+    end
+
+    def score_mean
+      pwm.each_position.inject(0.0){|mean, position| mean + background.mean(position) }
+    end
+
+    def score_variance
+      pwm.each_position.inject(0.0){|variance, position| variance + background.mean_square(position) - background.mean(position) **2 }
+    end
+
+    def threshold_gauss_estimation(pvalue)
+      sigma = Math.sqrt(score_variance)
+      n_ = Math.inverf(1 - 2 * pvalue) * Math.sqrt(2)
+      score_mean + n_ * sigma
+    end
 
     def threshold(pvalue)
       thresholds(pvalue){|_, thresh, _| return thresh }
@@ -79,7 +131,7 @@ module Bioinform
       return @count_distribution.select{|score, count| score >= threshold}  if @count_distribution
       scores = { 0 => 1 }
       length.times do |column|
-        scores.replace recalc_score_hash(scores, @matrix[column], threshold - best_suffix(column + 1))
+        scores.replace recalc_score_hash(scores, matrix[column], threshold - best_suffix(column + 1))
         raise 'Hash overflow in PWM::ThresholdByPvalue#count_distribution_after_threshold'  if max_hash_size && scores.size > max_hash_size
       end
       scores
@@ -95,7 +147,7 @@ module Bioinform
         4.times do |letter|
           new_score = score + column[letter]
           if new_score >= least_sufficient
-            new_scores[new_score] += count * background[letter]
+            new_scores[new_score] += count * background.counts[letter]
           end
         end
       end

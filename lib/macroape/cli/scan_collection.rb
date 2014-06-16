@@ -33,7 +33,7 @@ module Macroape
           exit
         end
 
-        data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
+        data_model = argv.delete('--pcm') ? :pcm : :pwm
         filename = argv.shift
         collection_file = argv.shift
         raise 'No input. You should specify input file with matrix' unless filename
@@ -43,7 +43,7 @@ module Macroape
         pvalue = 0.0005
         cutoff = 0.05 # minimal similarity to output
         collection = YAML.load_file(collection_file)
-        collection_background = collection.background
+        collection_background = (collection.background == [1,1,1,1]) ? Bioinform::Background::Wordwise : Bioinform::Frequencies.new(collection.background)
         query_background = collection_background
 
         rough_discretization = collection.rough_discretization
@@ -57,8 +57,8 @@ module Macroape
         until argv.empty?
           case argv.shift
             when '-b'
-              query_background = argv.shift.split(',').map(&:to_f)
-              raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless query_background == query_background.reverse
+              query_background = Bioinform::Background.from_string(argv.shift)
+              raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless query_background.symmetric?
             when '-p'
               pvalue = argv.shift.to_f
             when '--max-hash-size'
@@ -94,18 +94,26 @@ module Macroape
           query_input = File.read(filename)
         end
 
-        query_pwm = data_model.new(query_input).tap{|x| x.background = query_background }.to_pwm
-        query_pwm.tap{|x| x.background = query_background; x.max_hash_size = max_hash_size }
+        query_input = Bioinform::Parser.choose(query_input).parse!(query_input)
+        case data_model
+        when :pcm
+          query_pcm = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PCM.new(query_input.matrix), query_input.name )
+          query_pwm = Bioinform::ConversionAlgorithms::PCM2PWMConverter_.new(pseudocount: :log, background: query_background).convert(query_pcm)
+        when :pwm
+          query_pwm = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PWM.new(query_input.matrix), query_input.name )
+        end
 
-        query_pwm_rough = query_pwm.discrete(rough_discretization)
-        query_pwm_precise = query_pwm.discrete(precise_discretization)
+        query_pwm_rough = query_pwm.discreted(rough_discretization)
+        query_pwm_rough_counting = PWMCounting.new(query_pwm_rough, background: query_background, max_hash_size: max_hash_size)
+        query_pwm_precise = query_pwm.discreted(precise_discretization)
+        query_pwm_precise_counting = PWMCounting.new(query_pwm_precise, background: query_background, max_hash_size: max_hash_size)
 
         if pvalue_boundary == :lower
-          query_threshold_rough, query_rough_real_pvalue = query_pwm_rough.threshold_and_real_pvalue(pvalue)
-          query_threshold_precise, query_precise_real_pvalue = query_pwm_precise.threshold_and_real_pvalue(pvalue)
+          query_threshold_rough, query_rough_real_pvalue = query_pwm_rough_counting.threshold_and_real_pvalue(pvalue)
+          query_threshold_precise, query_precise_real_pvalue = query_pwm_precise_counting.threshold_and_real_pvalue(pvalue)
         else
-          query_threshold_rough, query_rough_real_pvalue = query_pwm_rough.weak_threshold_and_real_pvalue(pvalue)
-          query_threshold_precise, query_precise_real_pvalue = query_pwm_precise.weak_threshold_and_real_pvalue(pvalue)
+          query_threshold_rough, query_rough_real_pvalue = query_pwm_rough_counting.weak_threshold_and_real_pvalue(pvalue)
+          query_threshold_precise, query_precise_real_pvalue = query_pwm_precise_counting.weak_threshold_and_real_pvalue(pvalue)
         end
 
         if query_precise_real_pvalue == 0
@@ -114,7 +122,7 @@ module Macroape
         end
 
         if query_rough_real_pvalue == 0
-          query_pwm_rough, query_threshold_rough = query_pwm_precise, query_threshold_precise
+          query_pwm_rough_counting, query_threshold_rough = query_pwm_precise_counting, query_threshold_precise
           $stderr.puts "Query motif #{query_pwm.name} gives 0 recognized words for a given P-value of #{pvalue} with the rough discretization level of #{rough_discretization}. Forcing precise discretization level of #{precise_discretization}"
         end
 
@@ -122,19 +130,24 @@ module Macroape
         precision_file_mode = {}
 
         collection.each_with_index do |motif, index|
+          collection_pwm = Bioinform::MotifModel::NamedModel.new(Bioinform::MotifModel::PWM.new(motif.pwm.matrix), motif.name)
           name = motif.name
           $stderr.puts "Testing motif #{name} (#{index+1} of #{collection.size}, #{index*100/collection.size}% complete)"  unless silent
-          motif.tap{|x| x.background = collection_background; x.max_hash_size = max_hash_size }
+
           if motif.rough[pvalue]
-            collection_pwm_rough = motif.pwm.discrete(rough_discretization)
+            collection_pwm_rough = collection_pwm.discreted(rough_discretization)
+            collection_pwm_rough_counting = Macroape::PWMCounting.new(collection_pwm_rough, background: collection_background, max_hash_size: max_hash_size)
+
             collection_threshold_rough = motif.rough[pvalue] * rough_discretization
-            info = Macroape::PWMCompare.new(query_pwm_rough, collection_pwm_rough).tap{|x| x.max_pair_hash_size = max_pair_hash_size }.jaccard(query_threshold_rough, collection_threshold_rough)
+            info = Macroape::PWMCompare.new(query_pwm_rough_counting, collection_pwm_rough_counting).tap{|x| x.max_pair_hash_size = max_pair_hash_size }.jaccard(query_threshold_rough, collection_threshold_rough)
             info[:precision_mode] = :rough
           end
           if !motif.rough[pvalue] || (precision_mode == :precise) && (info[:similarity] >= minimal_similarity)
-            collection_pwm_precise = motif.pwm.discrete(precise_discretization)
+            collection_pwm_precise = collection_pwm.discreted(precise_discretization)
+            collection_pwm_precise_counting = Macroape::PWMCounting.new(collection_pwm_precise, background: collection_background, max_hash_size: max_hash_size)
+
             collection_threshold_precise = motif.precise[pvalue] * precise_discretization
-            info = Macroape::PWMCompare.new(query_pwm_precise, collection_pwm_precise).tap{|x| x.max_pair_hash_size = max_pair_hash_size }.jaccard(query_threshold_precise, collection_threshold_precise)
+            info = Macroape::PWMCompare.new(query_pwm_precise_counting, collection_pwm_precise_counting).tap{|x| x.max_pair_hash_size = max_pair_hash_size }.jaccard(query_threshold_precise, collection_threshold_precise)
             info[:precision_mode] = :precise
           end
           info[:name] = name

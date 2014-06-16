@@ -3,14 +3,14 @@ module Macroape
     # unoptimized version of this and related methods
     def counts_for_two_matrices(threshold_first, threshold_second)
       # just not to call method each time
-      first_background = first.background
-      second_background = second.background
+      first_background = first.background.counts
+      second_background = second.background.counts
       unless first_background == second_background
         first_result = get_counts(threshold_first, threshold_second) {|score,letter| first_background[letter] * score }
         second_result = get_counts(threshold_first, threshold_second) {|score,letter| second_background[letter] * score }
         return [first_result, second_result]
       end
-      if first.background == [1,1,1,1]
+      if first.background.wordwise?
         result = get_counts(threshold_first, threshold_second) {|score,letter| score}
         [result, result]
       else

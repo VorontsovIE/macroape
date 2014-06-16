@@ -25,11 +25,11 @@ module Macroape
         end
 
         discretization = 10000
-        background = [1,1,1,1]
+        background = Bioinform::Background::Wordwise
         thresholds = []
         max_hash_size = 10000000
 
-        data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
+        data_model = argv.delete('--pcm') ? :pcm : :pwm
         filename = argv.shift
 
         loop do
@@ -47,7 +47,7 @@ module Macroape
         until argv.empty?
           case argv.shift
             when '-b'
-              background = argv.shift.split(',').map(&:to_f)
+              background = Bioinform::Background.from_string(argv.shift)
             when '-d'
               discretization = argv.shift.to_f
             when '--max-hash-size'
@@ -62,20 +62,31 @@ module Macroape
           raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
           input = File.read(filename)
         end
-        pwm = data_model.new(input).tap{|x| x.background = background }.to_pwm
-        pwm = pwm.tap{|x| x.background = background; x.max_hash_size = max_hash_size }.discrete(discretization)
 
-        counts = pwm.counts_by_thresholds(* thresholds.map{|count| count * discretization})
+        parser = Bioinform::Parser.choose(input)
+        motif_data = parser.parse!(input)
+        case data_model
+        when :pcm
+          pcm = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PCM.new(motif_data.matrix), motif_data.name )
+          pwm = Bioinform::ConversionAlgorithms::PCM2PWMConverter_.new(pseudocount: :log, background: background).convert(pcm)
+        when :pwm
+          pwm = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PWM.new(motif_data.matrix), motif_data.name )
+        end
+
+        pwm = pwm.discreted(discretization)
+        counting = PWMCounting.new(pwm, background: background, max_hash_size: max_hash_size)
+
+        counts = counting.counts_by_thresholds(* thresholds.map{|count| count * discretization})
         infos = []
         thresholds.each do |threshold|
           count = counts[threshold * discretization]
-          pvalue = count.to_f / pwm.vocabulary_volume
+          pvalue = count.to_f / (counting.vocabulary_volume)
           infos << {threshold: threshold,
                     number_of_recognized_words: count,
                     pvalue: pvalue}
         end
 
-        puts Helper.find_pvalue_info_string( infos,
+        puts Helper.find_pvalue_info_string(infos,
                                             {discretization: discretization,
                                             background: background} )
       rescue => err

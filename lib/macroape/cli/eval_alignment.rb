@@ -31,13 +31,13 @@ module Macroape
         pvalue = 0.0005
         discretization = 10.0
 
-        first_background = [1,1,1,1]
-        second_background = [1,1,1,1]
+        first_background = Bioinform::Background::Wordwise
+        second_background = Bioinform::Background::Wordwise
         max_hash_size = 10000000
         max_pair_hash_size = 10000
         pvalue_boundary = :upper
 
-        data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
+        data_model = argv.delete('--pcm') ? :pcm : :pwm
 
         first_file = argv.shift
         second_file = argv.shift
@@ -73,11 +73,11 @@ module Macroape
             when '--max-2d-hash-size'
               max_pair_hash_size = argv.shift.to_i
             when '-b'
-              second_background = first_background = argv.shift.split(',').map(&:to_f)
+              second_background = first_background = Bioinform::Background.from_string(argv.shift)
             when '-b1'
-              first_background = argv.shift.split(',').map(&:to_f)
+              first_background = Bioinform::Background.from_string(argv.shift)
             when '-b2'
-              second_background = argv.shift.split(',').map(&:to_f)
+              second_background = Bioinform::Background.from_string(argv.shift)
             when '--boundary'
               pvalue_boundary = argv.shift.to_sym
               raise 'boundary should be either lower or upper'  unless  pvalue_boundary == :lower || pvalue_boundary == :upper
@@ -87,44 +87,57 @@ module Macroape
               predefined_threshold_second = argv.shift.to_f
           end
         end
-        raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless first_background == first_background.reverse
-        raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless second_background == second_background.reverse
+        raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless first_background.symmetric?
+        raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless second_background.symmetric?
 
         if first_file == '.stdin' || second_file == '.stdin'
           input = $stdin.read
-          parser = Bioinform::Parser.choose(input, data_model)
+          parser = Bioinform::Parser.choose_for_collection(input)
+          stdin_multi_parser = Bioinform::CollectionParser.new(parser, input)
         end
 
-        multi_parser = Bioinform::CollectionParser.new(parser, input)
-
         if first_file == '.stdin'
-          input_first = multi_parser.parse
+          input_first = stdin_multi_parser.parse
         else
           raise "Error! File #{first_file} don't exist" unless File.exist?(first_file)
           input_first = File.read(first_file)
+          input_first = Bioinform::Parser.choose(input_first).parse!(input_first)
         end
-        pwm_first = data_model.new(input_first).tap{|x| x.background = first_background }.to_pwm
 
         if second_file == '.stdin'
-          input_second = multi_parser.parse
+          input_second = stdin_multi_parser.parse
         else
           raise "Error! File #{second_file} don't exist" unless File.exist?(second_file)
           input_second = File.read(second_file)
+          input_second = Bioinform::Parser.choose(input_second).parse!(input_second)
         end
-        pwm_second = data_model.new(input_second).tap{|x| x.background = second_background }.to_pwm
 
-        pwm_first = pwm_first.tap{|x| x.background = first_background; x.max_hash_size = max_hash_size }.discrete(discretization)
-        pwm_second = pwm_second.tap{|x| x.background = second_background; x.max_hash_size = max_hash_size }.discrete(discretization)
+        case data_model
+        when :pcm
+          pcm_first = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PCM.new(input_first.matrix), input_first.name )
+          pwm_first = Bioinform::ConversionAlgorithms::PCM2PWMConverter_.new(pseudocount: :log, background: first_background).convert(pcm_first)
+          pcm_second = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PCM.new(input_second.matrix), input_second.name )
+          pwm_second = Bioinform::ConversionAlgorithms::PCM2PWMConverter_.new(pseudocount: :log, background: second_background).convert(pcm_second)
+        when :pwm
+          pwm_first = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PWM.new(input_first.matrix), input_first.name )
+          pwm_second = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PWM.new(input_second.matrix), input_second.name )
+        end
 
-        cmp = Macroape::PWMCompareAligned.new(pwm_first, pwm_second, shift, orientation).tap{|x| x.max_pair_hash_size = max_pair_hash_size }
+        pwm_first = pwm_first.discreted(discretization)
+        pwm_second = pwm_second.discreted(discretization)
+
+        counting_first = PWMCounting.new(pwm_first, background: first_background, max_hash_size: max_hash_size)
+        counting_second = PWMCounting.new(pwm_second, background: second_background, max_hash_size: max_hash_size)
+
+        cmp = Macroape::PWMCompareAligned.new(counting_first, counting_second, shift, orientation).tap{|x| x.max_pair_hash_size = max_pair_hash_size }
 
         if predefined_threshold_first
           threshold_first = predefined_threshold_first * discretization
         else
           if pvalue_boundary == :lower
-            threshold_first = pwm_first.threshold(pvalue)
+            threshold_first = counting_first.threshold(pvalue)
           else
-            threshold_first = pwm_first.weak_threshold(pvalue)
+            threshold_first = counting_first.weak_threshold(pvalue)
           end
         end
 
@@ -132,9 +145,9 @@ module Macroape
           threshold_second = predefined_threshold_second * discretization
         else
           if pvalue_boundary == :lower
-            threshold_second = pwm_second.threshold(pvalue)
+            threshold_second = counting_second.threshold(pvalue)
           else
-            threshold_second = pwm_second.weak_threshold(pvalue)
+            threshold_second = counting_second.weak_threshold(pvalue)
           end
         end
         info = cmp.alignment_infos.merge( cmp.jaccard(threshold_first, threshold_second) )

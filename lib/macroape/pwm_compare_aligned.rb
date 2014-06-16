@@ -1,12 +1,25 @@
 require_relative 'aligned_pair_intersection'
 
 module Macroape
+  class PWMCounting
+    def left_augment(n)
+      PWMCounting.new(pwm.left_augment(n), background: background, max_hash_size: max_hash_size)
+    end
+    def right_augment(n)
+      PWMCounting.new(pwm.right_augment(n), background: background, max_hash_size: max_hash_size)
+    end
+    def reverse_complement
+      PWMCounting.new(pwm.reverse_complement, background: background, max_hash_size: max_hash_size)
+    end
+  end
+
   class PWMCompareAligned
     # sets or gets limit of summary size of calculation hash. It's a defence against overuse CPU resources by non-appropriate data
     attr_accessor :max_pair_hash_size
 
     attr_reader :first, :second, :length, :shift, :orientation, :first_length, :second_length
 
+    # first_unaligned and second_unaligned - PWMCounting objects, not PWMs
     def initialize(first_unaligned, second_unaligned, shift, orientation)
       @shift, @orientation = shift, orientation
 

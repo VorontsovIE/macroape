@@ -30,10 +30,10 @@ module Macroape
           exit
         end
 
-        data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
-
+        data_model = argv.delete('--pcm') ? :pcm : :pwm
+        data_model_class = (data_model == :pcm) ? Bioinform::PCM : Bioinform::PWM
         default_pvalues = [0.0005]
-        background = [1,1,1,1]
+        background = Bioinform::Background::Wordwise
         rough_discretization = 1
         precise_discretization = 10
         max_hash_size = 10000000
@@ -52,8 +52,8 @@ module Macroape
         until argv.empty?
           case argv.shift
             when '-b'
-              background = argv.shift.split(',').map(&:to_f)
-              raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless background == background.reverse
+              background = Bioinform::Background.from_string(argv.shift)
+              raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless background.symmetric?
             when '-p'
               pvalues = argv.shift.split(',').map(&:to_f)
             when '-d'
@@ -71,26 +71,27 @@ module Macroape
 
         collection = Macroape::ThresholdingParametersCollection.new(rough_discretization: rough_discretization,
                                 precise_discretization: precise_discretization,
-                                background: background,
+                                background: background.counts,
                                 pvalues: pvalues)
 
         data_source = data_source.gsub("\\",'/')
+
         if File.directory?(data_source)
           motifs = Dir.glob(File.join(data_source,'*')).sort.map do |filename|
-            pwm = data_model.new(File.read(filename))
+            pwm = data_model_class.new(File.read(filename))
             pwm.name ||= File.basename(filename, File.extname(filename))
             pwm
           end
         elsif File.file?(data_source)
           input = File.read(data_source)
-          motifs = Bioinform::Parser.split_on_motifs(input, data_model)
+          motifs = Bioinform::Parser.split_on_motifs(input, data_model_class)
         elsif data_source == '.stdin'
           filelist = $stdin.read.shellsplit
           motifs = []
           filelist.each do |filename|
-            motif = data_model.new(File.read(filename))
+            motif = data_model_class.new(File.read(filename))
             motif.name ||= File.basename(filename, File.extname(filename))
-            motif.tap{|x| x.background = background }
+            motif.tap{|x| x.background = background.counts }
             motifs << motif
           end
         else
@@ -107,9 +108,16 @@ module Macroape
           # Also two command line options to fail on skipping or to skip silently should be included
 
           info = {rough: {}, precise: {}}
-          pwm.tap{|x| x.background = background; max_hash_size = max_hash_size }
+          pwm.tap{|x| x.background = background.counts }
           skip_motif = false
 
+          # case data_model
+          # when :pcm
+          #   _pcm = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PCM.new(pwm.matrix), pwm.name )
+          #   _pwm = Bioinform::ConversionAlgorithms::PCM2PWMConverter_.new(pseudocount: :log, background: background).convert(_pcm)
+          # when :pwm
+            _pwm = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PWM.new(pwm.matrix), pwm.name )
+          # end
 
           fill_rough_infos = ->(pvalue, threshold, real_pvalue) do
             if real_pvalue == 0
@@ -128,16 +136,19 @@ module Macroape
             end
           end
 
+          rough_counting = PWMCounting.new(_pwm.discreted(rough_discretization), background: background, max_hash_size: max_hash_size)
+          precise_counting = PWMCounting.new(_pwm.discreted(precise_discretization), background: background, max_hash_size: max_hash_size)
+
           if pvalue_boundary == :lower
-            pwm.discrete(rough_discretization).thresholds(*pvalues, &fill_rough_infos)
+            rough_counting.thresholds(*pvalues, &fill_rough_infos)
           else
-            pwm.discrete(rough_discretization).weak_thresholds(*pvalues, &fill_rough_infos)
+            rough_counting.weak_thresholds(*pvalues, &fill_rough_infos)
           end
 
           if pvalue_boundary == :lower
-            pwm.discrete(precise_discretization).thresholds(*pvalues, &fill_precise_infos)
+            precise_counting.thresholds(*pvalues, &fill_precise_infos)
           else
-            pwm.discrete(precise_discretization).weak_thresholds(*pvalues,&fill_precise_infos)
+            precise_counting.weak_thresholds(*pvalues,&fill_precise_infos)
           end
           collection.add_pm(pwm, info)  unless skip_motif
         end

@@ -25,11 +25,11 @@ module Macroape
           exit
         end
 
-        background = [1,1,1,1]
+        background = Bioinform::Background::Wordwise
         default_pvalues = [0.0005]
         discretization = 10000
         max_hash_size = 10000000
-        data_model = argv.delete('--pcm') ? Bioinform::PCM : Bioinform::PWM
+        data_model = argv.delete('--pcm') ? :pcm : :pwm
 
         pvalue_boundary = :lower
 
@@ -51,7 +51,7 @@ module Macroape
         until argv.empty?
           case argv.shift
             when '-b'
-              background = argv.shift.split(',').map(&:to_f)
+              background = Bioinform::Background.from_string(argv.shift)
             when '--max-hash-size'
               max_hash_size = argv.shift.to_i
             when '-d'
@@ -68,20 +68,31 @@ module Macroape
           raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
           input = File.read(filename)
         end
-        pwm = data_model.new(input).tap{|x| x.background = background }.to_pwm
-        pwm = pwm.tap{|x| x.background = background; x.max_hash_size = max_hash_size }.discrete(discretization)
+
+        parser = Bioinform::Parser.choose(input)
+        motif_data = parser.parse!(input)
+        case data_model
+        when :pcm
+          pcm = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PCM.new(motif_data.matrix), motif_data.name )
+          pwm = Bioinform::ConversionAlgorithms::PCM2PWMConverter_.new(pseudocount: :log, background: background).convert(pcm)
+        when :pwm
+          pwm = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PWM.new(motif_data.matrix), motif_data.name )
+        end
+
+        pwm = pwm.discreted(discretization)
+        counting = PWMCounting.new(pwm, background: background, max_hash_size: max_hash_size)
 
         infos = []
         collect_infos_proc = ->(pvalue, threshold, real_pvalue) do
           infos << {expected_pvalue: pvalue,
                     threshold: threshold / discretization,
                     real_pvalue: real_pvalue,
-                    recognized_words: pwm.vocabulary_volume * real_pvalue }
+                    recognized_words: real_pvalue * counting.vocabulary_volume }
         end
         if pvalue_boundary == :lower
-          pwm.thresholds(*pvalues, &collect_infos_proc)
+          counting.thresholds(*pvalues, &collect_infos_proc)
         else
-          pwm.weak_thresholds(*pvalues, &collect_infos_proc)
+          counting.weak_thresholds(*pvalues, &collect_infos_proc)
         end
         puts Helper.threshold_infos_string(infos,
                                           {discretization: discretization,
