@@ -1,9 +1,9 @@
 module Macroape
-  class ThresholdingParametersCollection < Bioinform::Collection
-    attr_accessor :rough_discretization, :precise_discretization, :background, :pvalues
+  class Collection
+    attr_accessor :motifs, :rough_discretization, :precise_discretization, :background, :pvalues
 
     def initialize(options = {})
-      super
+      @motifs = options[:motifs] || []
       @rough_discretization = options[:rough_discretization]
       @precise_discretization = options[:precise_discretization]
       @background = options[:background]
@@ -11,16 +11,19 @@ module Macroape
     end
 
     def ==(other)
-      super &&
+        (motifs == other.motifs) &&
         (rough_discretization == other.rough_discretization) &&
         (precise_discretization == other.precise_discretization) &&
         (background == other.background) &&
         (pvalues == other.pvalues)
     end
 
-    def add_pm(pm, info)
-      container << Macroape::MotifWithThresholds.new(info.merge(pm: pm))
-      self
+    def <<(motif_with_thresholds)
+      @motifs << motif_with_thresholds
+    end
+
+    def size
+      motifs.size
     end
   end
 end

@@ -6,6 +6,13 @@ module Macroape
   module CLI
     module PreprocessCollection
 
+      def self.motif_infos_from_file(filename)
+        input = File.read(filename)
+        motif_input = Bioinform::Parser.choose(input).parse(input)
+        { matrix: motif_input.matrix,
+          name: motif_input.name || File.basename(filename, File.extname(filename)) }
+      end
+
       def self.main(argv)
         doc = <<-EOS.strip_doc
           Command-line format:
@@ -31,7 +38,6 @@ module Macroape
         end
 
         data_model = argv.delete('--pcm') ? :pcm : :pwm
-        data_model_class = (data_model == :pcm) ? Bioinform::PCM : Bioinform::PWM
         default_pvalues = [0.0005]
         background = Bioinform::Background::Wordwise
         rough_discretization = 1
@@ -69,36 +75,36 @@ module Macroape
         end
         pvalues = default_pvalues  if pvalues.empty?
 
-        collection = Macroape::ThresholdingParametersCollection.new(rough_discretization: rough_discretization,
-                                precise_discretization: precise_discretization,
-                                background: background.counts,
-                                pvalues: pvalues)
-
         data_source = data_source.gsub("\\",'/')
 
+        pcm2pwm_converter = Bioinform::ConversionAlgorithms::PCM2PWMConverter_.new(pseudocount: :log, background: background)
+
         if File.directory?(data_source)
-          motifs = Dir.glob(File.join(data_source,'*')).sort.map do |filename|
-            pwm = data_model_class.new(File.read(filename))
-            pwm.name ||= File.basename(filename, File.extname(filename))
-            pwm
-          end
+          motif_inputs = Dir.glob(File.join(data_source,'*')).sort.map{|filename| motif_infos_from_file(filename) }
         elsif File.file?(data_source)
           input = File.read(data_source)
-          motifs = Bioinform::Parser.split_on_motifs(input, data_model_class)
+          parser = Bioinform::Parser.choose_for_collection(input)
+          motif_inputs = Bioinform::CollectionParser.new(parser, input).to_a
         elsif data_source == '.stdin'
           filelist = $stdin.read.shellsplit
-          motifs = []
-          filelist.each do |filename|
-            motif = data_model_class.new(File.read(filename))
-            motif.name ||= File.basename(filename, File.extname(filename))
-            motif.tap{|x| x.background = background.counts }
-            motifs << motif
-          end
+          motif_inputs = filelist.map{|filename| motif_infos_from_file(filename) }
         else
           raise "Specified data source `#{data_source}` is neither directory nor file nor even .stdin"
         end
 
-        pwms = motifs.map(&:to_pwm)
+        pwms = motif_inputs.map{|motif_input|
+          if data_model == :pwm
+            pwm = Bioinform::MotifModel::PWM.new(motif_input[:matrix]).named(motif_input[:name])
+          elsif data_model == :pcm
+            pcm = Bioinform::MotifModel::PCM.new(motif_input[:matrix]).named(motif_input[:name])
+            pwm = pcm2pwm_converter.convert(pcm)
+          end
+        }
+
+        collection = Macroape::Collection.new(rough_discretization: rough_discretization,
+                                precise_discretization: precise_discretization,
+                                background: background,
+                                pvalues: pvalues)
 
         pwms.each_with_index do |pwm,index|
           $stderr.puts "Motif #{pwm.name}, length: #{pwm.length} (#{index+1} of #{pwms.size}, #{index*100/pwms.size}% complete)"  unless silent
@@ -107,17 +113,8 @@ module Macroape
           # Otherwise it should skip motif and tell you about this
           # Also two command line options to fail on skipping or to skip silently should be included
 
-          info = {rough: {}, precise: {}}
-          pwm.tap{|x| x.background = background.counts }
+          info = {rough: {}, precise: {}, background: background}
           skip_motif = false
-
-          # case data_model
-          # when :pcm
-          #   _pcm = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PCM.new(pwm.matrix), pwm.name )
-          #   _pwm = Bioinform::ConversionAlgorithms::PCM2PWMConverter_.new(pseudocount: :log, background: background).convert(_pcm)
-          # when :pwm
-            _pwm = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PWM.new(pwm.matrix), pwm.name )
-          # end
 
           fill_rough_infos = ->(pvalue, threshold, real_pvalue) do
             if real_pvalue == 0
@@ -136,8 +133,8 @@ module Macroape
             end
           end
 
-          rough_counting = PWMCounting.new(_pwm.discreted(rough_discretization), background: background, max_hash_size: max_hash_size)
-          precise_counting = PWMCounting.new(_pwm.discreted(precise_discretization), background: background, max_hash_size: max_hash_size)
+          rough_counting = PWMCounting.new(pwm.discreted(rough_discretization), background: background, max_hash_size: max_hash_size)
+          precise_counting = PWMCounting.new(pwm.discreted(precise_discretization), background: background, max_hash_size: max_hash_size)
 
           if pvalue_boundary == :lower
             rough_counting.thresholds(*pvalues, &fill_rough_infos)
@@ -150,7 +147,8 @@ module Macroape
           else
             precise_counting.weak_thresholds(*pvalues,&fill_precise_infos)
           end
-          collection.add_pm(pwm, info)  unless skip_motif
+
+          collection << Macroape::MotifWithThresholds.new(pwm, info)  unless skip_motif
         end
         $stderr.puts "100% complete. Saving results"  unless silent
         File.open(output_file, 'w') do |f|

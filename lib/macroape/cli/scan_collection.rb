@@ -43,7 +43,7 @@ module Macroape
         pvalue = 0.0005
         cutoff = 0.05 # minimal similarity to output
         collection = YAML.load_file(collection_file)
-        collection_background = (collection.background == [1,1,1,1]) ? Bioinform::Background::Wordwise : Bioinform::Frequencies.new(collection.background)
+        collection_background = collection.background #(collection.background == [1,1,1,1]) ? Bioinform::Background::Wordwise : Bioinform::Frequencies.new(collection.background)
         query_background = collection_background
 
         rough_discretization = collection.rough_discretization
@@ -97,10 +97,10 @@ module Macroape
         query_input = Bioinform::Parser.choose(query_input).parse!(query_input)
         case data_model
         when :pcm
-          query_pcm = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PCM.new(query_input.matrix), query_input.name )
+          query_pcm = Bioinform::MotifModel::PCM.new(query_input.matrix).named(query_input.name)
           query_pwm = Bioinform::ConversionAlgorithms::PCM2PWMConverter_.new(pseudocount: :log, background: query_background).convert(query_pcm)
         when :pwm
-          query_pwm = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PWM.new(query_input.matrix), query_input.name )
+          query_pwm = Bioinform::MotifModel::PWM.new(query_input.matrix).named(query_input.name)
         end
 
         query_pwm_rough = query_pwm.discreted(rough_discretization)
@@ -129,29 +129,28 @@ module Macroape
         similarities = {}
         precision_file_mode = {}
 
-        collection.each_with_index do |motif, index|
-          collection_pwm = Bioinform::MotifModel::NamedModel.new(Bioinform::MotifModel::PWM.new(motif.pwm.matrix), motif.name)
-          name = motif.name
-          $stderr.puts "Testing motif #{name} (#{index+1} of #{collection.size}, #{index*100/collection.size}% complete)"  unless silent
+        collection.motifs.each_with_index do |motif_info, index|
+          motif = motif_info.model
+          $stderr.puts "Testing motif #{motif.name} (#{index+1} of #{collection.size}, #{index*100/collection.size}% complete)"  unless silent
 
-          if motif.rough[pvalue]
-            collection_pwm_rough = collection_pwm.discreted(rough_discretization)
+          if motif_info.rough[pvalue]
+            collection_pwm_rough = motif.discreted(rough_discretization)
             collection_pwm_rough_counting = Macroape::PWMCounting.new(collection_pwm_rough, background: collection_background, max_hash_size: max_hash_size)
 
-            collection_threshold_rough = motif.rough[pvalue] * rough_discretization
+            collection_threshold_rough = motif_info.rough[pvalue] * rough_discretization
             info = Macroape::PWMCompare.new(query_pwm_rough_counting, collection_pwm_rough_counting).tap{|x| x.max_pair_hash_size = max_pair_hash_size }.jaccard(query_threshold_rough, collection_threshold_rough)
             info[:precision_mode] = :rough
           end
-          if !motif.rough[pvalue] || (precision_mode == :precise) && (info[:similarity] >= minimal_similarity)
-            collection_pwm_precise = collection_pwm.discreted(precise_discretization)
+          if !motif_info.rough[pvalue] || (precision_mode == :precise) && (info[:similarity] >= minimal_similarity)
+            collection_pwm_precise = motif.discreted(precise_discretization)
             collection_pwm_precise_counting = Macroape::PWMCounting.new(collection_pwm_precise, background: collection_background, max_hash_size: max_hash_size)
 
-            collection_threshold_precise = motif.precise[pvalue] * precise_discretization
+            collection_threshold_precise = motif_info.precise[pvalue] * precise_discretization
             info = Macroape::PWMCompare.new(query_pwm_precise_counting, collection_pwm_precise_counting).tap{|x| x.max_pair_hash_size = max_pair_hash_size }.jaccard(query_threshold_precise, collection_threshold_precise)
             info[:precision_mode] = :precise
           end
-          info[:name] = name
-          similarities[name] = info
+          info[:name] = motif.name
+          similarities[motif.name] = info
         end
 
         $stderr.puts "100% complete"  unless silent

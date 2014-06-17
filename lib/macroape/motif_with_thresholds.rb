@@ -1,21 +1,18 @@
 module Macroape
-  class MotifWithThresholds < Bioinform::Motif
-    attr_accessor :rough, :precise, :background, :max_hash_size
+  class MotifWithThresholds
+    attr_accessor :model
+    attr_accessor :rough, :precise
 
-    def initialize(options = {})
-      super
+    def initialize(model, options = {})
+      @model = model
       @rough = options[:rough]
       @precise = options[:precise]
-      @background = options[:background]
-      @max_hash_size = options[:max_hash_size]
     end
 
     def ==(other)
-      super &&
+        (model == other.model) &&
         (rough == other.rough) &&
-        (precise == other.precise) &&
-        (background == other.background) &&
-        (max_hash_size == other.max_hash_size)
+        (precise == other.precise)
     end
   end
 end
