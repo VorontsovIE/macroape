@@ -72,8 +72,7 @@ module Macroape
 
         if first_file == '.stdin' || second_file == '.stdin'
           input = $stdin.read
-          parser = Bioinform::Parser.choose_for_collection(input) ## for_collection  or simple parser?
-          stdin_multi_parser = Bioinform::CollectionParser.new(parser, input)
+          stdin_multi_parser = Bioinform::CollectionParser.new(Bioinform::StringParser.new, input)
         end
 
         if first_file == '.stdin'
