@@ -2,14 +2,14 @@ require_relative 'aligned_pair_intersection'
 
 module Macroape
   class PWMCounting
-    def left_augment(n)
-      PWMCounting.new(pwm.left_augment(n), background: background, max_hash_size: max_hash_size)
+    def left_augmented(n)
+      PWMCounting.new(pwm.left_augmented(n), background: background, max_hash_size: max_hash_size)
     end
-    def right_augment(n)
-      PWMCounting.new(pwm.right_augment(n), background: background, max_hash_size: max_hash_size)
+    def right_augmented(n)
+      PWMCounting.new(pwm.right_augmented(n), background: background, max_hash_size: max_hash_size)
     end
-    def reverse_complement
-      PWMCounting.new(pwm.reverse_complement, background: background, max_hash_size: max_hash_size)
+    def reverse_complemented
+      PWMCounting.new(pwm.reverse_complemented, background: background, max_hash_size: max_hash_size)
     end
   end
 
@@ -27,16 +27,16 @@ module Macroape
       @length = self.class.calculate_alignment_length(@first_length, @second_length, @shift)
 
       first, second = first_unaligned, second_unaligned
-      second = second.reverse_complement  if revcomp?
+      second = second.reverse_complemented  if revcomp?
 
       if shift > 0
-        second = second.left_augment(shift)
+        second = second.left_augmented(shift)
       else
-        first = first.left_augment(-shift)
+        first = first.left_augmented(-shift)
       end
 
-      @first = first.right_augment(@length - first.length)
-      @second = second.right_augment(@length - second.length)
+      @first = first.right_augmented(@length - first.length)
+      @second = second.right_augmented(@length - second.length)
     end
 
     def direct?
