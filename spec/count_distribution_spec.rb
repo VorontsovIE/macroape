@@ -7,8 +7,6 @@ describe Bioinform::PWM do
   let :pwm_first do Bioinform::PWM.new(matrix_first) end
   let :pwm_second do Bioinform::PWM.new(matrix_second) end
   let :background do Bioinform::Frequencies.new([0.1,0.4,0.4,0.1]) end
-  # let :pwm_first_on_background do pwm_first.tap{|pwm| pwm.tap{|x| x.background = background }} end
-  # let :pwm_second_on_background do pwm_second.tap{|pwm| pwm.tap{|x| x.background = background }}  end
 
   let :counting_first do Macroape::PWMCounting.new(pwm_first) end
   let :counting_second do Macroape::PWMCounting.new(pwm_second) end
@@ -19,7 +17,7 @@ describe Bioinform::PWM do
 
     it 'should return hash of score => count for all scores >= threshold' do
       distribution_first = counting_first.count_distribution_after_threshold(0)
-      expect(distribution_first.keys).to eq Array.product(*matrix_first).map{|score_row| score_row.inject(&:+)}
+      expect(distribution_first.keys).to eq (matrix_first.first).product(*matrix_first[1..-1]).map{|score_row| score_row.inject(&:+)}
       expect(distribution_first.values.uniq).to eq [1]
 
       distribution_second = counting_second.count_distribution_after_threshold(0)

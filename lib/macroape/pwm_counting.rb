@@ -1,4 +1,5 @@
 require 'bioinform'
+require_relative 'inverf'
 
 module Macroape
   class PWMCounting
@@ -116,7 +117,7 @@ module Macroape
 
       results = {}
 
-      pvalue_counts = pvalues.sort.collect_hash{|pvalue| [pvalue, pvalue * vocabulary_volume] }
+      pvalue_counts = pvalues.sort.each_with_object({}){|pvalue, hsh| hsh[pvalue] = pvalue * vocabulary_volume }
       pvalue_counts.map do |pvalue,look_for_count|
         ind = partial_sums.index{|sum| sum >= look_for_count}
         minscore, count_at_minscore = scores[ind], partial_sums[ind]
