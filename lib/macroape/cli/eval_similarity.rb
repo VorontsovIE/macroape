@@ -94,13 +94,13 @@ module Macroape
 
         case data_model
         when :pcm
-          pcm_first = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PCM.new(input_first.matrix), input_first.name )
+          pcm_first = Bioinform::MotifModel::PCM.new(input_first.matrix).named(input_first.name)
           pwm_first = Bioinform::ConversionAlgorithms::PCM2PWMConverter_.new(pseudocount: :log, background: first_background).convert(pcm_first)
-          pcm_second = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PCM.new(input_second.matrix), input_second.name )
+          pcm_second = Bioinform::MotifModel::PCM.new(input_second.matrix).named(input_second.name)
           pwm_second = Bioinform::ConversionAlgorithms::PCM2PWMConverter_.new(pseudocount: :log, background: second_background).convert(pcm_second)
         when :pwm
-          pwm_first = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PWM.new(input_first.matrix), input_first.name )
-          pwm_second = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PWM.new(input_second.matrix), input_second.name )
+          pwm_first = Bioinform::MotifModel::PWM.new(input_first.matrix).named(input_first.name)
+          pwm_second = Bioinform::MotifModel::PWM.new(input_second.matrix).named(input_second.name)
         end
 
         pwm_first = pwm_first.discreted(discretization)

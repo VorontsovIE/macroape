@@ -67,10 +67,10 @@ module Macroape
         motif_data = parser.parse!(input)
         case data_model
         when :pcm
-          pcm = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PCM.new(motif_data.matrix), motif_data.name )
+          pcm = Bioinform::MotifModel::PCM.new(motif_data.matrix).named(motif_data.name)
           pwm = Bioinform::ConversionAlgorithms::PCM2PWMConverter_.new(pseudocount: :log, background: background).convert(pcm)
         when :pwm
-          pwm = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PWM.new(motif_data.matrix), motif_data.name )
+          pwm = Bioinform::MotifModel::PWM.new(motif_data.matrix).named(motif_data.name)
         end
 
         pwm = pwm.discreted(discretization)

@@ -82,10 +82,10 @@ module Macroape
         input_first = Bioinform::Parser.choose(input_first).parse!(input_first)
         case data_model
         when :pcm
-          pcm_first = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PCM.new(input_first.matrix), input_first.name )
+          pcm_first = Bioinform::MotifModel::PCM.new(input_first.matrix).named(input_first.name)
           pwm_first = Bioinform::ConversionAlgorithms::PCM2PWMConverter_.new(pseudocount: :log, background: leader_background).convert(pcm_first)
         when :pwm
-          pwm_first = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PWM.new(input_first.matrix), input_first.name )
+          pwm_first = Bioinform::MotifModel::PWM.new(input_first.matrix).named(input_first.name)
         end
 
         pwm_first = pwm_first.discreted(discretization)
@@ -96,10 +96,10 @@ module Macroape
           input_second = Bioinform::Parser.choose(input_second).parse!(input_second)
           case data_model
           when :pcm
-            pcm_second = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PCM.new(input_second.matrix), input_second.name )
+            pcm_second = Bioinform::MotifModel::PCM.new(input_second.matrix).named(input_second.name)
             pwm_second = Bioinform::ConversionAlgorithms::PCM2PWMConverter_.new(pseudocount: :log, background: rest_motifs_background).convert(pcm_second)
           when :pwm
-            pwm_second = Bioinform::MotifModel::NamedModel.new( Bioinform::MotifModel::PWM.new(input_second.matrix), input_second.name )
+            pwm_second = Bioinform::MotifModel::PWM.new(input_second.matrix).named(input_second.name)
           end
           pwm_second = pwm_second.discreted(discretization)
           counting_second = PWMCounting.new(pwm_second, background: rest_motifs_background, max_hash_size: max_hash_size)
