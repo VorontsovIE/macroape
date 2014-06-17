@@ -47,15 +47,6 @@ class TestPreprocessCollection < Test::Unit::TestCase
     assert_equal YAML.load(File.read('test_collection.yaml')), YAML.load(File.read('test_collection.yaml.tmp'))
   end
 
-  def test_preprocessing_collection_from_a_collection
-    Helpers.run_preprocess_collection('collection_without_thresholds.yaml test_collection.yaml.tmp -p 0.0005,0.0001,0.00005 --silent --boundary lower')
-    assert_equal YAML.load(File.read('test_collection.yaml')), YAML.load(File.read('test_collection.yaml.tmp'))
-  end
-  def test_preprocessing_collection_from_a_pcm_collection
-    Helpers.run_preprocess_collection('collection_pcm_without_thresholds.yaml test_collection.yaml.tmp -p 0.0005,0.0001,0.00005 --silent --pcm --boundary lower')
-    assert_equal YAML.load(File.read('test_collection.yaml')), YAML.load(File.read('test_collection.yaml.tmp'))
-  end
-
   def test_preprocessing_collection_from_stdin_pcm
     Helpers.provide_stdin('test_collection_pcm/GABPA_f1.pcm  test_collection_pcm/KLF4_f2.pcm  test_collection_pcm/SP1_f1.pcm'){
       Helpers.run_preprocess_collection('.stdin test_collection.yaml.tmp -p 0.0005,0.0001,0.00005 --silent --pcm --boundary lower')
