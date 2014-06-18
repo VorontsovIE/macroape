@@ -98,7 +98,7 @@ module Macroape
         case data_model
         when :pcm
           query_pcm = Bioinform::MotifModel::PCM.new(query_input.matrix).named(query_input.name)
-          query_pwm = Bioinform::ConversionAlgorithms::PCM2PWMConverter_.new(pseudocount: :log, background: query_background).convert(query_pcm)
+          query_pwm = Bioinform::ConversionAlgorithms::PCM2PWMConverter.new(pseudocount: :log, background: query_background).convert(query_pcm)
         when :pwm
           query_pwm = Bioinform::MotifModel::PWM.new(query_input.matrix).named(query_input.name)
         end

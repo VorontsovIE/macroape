@@ -68,7 +68,7 @@ module Macroape
         case data_model
         when :pcm
           pcm = Bioinform::MotifModel::PCM.new(motif_data.matrix).named(motif_data.name)
-          pwm = Bioinform::ConversionAlgorithms::PCM2PWMConverter_.new(pseudocount: :log, background: background).convert(pcm)
+          pwm = Bioinform::ConversionAlgorithms::PCM2PWMConverter.new(pseudocount: :log, background: background).convert(pcm)
         when :pwm
           pwm = Bioinform::MotifModel::PWM.new(motif_data.matrix).named(motif_data.name)
         end

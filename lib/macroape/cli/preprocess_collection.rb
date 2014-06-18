@@ -77,7 +77,7 @@ module Macroape
 
         data_source = data_source.gsub("\\",'/')
 
-        pcm2pwm_converter = Bioinform::ConversionAlgorithms::PCM2PWMConverter_.new(pseudocount: :log, background: background)
+        pcm2pwm_converter = Bioinform::ConversionAlgorithms::PCM2PWMConverter.new(pseudocount: :log, background: background)
 
         if File.directory?(data_source)
           motif_inputs = Dir.glob(File.join(data_source,'*')).sort.map{|filename| motif_infos_from_file(filename) }
