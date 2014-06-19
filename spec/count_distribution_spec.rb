@@ -1,11 +1,11 @@
 require_relative 'spec_helper'
 require_relative '../lib/macroape/pwm_counting'
 
-describe Bioinform::PWM do
+describe Bioinform::MotifModel::PWM do
   let :matrix_first do [[1,2,3,4],[10,20,30,40],[100,200,300,400]] end
   let :matrix_second do [[1,2,3,4],[2,3,4,5]] end
-  let :pwm_first do Bioinform::PWM.new(matrix_first) end
-  let :pwm_second do Bioinform::PWM.new(matrix_second) end
+  let :pwm_first do Bioinform::MotifModel::PWM.new(matrix_first) end
+  let :pwm_second do Bioinform::MotifModel::PWM.new(matrix_second) end
   let :background do Bioinform::Frequencies.new([0.1,0.4,0.4,0.1]) end
 
   let :counting_first do Macroape::PWMCounting.new(pwm_first) end
