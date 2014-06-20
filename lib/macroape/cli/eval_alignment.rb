@@ -45,7 +45,7 @@ module Macroape
         shift = argv.shift
         orientation = argv.shift
 
-        raise 'You should specify two input sources (each is filename or .stdin)'  unless first_file and second_file
+        raise 'You should specify two input files'  unless first_file and second_file
         raise 'You should specify shift' unless shift
         raise 'You should specify orientation' unless orientation
 
@@ -90,26 +90,13 @@ module Macroape
         raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless first_background.symmetric?
         raise 'background should be symmetric: p(A)=p(T) and p(G) = p(C)' unless second_background.symmetric?
 
-        if first_file == '.stdin' || second_file == '.stdin'
-          input = $stdin.read
-          stdin_multi_parser = Bioinform::CollectionParser.new(Bioinform::StringParser.new, input)
-        end
+        raise "Error! File #{first_file} don't exist" unless File.exist?(first_file)
+        input_first = File.read(first_file)
+        input_first = Bioinform::Parser.choose(input_first).parse!(input_first)
 
-        if first_file == '.stdin'
-          input_first = stdin_multi_parser.parse
-        else
-          raise "Error! File #{first_file} don't exist" unless File.exist?(first_file)
-          input_first = File.read(first_file)
-          input_first = Bioinform::Parser.choose(input_first).parse!(input_first)
-        end
-
-        if second_file == '.stdin'
-          input_second = stdin_multi_parser.parse
-        else
-          raise "Error! File #{second_file} don't exist" unless File.exist?(second_file)
-          input_second = File.read(second_file)
-          input_second = Bioinform::Parser.choose(input_second).parse!(input_second)
-        end
+        raise "Error! File #{second_file} don't exist" unless File.exist?(second_file)
+        input_second = File.read(second_file)
+        input_second = Bioinform::Parser.choose(input_second).parse!(input_second)
 
         case data_model
         when :pcm

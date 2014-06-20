@@ -87,25 +87,4 @@ class TestEvalAlignment < Test::Unit::TestCase
     assert_equal( Helpers.eval_alignment_output('KLF4_f2.pwm SP1_f1.pwm -1 direct'),
                   Helpers.eval_alignment_output('KLF4_f2.pcm SP1_f1.pcm -1 direct --pcm'))
   end
-
-  def test_process_alignment_first_motif_from_stdin
-    result = Helpers.provide_stdin(File.read('KLF4_f2.pwm')) {
-      Helpers.eval_alignment_output('.stdin SP1_f1.pwm 0 direct') }
-    assert_equal( Helpers.eval_alignment_output('KLF4_f2.pwm SP1_f1.pwm 0 direct'),
-                  result )
-  end
-
-  def test_process_alignment_second_motif_from_stdin
-    result = Helpers.provide_stdin(File.read('SP1_f1.pwm')) {
-      Helpers.eval_alignment_output('KLF4_f2.pwm .stdin 0 direct') }
-    assert_equal( Helpers.eval_alignment_output('KLF4_f2.pwm SP1_f1.pwm 0 direct'),
-                  result )
-  end
-
-  def test_process_alignment_both_motifs_from_stdin
-    result = Helpers.provide_stdin(File.read('KLF4_f2.pwm') + File.read('SP1_f1.pwm')) {
-      Helpers.eval_alignment_output('.stdin .stdin 0 direct') }
-    assert_equal( Helpers.eval_alignment_output('KLF4_f2.pwm SP1_f1.pwm 0 direct'),
-                  result )
-  end
 end

@@ -62,12 +62,8 @@ module Macroape
             end
         end
 
-        if filename == '.stdin'
-          input = $stdin.read
-        else
-          raise "Error! File #{filename} doesn't exist" unless File.exist?(filename)
-          input = File.read(filename)
-        end
+        raise "Error! File #{filename} doesn't exist"  unless File.exist?(filename)
+        input = File.read(filename)
 
         parser = Bioinform::Parser.choose(input)
         motif_data = parser.parse!(input)

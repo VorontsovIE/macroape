@@ -31,8 +31,4 @@ class FindPvalueTest < Test::Unit::TestCase
   def test_custom_background
     assert_equal [%w[5.2403 6.815000000000001e-06]], Helpers.find_pvalue_output('KLF4_f2.pwm 5.2403 -b 0.4,0.1,0.1,0.4')
   end
-  def test_process_pwm_from_stdin
-    assert_equal Helpers.find_pvalue_output('KLF4_f2.pwm 1'),
-                Helpers.provide_stdin(File.read 'KLF4_f2.pwm'){  Helpers.find_pvalue_output('.stdin 1') }
-  end
 end

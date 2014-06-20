@@ -71,10 +71,6 @@ class FindThresholdTest < Test::Unit::TestCase
     # additional consistency checks
     assert_equal Helpers.obtain_pvalue_by_threshold("KLF4_f2.pwm -0.10449000000000001 -b 0.4,0.1,0.1,0.4"), '0.0004996429000000166' # here real pvalue differs at last digits =\
   end
-  def test_process_pwm_from_stdin
-    assert_equal Helpers.find_threshold_output('KLF4_f2.pwm'),
-                Helpers.provide_stdin(File.read('KLF4_f2.pwm')){ Helpers.find_threshold_output('.stdin') }
-  end
 
   # TODO: it should be rewritten as a spec for count_distribution_under_pvalue - not to raise an error(log out of domain) and return a value
   def test_process_large_pvalue
