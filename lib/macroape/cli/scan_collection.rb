@@ -93,10 +93,10 @@ module Macroape
         query_input = Bioinform::Parser.choose(query_input).parse!(query_input)
         case data_model
         when :pcm
-          query_pcm = Bioinform::MotifModel::PCM.new(query_input.matrix).named(query_input.name)
+          query_pcm = Bioinform::MotifModel::PCM.new(query_input[:matrix]).named(query_input[:name])
           query_pwm = Bioinform::ConversionAlgorithms::PCM2PWMConverter.new(pseudocount: :log, background: query_background).convert(query_pcm)
         when :pwm
-          query_pwm = Bioinform::MotifModel::PWM.new(query_input.matrix).named(query_input.name)
+          query_pwm = Bioinform::MotifModel::PWM.new(query_input[:matrix]).named(query_input[:name])
         end
 
         query_pwm_rough = query_pwm.discreted(rough_discretization)

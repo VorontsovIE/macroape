@@ -9,8 +9,8 @@ module Macroape
       def self.motif_infos_from_file(filename)
         input = File.read(filename)
         motif_input = Bioinform::Parser.choose(input).parse(input)
-        { matrix: motif_input.matrix,
-          name: motif_input.name || File.basename(filename, File.extname(filename)) }
+        { matrix: motif_input[:matrix],
+          name: motif_input[:name] || File.basename(filename, File.extname(filename)) }
       end
 
       def self.main(argv)
