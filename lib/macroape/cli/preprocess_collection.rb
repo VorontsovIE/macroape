@@ -83,7 +83,7 @@ module Macroape
           motif_inputs = Dir.glob(File.join(data_source,'*')).sort.map{|filename| motif_infos_from_file(filename) }
         elsif File.file?(data_source)
           input = File.read(data_source)
-          motif_inputs = Bioinform::CollectionParser.new(Bioinform::StringParser.new, input).to_a
+          motif_inputs = Bioinform::MotifSplitter.new.split(input).map{|motif_input| Bioinform::StringParser.new.parse(motif_input) }
         elsif data_source == '.stdin'
           filelist = $stdin.read.shellsplit
           motif_inputs = filelist.map{|filename| motif_infos_from_file(filename) }
