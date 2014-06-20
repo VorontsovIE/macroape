@@ -1,5 +1,6 @@
 require 'bioinform'
-require_relative 'inverf'
+require_relative 'support/inverf'
+require_relative 'support/partial_sums'
 
 module Macroape
   class PWMCounting
