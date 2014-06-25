@@ -72,11 +72,11 @@ module Macroape
 
         raise "Error! File #{first_file} don't exist" unless File.exist?(first_file)
         input_first = File.read(first_file)
-        input_first = Bioinform::Parser.choose(input_first).parse!(input_first)
+        input_first = Bioinform::MatrixParser.new.parse!(input_first)
 
         raise "Error! File #{second_file} don't exist" unless File.exist?(second_file)
         input_second = File.read(second_file)
-        input_second = Bioinform::Parser.choose(input_second).parse!(input_second)
+        input_second = Bioinform::MatrixParser.new.parse!(input_second)
 
         case data_model
         when :pcm

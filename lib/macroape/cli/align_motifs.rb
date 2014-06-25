@@ -79,7 +79,7 @@ module Macroape
         shifts << [leader_pwm_file, 0, :direct]
 
         input_first = File.read(leader_pwm_file)
-        input_first = Bioinform::Parser.choose(input_first).parse!(input_first)
+        input_first = Bioinform::MatrixParser.new.parse!(input_first)
         case data_model
         when :pcm
           pcm_first = Bioinform::MotifModel::PCM.new(input_first[:matrix]).named(input_first[:name])
@@ -93,7 +93,7 @@ module Macroape
 
         rest_pwm_files.each do |motif_name|
           input_second = File.read(motif_name)
-          input_second = Bioinform::Parser.choose(input_second).parse!(input_second)
+          input_second = Bioinform::MatrixParser.new.parse!(input_second)
           case data_model
           when :pcm
             pcm_second = Bioinform::MotifModel::PCM.new(input_second[:matrix]).named(input_second[:name])

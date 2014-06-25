@@ -58,7 +58,7 @@ module Macroape
         raise "Error! File #{filename} doesn't exist"  unless File.exist?(filename)
         input = File.read(filename)
 
-        parser = Bioinform::Parser.choose(input)
+        parser = Bioinform::MatrixParser.new
         motif_data = parser.parse!(input)
         case data_model
         when :pcm
