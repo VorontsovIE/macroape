@@ -1,4 +1,4 @@
 module Macroape
-  VERSION = "4.0.2"
+  VERSION = "4.1.0"
   STANDALONE = false
 end
